@@ -13,4 +13,5 @@
 <!-- summary 아래 한칸 공백 두어야함 -->
 - naver news crawler 완료
 - naver news crawler 세이브 기능 추가
+- mt5 요약 모델 모듈화 완료
 </details>
