@@ -70,7 +70,7 @@ def get_news(comp_name, page=5):
     return news_df
 
 def pretreatment_data(news_df):
-    news_df['content'] = news_df['content'].apply(lambda x: re.sub(r'\n+', ' ',re.sub(r'\s+', ' ', x)).strip())
+    news_df['content'] = news_df['content'].apply(lambda x: re.sub(r'\s+', ' ',re.sub(r'\n+', ' ', x)).strip())
     return news_df
 
 def save_news(news_df, comp_name):
