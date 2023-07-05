@@ -1,18 +1,4 @@
 
-# pip install
-
-!pip install pandas
-
-!pip install chromedriver-autoinstaller
-
-!pip install BeautifulSoup4
-!pip install lxml
-!pip install selenium
-!pip install selenium --upgrade
-!pip install webdriver-manager
-
-
-
 # import
 
 import os
