@@ -4,8 +4,10 @@ import pandas as pd
 from bs4 import BeautifulSoup as bs
 import news_crawlers as nc
 
-BASE_URL = r'https://search.naver.com/search.naver?where=news&ie=utf8&sm=nws_hty&query={comp_name}'
-# BASE_URL = r'https://search.naver.com/search.naver?where=news&sm=tab_pge&query={comp_name}sort=0&photo=0&field=0&pd=0&ds=&de=&cluster_rank=79&mynews=0&office_type=0&office_section_code=0&news_office_checked=&nso=so:r,p:all,a:all&start={page_num}'
+# BASE_URL = r'https://search.naver.com/search.naver?where=news&ie=utf8&sm=nws_hty&query={comp_name}'
+BASE_URL = r'https://search.naver.com/search.naver?where=news&sm=tab_pge&query={comp_name}&sort=0&photo=0&field=0&pd=0&ds=&de=&cluster_rank=79&mynews=0&office_type=0&office_section_code=0&news_office_checked=&nso=so:r,p:all,a:all&start={page}'
+
+SAVE_PATH = r'E:\Python\data\MiniProj\datas\news\{}_naver.csv'
 
 def get_content(link):
     site_url = link.split('/')[2]
@@ -15,12 +17,12 @@ def get_content(link):
     else:
         return False, None
 
-def get_url(comp_name):
-    url = BASE_URL.format(comp_name=comp_name)
+def get_url(comp_name, page=1):
+    url = BASE_URL.format(comp_name=comp_name, page=page)
     return url
 
-def get_news(comp_name):
-    url = get_url(comp_name)
+def get_news_in_page(comp_name, page=1):
+    url = get_url(comp_name, page)
     r = requests.get(url)
     soup = bs(r.text, 'lxml')
     # #main_pack > section > div > div.group_news > ul
@@ -45,12 +47,31 @@ def get_news(comp_name):
         'content': []
     }
     
-    for news in link_list:
-        print(news)
-        is_success, data = get_content(news)
+    for news_link in link_list:
+        # print(news_link)
+        is_success, data = get_content(news_link)
         if is_success:
             link, content = data
             news_dict['link'].append(link)
             news_dict['content'].append(content)
     
-    return pd.DataFrame(news_dict)
+    
+    news_df = pd.DataFrame(news_dict)
+    
+    return news_df
+
+def get_news(comp_name, page=5):
+    news_dfs = []
+    for i in range(1, page+1):
+        news_dfs.append(get_news_in_page(comp_name, i))
+    news_df = pd.concat(news_dfs)
+    news_df = pretreatment_data(news_df)
+    save_news(news_df, comp_name)
+    return news_df
+
+def pretreatment_data(news_df):
+    news_df['content'] = news_df['content'].apply(lambda x: re.sub(r'\n+', ' ',re.sub(r'\s+', ' ', x)).strip())
+    return news_df
+
+def save_news(news_df, comp_name):
+    news_df.to_csv(SAVE_PATH.format(comp_name), index=False, encoding='utf-8-sig')
