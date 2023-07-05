@@ -106,7 +106,7 @@ link_to_get_content = {
     'www.hankyung.com': get_hankyung_content,
     'www.joongangilbo.co.kr': get_joongang_content,
     'news.mt.co.kr': get_moneytoday_content,
-    'www.news1.kr': get_newsone_content,
+    # 'www.news1.kr': get_newsone_content,
     'www.hankookilbo.com': get_hankookilbo_content,
     'www.zdnet.co.kr': get_zdnet_content,
     'n.news.naver.com': get_naver_content,
