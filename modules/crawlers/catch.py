@@ -196,6 +196,9 @@ def WC_Catch(corp=str) :
     bad_df = pd.DataFrame({"부정적 평가" : bad_lst})
 
     pros_cons = good_df.join(bad_df)
-    
-    
+    pros_cons
+
+
+
     return pros_cons
+
