@@ -124,6 +124,8 @@ def get_news(keyword, csv_save=False):
         'content': contents
     })
     
+    df['content'] = df['content'].apply(lambda x: re.sub(r'\s+', ' ',re.sub(r'\n+', ' ', x)).strip())
+    
     if csv_save:
         # ========== [이하는 csv 저장 로직] ==========
         os.makedirs(SAVE_PATH, exist_ok=True) # 디렉토리 생성
