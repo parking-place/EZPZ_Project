@@ -9,14 +9,6 @@ BASE_URL = r'https://search.naver.com/search.naver?where=news&sm=tab_pge&query={
 
 SAVE_PATH = r'E:\Python\data\MiniProj\datas\news\{}_naver.csv'
 
-def get_content(link):
-    site_url = link.split('/')[2]
-    get_content_func = nc.link_to_get_content.get(site_url, None)
-    if get_content_func:
-        return True, get_content_func(link)
-    else:
-        return False, None
-
 def get_url(comp_name, page=1):
     url = BASE_URL.format(comp_name=comp_name, page=page)
     return url
@@ -49,12 +41,11 @@ def get_news_in_page(comp_name, page=1):
     
     for news_link in link_list:
         # print(news_link)
-        is_success, data = get_content(news_link)
+        is_success, data = nc.get_content(news_link)
         if is_success:
             link, content = data
             news_dict['link'].append(link)
             news_dict['content'].append(content)
-    
     
     news_df = pd.DataFrame(news_dict)
     

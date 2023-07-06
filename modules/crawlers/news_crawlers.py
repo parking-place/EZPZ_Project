@@ -111,3 +111,11 @@ link_to_get_content = {
     'www.zdnet.co.kr': get_zdnet_content,
     'n.news.naver.com': get_naver_content,
 }
+
+def get_content(link):
+    site_url = link.split('/')[2]
+    get_content_func = link_to_get_content.get(site_url, None)
+    if get_content_func:
+        return True, get_content_func(link)
+    else:
+        return False, None
