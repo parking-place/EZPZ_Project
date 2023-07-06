@@ -18,7 +18,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 from bs4 import BeautifulSoup
 
-def get_jp_reviews():
+def get_jp_reviews(company_name):
     ############################
     # 크롬으로 잡플래닛 사이트 열기
     ############################
@@ -59,6 +59,7 @@ def get_jp_reviews():
     # 이메일로 로그인 버튼 누르기
     em_log = browser.find_element(By.CSS_SELECTOR, "fieldset > button")
     em_log.click()
+    time.sleep(2)
 
 
 
@@ -70,8 +71,7 @@ def get_jp_reviews():
     search_bar.click()
 
     # 내가 원하는 회사 입력하기
-    want_cp = input()
-    search_bar.send_keys(want_cp)
+    search_bar.send_keys(company_name)
     search_bar.send_keys(Keys.RETURN)
 
     # 검색결과 기다리기.
@@ -131,8 +131,8 @@ def get_jp_reviews():
         soup = BeautifulSoup(html, "lxml")
 
         # 현재 페이지의 숫자를 가져오기.
-        crt_btn = soup.select_one('#viewReviewsList > div > div > div > div.pg_bottom.um_paginnation > article > strong')
-        crt_page = int(crt_btn.text.strip())
+        crt_btn = soup.select_one('strong.txtlink_page')
+        crt_page = int(crt_btn.text[0].strip())
 
         # 다음버튼을 눌렀은데도 같은 페이지인 경우
         if crt_page == pre_page:
@@ -173,7 +173,7 @@ def get_jp_reviews():
         jp_df = pd.DataFrame(review_list, columns=[f"jp_review"])
 
         # csv 파일로 저장.
-        file_name = f"{want_cp}reviews.csv"
+        file_name = f"{company_name}reviews.csv"
         save_file_path = os.path.join(save_path, file_name)
         jp_df.to_csv(save_file_path, index=False, encoding = "utf-8")
     
