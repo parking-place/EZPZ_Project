@@ -22,7 +22,10 @@ from accounts import si
 service = Service(executable_path='chromedriver.exe')
 browser = webdriver.Chrome(service=service)
 save_path=r'C:\python_lesson\mini_project\MiniProj\si_crawl\{}_si.csv'
+# ChromeBrowser - headless mode
 
+option = webdriver.ChromeOptions()
+option.add_argument#("--headless")
 
 
 def get_si_reviews(company_name): #1.회사 이름 받아서 추출해주는 함수
