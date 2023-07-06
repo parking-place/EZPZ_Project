@@ -1,19 +1,5 @@
 
-# pip install
-
-!pip install pandas
-
-!pip install chromedriver-autoinstaller
-
-!pip install BeautifulSoup4
-!pip install lxml
-!pip install selenium
-!pip install selenium --upgrade
-!pip install webdriver-manager
-
-
-
-# import
+# Import
 
 import os
 import sys
@@ -38,136 +24,178 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from selenium.common.exceptions import NoSuchElementException
 
 
-# ChromeBrowser - headless mode
+def WC_Catch(corp=str) :
+    
+    # headless mode
 
-option = webdriver.ChromeOptions()
-option.add_argument#("--headless")
+    option = webdriver.ChromeOptions()
+    option.add_argument('--headless')        # Head-less 설정
+    option.add_argument('--no-sandbox')
+    option.add_argument('--disable-dev-shm-usage')
 
-service = Service(executable_path='chromedriver.exe')
-browser = webdriver.Chrome(service=service, options=option)
+    service = Service(executable_path='chromedriver.exe')
+    browser = webdriver.Chrome(service=service, options=option)
 
-html = browser.page_source
-soup = BeautifulSoup(html, 'lxml')
+    html = browser.page_source
+    soup = BeautifulSoup(html, 'lxml')
 
-url = r"https://www.catch.co.kr/"
+    url = r"https://www.catch.co.kr/"
 
-browser.maximize_window()
-print(browser.get_window_size())
+    browser.maximize_window()
+    print(browser.get_window_size())
 
-browser.get(url)
-
-
-
-# 로그인
-
-from accounts import ct
-
-ID = ct.ID
-PW = ct.PW
-
-
-browser.find_element(By.CSS_SELECTOR, "a.login").click()
-
-browser.find_element(By.CSS_SELECTOR, "input#id_login").send_keys(ID)
-time.sleep(1)
-browser.find_element(By.CSS_SELECTOR, "input#pw_login").send_keys(PW)
-
-browser.find_element(By.CSS_SELECTOR, "input#pw_login").send_keys(Keys.ENTER)
+    browser.get(url)
 
 
 
-# 기업 검색 (input)
-query = browser.find_element(By.CSS_SELECTOR, "input")
+    # 로그인
 
-query.send_keys(input("리뷰 확인하기: "))
-query.send_keys(Keys.ENTER)
+    from accounts import ct
 
-try : 
-    browser.find_element(By.CSS_SELECTOR, 'button.today > span').click()
-    time.sleep(2)
-
-except : 
-    pass
-
-
-browser.find_element(By.CSS_SELECTOR, "p.name > a").click()
-time.sleep(2)
-
-browser.find_element(By.XPATH, r'//*[@id="Contents"]/div[1]/div[1]/div[2]/ul/li[4]/a').click()
-time.sleep(1)
-
-browser.find_element(By.CSS_SELECTOR, 'div.pd_type2 > div > a').click()
-time.sleep(1)
+    ID = ct.ID
+    PW = ct.PW
 
 
 
-# reviews Crawling
+    browser.find_element(By.CSS_SELECTOR, "a.login").click()
 
+    browser.find_element(By.CSS_SELECTOR, "input#id_login").send_keys(ID)
 
-n_btn = browser.find_element(By.CSS_SELECTOR, 'a.ico.next')
+    browser.find_element(By.CSS_SELECTOR, "input#pw_login").send_keys(PW)
 
-
-good_lst = []
-bad_lst = []
-
-
-i = 0 
-
-pre_page = 0
-
-while True : 
-
-    # 현재 페이지의 숫자
-    crt_btn = browser.find_element(By.CSS_SELECTOR, 'div.pd_type2 > p > a.selected')
-    crt_page = int(crt_btn.text)
-
-    # 다음 버튼 눌러도 같은 페이지의 경우 (마지막 페이지)
-    if crt_page == pre_page:
-        break
-
-
-    for p in range(1, 5) : 
-
-        grv = browser.find_element(By.CSS_SELECTOR, f"li:nth-child({p}) > p:nth-child(4)").text
-        brv = browser.find_element(By.CSS_SELECTOR, f"li:nth-child({p}) > p:nth-child(5)").text
-
-        grv_clean = grv.replace(grv[:5], "").replace('\n', ' ') 
-        brv_clean = brv.replace(brv[:4], "").replace('\n', ' ') 
-
-        good_lst.append(grv_clean)
-        bad_lst.append(brv_clean)
-
+    browser.find_element(By.CSS_SELECTOR, "input#pw_login").send_keys(Keys.ENTER)
 
     time.sleep(2)
 
-    # WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, f"li:nth-child({i}) > p:nth-child(4)")))
 
 
-# 다음 페이지로 이동하기 위한 버튼을 찾기.
-    try:
-        # 이전페이지의 번호를 갱신
-        pre_page = crt_page
+    query = browser.find_element(By.CSS_SELECTOR, "input")
 
-        # 다음 버튼 클릭
-        n_btn.click()
+    query.send_keys(corp)
 
-        # 버튼 누르고나서 정보를 가져올때까지 슬립(몇초동안)걸어두기.
+    time.sleep(1)
+
+    query.send_keys(Keys.ENTER)
+
+    time.sleep(2)
+
+
+
+    ### 팝업 뜨면 끄기 (예외 처리)
+
+    try : 
+        browser.find_element(By.CSS_SELECTOR, 'button.today > span').click()
+        
+    except : 
+        pass
+
+    time.sleep(2)
+
+
+
+    # 검색한 기업(최상위 노출) 클릭 
+    browser.find_element(By.CSS_SELECTOR, "p.name > a").click()
+
+    time.sleep(1)
+
+    # '현직자 리뷰' 탭 클릭
+    browser.find_element(By.XPATH, r'//*[@id="Contents"]/div[1]/div[1]/div[2]/ul/li[4]/a').click()
+
+    time.sleep(1)
+
+    # 핵심 리뷰만 조회 - 정규직/현직자가 3년 이내 작성한 리뷰
+    browser.find_element(By.CSS_SELECTOR, 'div.pd_type2 > div > a').click()
+
+    time.sleep(1)
+
+
+
+
+
+    #########################################################################
+
+    time.sleep(1)
+
+    # Review Crawler
+
+    n_btn = browser.find_element(By.CSS_SELECTOR, 'a.ico.next')
+
+    time.sleep(1)
+
+    good_lst = None
+    bad_lst = None
+
+
+    good_lst = []
+    bad_lst = []
+
+
+    pre_page = 0
+
+
+    while True : 
+
         time.sleep(1)
 
-    except:
-        break
+        # 현재 페이지의 숫자
+        crt_btn = browser.find_element(By.CSS_SELECTOR, 'div.pd_type2 > p > a.selected')
+        crt_page = int(crt_btn.text)
+
+        # 다음 버튼 눌러도 같은 페이지의 경우 (마지막 페이지)
+        if crt_page == pre_page:
+            break
+
+        try:
+            for p in range(1, 5) : 
+
+                grv = browser.find_element(By.CSS_SELECTOR, f"li:nth-child({p}) > p:nth-child(4)").text
+                brv = browser.find_element(By.CSS_SELECTOR, f"li:nth-child({p}) > p:nth-child(5)").text
+
+                grv_clean = grv.replace(grv[:5], "").replace('\n', ' ') 
+                brv_clean = brv.replace(brv[:4], "").replace('\n', ' ') 
+
+                good_lst.append(grv_clean)
+                bad_lst.append(brv_clean)
+        
+        except NoSuchElementException : 
+            break
+
+        time.sleep(2)
+
+        # WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, f"li:nth-child({i}) > p:nth-child(4)")))
 
 
-good_lst = list(set(good_lst))
-bad_lst = list(set(bad_lst))
+    # 다음 페이지로 이동하기 위한 버튼을 찾기.
+        try:
+            # 이전페이지의 번호를 갱신
+            pre_page = crt_page
+
+            # 다음 버튼 클릭
+            n_btn.click()
+
+            # 버튼 누르고나서 정보를 가져올때까지 슬립(몇초동안)걸어두기.
+            time.sleep(1)
+
+        except:
+            break
 
 
 
-# List 2 DataFrame
+    browser.close()
 
-good_df = pd.DataFrame({"긍정적 평가" : good_lst})
-bad_df = pd.DataFrame({"부정적 평가" : bad_lst})
 
-pros_cons = good_df.join(bad_df)        # 긍정 부정 병합
+    # list to dataframe
+
+    good_lst = list(set(good_lst))
+    bad_lst = list(set(bad_lst))
+
+    good_df = pd.DataFrame({"긍정적 평가" : good_lst})
+    bad_df = pd.DataFrame({"부정적 평가" : bad_lst})
+
+    pros_cons = good_df.join(bad_df)
+    
+    
+    return pros_cons
