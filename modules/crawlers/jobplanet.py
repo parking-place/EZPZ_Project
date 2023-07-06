@@ -2,15 +2,10 @@ from accounts import jp
 # jp.ID, jp.PW
 
 import os
-from datetime import datetime
 import time
 import requests
 import re
-
 import pandas as pd
-
-from bs4 import BeautifulSoup
-
 import selenium
 
 from selenium.webdriver.chrome.service import Service
@@ -21,101 +16,103 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 
-############################
-# 크롬으로 잡플래닛 사이트 열기
-############################
-# headless 모드
+from bs4 import BeautifulSoup
 
-option = webdriver.ChromeOptions()
-option.add_argument("--headless")
+def get_jp_reviews():
+    ############################
+    # 크롬으로 잡플래닛 사이트 열기
+    ############################
+    # headless 모드
 
-service = Service(executable_path='chromedriver.exe')
-browser = webdriver.Chrome(service=service, options=option)
+    option = webdriver.ChromeOptions()
+    option.add_argument("--headless")
 
-url = r"https://www.jobplanet.co.kr/job"
+    service = Service(executable_path='chromedriver.exe')
+    browser = webdriver.Chrome(service=service, options=option)
 
-browser.maximize_window()
-print(browser.get_window_size())
+    url = r"https://www.jobplanet.co.kr/job"
 
-browser.get(r"https://www.jobplanet.co.kr/job")
+    browser.maximize_window()
+    print(browser.get_window_size())
 
-
-
-############################
-# 잡플래닛에 로그인 하기
-############################
-
-# 로그인 버튼 찾기 및 클릭
-login_btn = browser.find_element(By.CSS_SELECTOR,"a.btn_txt.login")
-login_btn.click()
-
-# 로그인 ID와 PW 쳐야할 곳 클릭 + 적기
-login_Id = browser.find_element(By.CSS_SELECTOR, "#user_email")
-login_Id.click()
-login_Id.send_keys(jp.ID)
-
-login_Pw = browser.find_element(By.CSS_SELECTOR, "#user_password")
-login_Pw.click()
-login_Pw.send_keys(jp.PW)
-
-# 이메일로 로그인 버튼 누르기
-em_log = browser.find_element(By.CSS_SELECTOR, "fieldset > button")
-em_log.click()
+    browser.get(url)
 
 
 
-###########################
-# 잡플래닛 검색창에 회사 입력하고 맨 처음에 나오는 기업 클릭하기.
-###########################
-# 검색창 누르기
-search_bar = browser.find_element(By.CSS_SELECTOR, "#search_bar_search_query")
-search_bar.click()
+    ############################
+    # 잡플래닛에 로그인 하기
+    ############################
 
-# 내가 원하는 회사 입력하기
-want_cp = input()
-search_bar.send_keys(want_cp)
-search_bar.send_keys(Keys.RETURN)
+    # 로그인 버튼 찾기 및 클릭
+    login_btn = browser.find_element(By.CSS_SELECTOR,"a.btn_txt.login")
+    login_btn.click()
 
-# 검색결과 기다리기.
-time.sleep(1)
+    # 로그인 ID와 PW 쳐야할 곳 클릭 + 적기
+    login_Id = browser.find_element(By.CSS_SELECTOR, "#user_email")
+    login_Id.click()
+    login_Id.send_keys(jp.ID)
 
-# 맨처음에 나오는 기업 클릭하기
-company = browser.find_element(By.CSS_SELECTOR, "div.is_company_card > div:nth-child(1) > a")
-company.click()
+    login_Pw = browser.find_element(By.CSS_SELECTOR, "#user_password")
+    login_Pw.click()
+    login_Pw.send_keys(jp.PW)
 
-# 검색결과 기다리기.
-time.sleep(1)
-
+    # 이메일로 로그인 버튼 누르기
+    em_log = browser.find_element(By.CSS_SELECTOR, "fieldset > button")
+    em_log.click()
 
 
-###########################
-# 회사페이지에서 리뷰 버튼 누르기
-###########################
-# 팝업창이 있을 때는 팝업창 버튼을 누르고 리뷰버튼을 누르기
-try:
-    pop = browser.find_element(By.CSS_SELECTOR, "div.premium_modal_header > button")
-    pop.click()
-    review_bar = browser.find_element(By.CSS_SELECTOR, "li.viewReviews > a")
-    review_bar.click()
 
-except NoSuchElementException:
-    # 만약 팝업창 버튼이 없다면 리뷰 버튼만 누르기
+    ###########################
+    # 잡플래닛 검색창에 회사 입력하고 맨 처음에 나오는 기업 클릭하기.
+    ###########################
+    # 검색창 누르기
+    search_bar = browser.find_element(By.CSS_SELECTOR, "#search_bar_search_query")
+    search_bar.click()
+
+    # 내가 원하는 회사 입력하기
+    want_cp = input()
+    search_bar.send_keys(want_cp)
+    search_bar.send_keys(Keys.RETURN)
+
+    # 검색결과 기다리기.
+    time.sleep(1)
+
+    # 맨처음에 나오는 기업 클릭하기
+    company = browser.find_element(By.CSS_SELECTOR, "div.is_company_card > div:nth-child(1) > a")
+    company.click()
+
+    # 검색결과 기다리기.
+    time.sleep(1)
+
+
+
+    ###########################
+    # 회사페이지에서 리뷰 버튼 누르기
+    ###########################
+    # 팝업창이 있을 때는 팝업창 버튼을 누르고 리뷰버튼을 누르기
     try:
-        review_bar = browser.find_element(By.CSS_SELECTOR, "li.viewReviews > a")
-        review_bar.click()
-        time.sleep(1)
         pop = browser.find_element(By.CSS_SELECTOR, "div.premium_modal_header > button")
         pop.click()
+        review_bar = browser.find_element(By.CSS_SELECTOR, "li.viewReviews > a")
+        review_bar.click()
+
     except NoSuchElementException:
+        # 만약 팝업창 버튼이 없다면 리뷰 버튼만 누르기
+        try:
+            review_bar = browser.find_element(By.CSS_SELECTOR, "li.viewReviews > a")
+            review_bar.click()
+            time.sleep(1)
+            pop = browser.find_element(By.CSS_SELECTOR, "div.premium_modal_header > button")
+            pop.click()
+        except NoSuchElementException:
+            pass
         pass
-    pass
 
 
 
-###########################
-# 회사페이지에서 리뷰 가져오기.
-###########################
-def get_jp_reviews():
+    ###########################
+    # 회사페이지에서 리뷰 가져오기.
+    ###########################
     """
     잡플래닛 회사 리뷰 상세 내용을 url을 받아서 내용을 반환.
     연결
@@ -179,8 +176,8 @@ def get_jp_reviews():
         file_name = f"{want_cp}reviews.csv"
         save_file_path = os.path.join(save_path, file_name)
         jp_df.to_csv(save_file_path, index=False, encoding = "utf-8")
-
+    
+    # 브라우저 끄기
+    browser.close()
+    
     return jp_df
-
-# 브라우저 끄기
-browser.close()
