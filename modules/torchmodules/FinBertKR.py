@@ -14,4 +14,9 @@ class FinBertKR:
         model_name = "snunlp/KR-FinBert-SC"
         self.__tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.__model = AutoModelForSequenceClassification.from_pretrained(model_name)
+        self.__softmax = F.softmax
         
+    def load_dict(self, model_name):
+        self.__model.load_state_dict(torch.load(f'{DICT_PATH}/{model_name}'))
+        
+    
