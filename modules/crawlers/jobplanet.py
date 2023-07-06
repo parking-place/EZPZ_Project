@@ -18,6 +18,8 @@ from selenium.common.exceptions import NoSuchElementException
 
 from bs4 import BeautifulSoup
 
+SAVE_PATH = f"/Users/gyeonmunju/Desktop/PlayData/jp_company"
+
 def get_jp_reviews(company_name):
     ############################
     # 크롬으로 잡플래닛 사이트 열기
@@ -166,15 +168,14 @@ def get_jp_reviews(company_name):
             break
 
         # local에 디렉토리를 생성.
-        save_path = f"/Users/gyeonmunju/Desktop/PlayData/jp_company"
-        os.makedirs(save_path, exist_ok=True)
+        os.makedirs(SAVE_PATH, exist_ok=True)
 
         # 데이터프레임으로 관리하겠다 지정. (데이터 생성하기.)
         jp_df = pd.DataFrame(review_list, columns=[f"jp_review"])
 
         # csv 파일로 저장.
-        file_name = f"{company_name}reviews.csv"
-        save_file_path = os.path.join(save_path, file_name)
+        file_name = f"{company_name}_reviews.csv"
+        save_file_path = os.path.join(SAVE_PATH, file_name)
         jp_df.to_csv(save_file_path, index=False, encoding = "utf-8")
     
     # 브라우저 끄기
