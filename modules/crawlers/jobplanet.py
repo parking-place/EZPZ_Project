@@ -146,7 +146,7 @@ def get_jp_reviews(company_name):
         bad_review = soup.select("section > div > div.ctbody_col2 > div > dl > dd:nth-child(4) > span")
 
         # 텍스트로 추출한 내용을 리스트에 추가해서 넣어주기 위해 이용.
-        for good_text in good_review[:60]: # for문은 for 채워져있는 값의 원소 in 채워져있는 리스트
+        for good_text in good_review: # for문은 for 채워져있는 값의 원소 in 채워져있는 리스트
             # 데이터 전처리
             good_text_clean_1 = good_text.get_text().strip()
             good_text_clean_2 = good_text_clean_1.replace("\n", " ")
@@ -154,7 +154,7 @@ def get_jp_reviews(company_name):
             # 장점 리뷰에 넣기.
             good_review_list.append(good_text_clean_2)
 
-        for bad_text in bad_review[:60]:
+        for bad_text in bad_review:
             # 데이터 전처리
             bad_text_clean_1 = bad_text.get_text().strip()
             bad_text_clean_2 = bad_text_clean_1.replace("\n", " ")
