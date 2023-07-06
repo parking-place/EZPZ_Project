@@ -146,7 +146,7 @@ def get_jp_reviews(company_name):
         bad_review = soup.select("section > div > div.ctbody_col2 > div > dl > dd:nth-child(4) > span")
 
         # 텍스트로 추출한 내용을 리스트에 추가해서 넣어주기 위해 이용.
-        for good_text in good_review: # for문은 for 채워져있는 값의 원소 in 채워져있는 리스트
+        for good_text in good_review[:60]: # for문은 for 채워져있는 값의 원소 in 채워져있는 리스트
             # 데이터 전처리
             good_text_clean_1 = good_text.get_text().strip()
             good_text_clean_2 = good_text_clean_1.replace("\n", " ")
@@ -154,7 +154,7 @@ def get_jp_reviews(company_name):
             # 장점 리뷰에 넣기.
             good_review_list.append(good_text_clean_2)
 
-        for bad_text in bad_review:
+        for bad_text in bad_review[:60]:
             # 데이터 전처리
             bad_text_clean_1 = bad_text.get_text().strip()
             bad_text_clean_2 = bad_text_clean_1.replace("\n", " ")
@@ -182,8 +182,7 @@ def get_jp_reviews(company_name):
             break
 
         # local에 디렉토리를 생성.
-        save_path = f"/Users/gyeonmunju/Desktop/PlayData/jp_company"
-        os.makedirs(save_path, exist_ok=True)
+        os.makedirs(SAVE_PATH, exist_ok=True)
 
         # 데이터프레임으로 관리하겠다 지정. (데이터 생성하기.)
         good_df = pd.DataFrame({"긍정적 리뷰" : good_review_list})
@@ -196,6 +195,10 @@ def get_jp_reviews(company_name):
         file_name = f"{company_name}_reviews.csv"
         save_file_path = os.path.join(SAVE_PATH, file_name)
         jp_df.to_csv(save_file_path, index=False, encoding = "utf-8")
+
+        # 데이터프레임의 인덱스 개수 확인 후 60개를 초과하면 다음 코드로 넘어가기.
+        if len(jp_df.index) > 60:
+            break
     
     # 브라우저 끄기
     browser.close()
