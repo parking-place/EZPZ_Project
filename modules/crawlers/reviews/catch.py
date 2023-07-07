@@ -27,6 +27,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 
 
+
+### 저장 경로 설정
+
+SAVE_PATH = r'C:/DA_30_classes - 2nd Season/Project/data/'
+
+
+
 def WC_Catch(corp=str) :
     
     # headless mode
@@ -35,6 +42,7 @@ def WC_Catch(corp=str) :
     option.add_argument('--headless')        # Head-less 설정
     option.add_argument('--no-sandbox')
     option.add_argument('--disable-dev-shm-usage')
+    option.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64)" + "AppleWebKit/537.36 (KHTML, like Gecko)" + "Chrome/87.0.4280.141 Safari/537.36")
 
     service = Service(executable_path='chromedriver.exe')
     browser = webdriver.Chrome(service=service, options=option)
@@ -117,7 +125,7 @@ def WC_Catch(corp=str) :
 
     #########################################################################
 
-    time.sleep(1)
+    time.sleep(2)
 
     # Review Crawler
 
@@ -196,8 +204,28 @@ def WC_Catch(corp=str) :
     bad_df = pd.DataFrame({"부정적 평가" : bad_lst})
 
     pros_cons = good_df.join(bad_df)
-    pros_cons
+
+
+
+    # dataframe to csv file
+
+    os.makedirs(SAVE_PATH, exist_ok=True)
+
+    # csv 파일로 저장.
+
+    file_name = f"{corp}_reviews.csv"
+    save_file_path = os.path.join(SAVE_PATH, file_name)
+    
+    pros_cons.to_csv(save_file_path, index=False, encoding = "utf-8")
+
+
+
+    # 후처리
+
+    pros_cons['긍정적 평가'] = pros_cons['긍정적 평가'].apply(lambda x: re.sub(r'\s+', ' ',re.sub(r'\n+', ' ', x)).strip())
+    pros_cons['부정적 평가'] = pros_cons['부정적 평가'].apply(lambda x: re.sub(r'\s+', ' ',re.sub(r'\n+', ' ', x)).strip())
 
 
 
     return pros_cons
+    
