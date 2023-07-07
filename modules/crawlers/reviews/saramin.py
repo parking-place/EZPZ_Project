@@ -21,7 +21,7 @@ from accounts import si
 
 service = Service(executable_path='chromedriver.exe')
 browser = webdriver.Chrome(service=service)
-save_path=r'C:\python_lesson\mini_project\MiniProj\si_crawl\{}_si.csv'
+save_path=f'C:\python_lesson\mini_project\MiniProj\si_crawl'
 # ChromeBrowser - headless mode
 
 option = webdriver.ChromeOptions()
@@ -40,7 +40,7 @@ def get_si_reviews(company_name): #1.회사 이름 받아서 추출해주는 함
     user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36'
     url = r"https://www.saramin.co.kr/zf_user/"
     browser.maximize_window() #윈도우 전체화면
-    print(browser.get_window_size()) # WINDOW_SIZE 출력
+    #print(browser.get_window_size()) # WINDOW_SIZE 출력
     browser.get(url) #사람인에서 url을 받아옴
 
     ###################################################################################
@@ -52,7 +52,7 @@ def get_si_reviews(company_name): #1.회사 이름 받아서 추출해주는 함
     login_screen_btn.click()
     #아이디 버튼 클릭
     id_btn = browser.find_element(By.CSS_SELECTOR,"#id")
-    #id_btn.click()
+    id_btn.click()
     #아이디 입력
     id_btn.send_keys(si.ID)
 
@@ -79,6 +79,7 @@ def get_si_reviews(company_name): #1.회사 이름 받아서 추출해주는 함
 
     #검색창 클릭
     try: #처음 들어갈 때 팝업창이 떴을 경우
+        time.sleep(1)
         pop_up_delete_btn= browser.find_element(By.CSS_SELECTOR,'#wrap_review_tutorial > div > button')
         pop_up_delete_btn.click()
         search_btn = browser.find_element(By.CSS_SELECTOR,'#content > div.company_review_main > div.wrap_main_top > div > div > div.area_input > input')
@@ -89,12 +90,7 @@ def get_si_reviews(company_name): #1.회사 이름 받아서 추출해주는 함
         search_btn.click()
 
     #검색어 입력
-    
-    #cop=input()
-    #print(cop)
     search_btn.send_keys(company_name)
-    #print(browser.text)
-    #print(browser.find_element(By.CSS_SELECTOR,'#content > div.company_review_main > div.wrap_main_top > div > div > div.area_input.on > button'))
 
     time.sleep(2)
     #검색어 엔터
@@ -115,7 +111,7 @@ def get_si_reviews(company_name): #1.회사 이름 받아서 추출해주는 함
                     
                 
         except: 
-            print(f"No result found for {company_name}") #검색어와 연관된 회사 찾지 못할 시 에러 표시 (에러시 다시 검색어로 돌아가는것도 구현)
+            #print(f"No result found for {company_name}") #검색어와 연관된 회사 찾지 못할 시 에러 표시 (에러시 다시 검색어로 돌아가는것도 구현)
             break
     ###################################################################################
     #회사 리뷰 크롤링 
@@ -123,7 +119,7 @@ def get_si_reviews(company_name): #1.회사 이름 받아서 추출해주는 함
 
     #한번 크롤링하고 클릭하고 리스트에 넣고 그걸 끝날 때까지 반복하고 break
     review_list=[]
-    review_tag=[]#div.bx-wrapper > div > ul > li:nth-child({i}) > p.desc
+    review_tag=[]
     i=0
     while True:
         try:
@@ -160,6 +156,8 @@ def get_si_reviews(company_name): #1.회사 이름 받아서 추출해주는 함
     ###################################################################################
 
     # 데이터프레임을 CSV 파일로 저장
-    si_df.to_csv(save_path, index= True, encoding='utf-8-sig')
-
+    
+    file_name = f"{company_name}_reviews.csv"
+    final_path = os.path.join(save_path, file_name)
+    si_df.to_csv(final_path, index= False, encoding='utf-8-sig')
     return si_df
