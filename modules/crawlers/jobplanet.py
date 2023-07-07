@@ -120,7 +120,8 @@ def get_jp_reviews(company_name):
     연결
     """
     # 리뷰들을 리스트로 저장하는 변수
-    review_list = []
+    good_review_list = []
+    bad_review_list = []
 
     # 이전페이지 변수
     pre_page = 0
@@ -134,20 +135,33 @@ def get_jp_reviews(company_name):
 
         # 현재 페이지의 숫자를 가져오기.
         crt_btn = soup.select_one('strong.txtlink_page')
-        crt_page = int(crt_btn.text[0].strip())
+        crt_page = int(crt_btn.text.strip())
 
         # 다음버튼을 눌렀은데도 같은 페이지인 경우
         if crt_page == pre_page:
             break
 
         # html 내용 가져오기
-        review = soup.select("div.us_label_wrap > h2")
+        good_review = soup.select("section > div > div.ctbody_col2 > div > dl > dd:nth-child(2) > span")
+        bad_review = soup.select("section > div > div.ctbody_col2 > div > dl > dd:nth-child(4) > span")
 
-        # 텍스트로 추출한 내용을 리스트에 추가해서 넣어주기 위해 이용. (데이터 전처리)
-        for text in review : # for문은 for 채워져있는 값의 원소 in 채워져있는 리스트
-            text_clean_1 = text.get_text().strip()
-            text_clean_2 = text_clean_1.replace("\n\n", "").replace('"', '').replace("T","").replace("\n","").replace(text_clean_1[:3], "").replace("      ","")
-            review_list.append(text_clean_2)
+        # 텍스트로 추출한 내용을 리스트에 추가해서 넣어주기 위해 이용.
+        for good_text in good_review: # for문은 for 채워져있는 값의 원소 in 채워져있는 리스트
+            # 데이터 전처리
+            good_text_clean_1 = good_text.get_text().strip()
+            good_text_clean_2 = good_text_clean_1.replace("\n", " ")
+            
+            # 장점 리뷰에 넣기.
+            good_review_list.append(good_text_clean_2)
+
+        for bad_text in bad_review:
+            # 데이터 전처리
+            bad_text_clean_1 = bad_text.get_text().strip()
+            bad_text_clean_2 = bad_text_clean_1.replace("\n", " ")
+            
+            # 단점 리뷰에 넣기.
+            bad_review_list.append(bad_text_clean_2)
+
         time.sleep(1)
 
         # 다음 페이지로 이동하기 위한 버튼을 찾기.
@@ -171,12 +185,20 @@ def get_jp_reviews(company_name):
         os.makedirs(SAVE_PATH, exist_ok=True)
 
         # 데이터프레임으로 관리하겠다 지정. (데이터 생성하기.)
-        jp_df = pd.DataFrame(review_list, columns=[f"jp_review"])
+        good_df = pd.DataFrame({"긍정적 리뷰" : good_review_list})
+        bad_df = pd.DataFrame({"부정적 리뷰" : bad_review_list})
+
+        # 긍정적/부정적 리뷰 합치기
+        jp_df = good_df.join(bad_df)
 
         # csv 파일로 저장.
         file_name = f"{company_name}_reviews.csv"
         save_file_path = os.path.join(SAVE_PATH, file_name)
         jp_df.to_csv(save_file_path, index=False, encoding = "utf-8")
+
+        # 데이터프레임의 인덱스 개수 확인 후 60개를 초과하면 다음 코드로 넘어가기.
+        if len(jp_df.index) > 60:
+            break
     
     # 브라우저 끄기
     browser.close()
