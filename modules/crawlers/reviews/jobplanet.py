@@ -35,7 +35,7 @@ def get_jp_reviews(company_name):
     url = r"https://www.jobplanet.co.kr/job"
 
     browser.maximize_window()
-    print(browser.get_window_size())
+    # print(browser.get_window_size())
 
     browser.get(url)
 
@@ -61,7 +61,7 @@ def get_jp_reviews(company_name):
     # 이메일로 로그인 버튼 누르기
     em_log = browser.find_element(By.CSS_SELECTOR, "fieldset > button")
     em_log.click()
-    time.sleep(2)
+    time.sleep(3)
 
 
 
@@ -83,8 +83,8 @@ def get_jp_reviews(company_name):
     company = browser.find_element(By.CSS_SELECTOR, "div.is_company_card > div:nth-child(1) > a")
     company.click()
 
-    # 검색결과 기다리기.
-    time.sleep(1)
+    # 클릭 결과 기다리기.
+    time.sleep(3)
 
 
 
@@ -97,6 +97,7 @@ def get_jp_reviews(company_name):
         pop.click()
         review_bar = browser.find_element(By.CSS_SELECTOR, "li.viewReviews > a")
         review_bar.click()
+        time.sleep(1)
 
     except NoSuchElementException:
         # 만약 팝업창 버튼이 없다면 리뷰 버튼만 누르기
@@ -119,6 +120,10 @@ def get_jp_reviews(company_name):
     잡플래닛 회사 리뷰 상세 내용을 url을 받아서 내용을 반환.
     연결
     """
+    # 리뷰들을 리스트 초기화
+    good_review_list = None
+    bad_review_list = None
+
     # 리뷰들을 리스트로 저장하는 변수
     good_review_list = []
     bad_review_list = []
@@ -126,6 +131,9 @@ def get_jp_reviews(company_name):
     # 이전페이지 변수
     pre_page = 0
 
+    # 데이터프레임 초기화
+    jp_df = None
+    
     # 무한 루프를 돌기.
     while True:
 
@@ -134,7 +142,7 @@ def get_jp_reviews(company_name):
         soup = BeautifulSoup(html, "lxml")
 
         # 현재 페이지의 숫자를 가져오기.
-        crt_btn = soup.select_one('strong.txtlink_page')
+        crt_btn = soup.select_one('article > strong')
         crt_page = int(crt_btn.text.strip())
 
         # 다음버튼을 눌렀은데도 같은 페이지인 경우
@@ -170,7 +178,7 @@ def get_jp_reviews(company_name):
             pre_page = crt_page
 
             # 다음 버튼 찾기
-            next_btn = browser.find_element(By.CSS_SELECTOR,f"a.btn_pgnext")
+            next_btn = browser.find_element(By.CSS_SELECTOR,f"article > a.btn_pgnext")
 
             # 버튼이 있으면 클릭합니다.
             next_btn.click()
@@ -185,11 +193,10 @@ def get_jp_reviews(company_name):
         os.makedirs(SAVE_PATH, exist_ok=True)
 
         # 데이터프레임으로 관리하겠다 지정. (데이터 생성하기.)
-        good_df = pd.DataFrame({"긍정적 리뷰" : good_review_list})
-        bad_df = pd.DataFrame({"부정적 리뷰" : bad_review_list})
-
-        # 긍정적/부정적 리뷰 합치기
-        jp_df = good_df.join(bad_df)
+        jp_df = pd.DataFrame({
+            "긍정적 리뷰" : good_review_list,
+            "부정적 리뷰" : bad_review_list
+        })
 
         # csv 파일로 저장.
         file_name = f"{company_name}_reviews.csv"
