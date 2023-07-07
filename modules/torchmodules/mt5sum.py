@@ -5,6 +5,7 @@ import torch
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 WHITESPACE_HANDLER = lambda k: re.sub('\s+', ' ', re.sub('\n+', ' ', k.strip()))
+SEPTOKEN_DELETER = lambda x: x.replace('<extra_id_70>', '').strip()
 
 DICT_PATH = '/home/parking/ml/data/MiniProj/models'
 
@@ -23,7 +24,25 @@ class MT5Sum:
     def load_dict(self, model_name):
         self.__model.load_state_dict(torch.load(f'{DICT_PATH}/{model_name}'))
         
-    def get_sum(self, text, result_max_length=84, no_repeat_ngram_size=1, num_beams=4):
+    def __get_params(self, type='news'):
+        if type == 'news':
+            result_max_length=84
+            no_repeat_ngram_size=1
+            num_beams=4
+        elif type == 'reviews_long':
+            result_max_length=128
+            no_repeat_ngram_size=4
+            num_beams=8
+        elif type == 'reviews_short':
+            result_max_length=84
+            no_repeat_ngram_size=1
+            num_beams=4
+        return result_max_length, no_repeat_ngram_size, num_beams
+        
+    def get_sum(self, text, type='news'):
+        
+        result_max_length, no_repeat_ngram_size, num_beams = self.__get_params(type)
+        
         clean_text = WHITESPACE_HANDLER(text)
         
         max_len = len(clean_text.split())
@@ -50,5 +69,7 @@ class MT5Sum:
         )[0]
         
         summarized_text = self.__tokenizer.decode(output_ids, skip_special_tokens=True)
+        
+        summarized_text = SEPTOKEN_DELETER(summarized_text)
         
         return summarized_text

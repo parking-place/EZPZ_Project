@@ -18,7 +18,7 @@ class FinBertKR:
     def load_dict(self, model_name):
         self.__model.load_state_dict(torch.load(f'{DICT_PATH}/{model_name}'))
 
-    def predict(self, text):
+    def get_sentiment(self, text):
         inputs = self.__tokenizer(text, return_tensors='pt').to(DEVICE)
         outputs = self.__model(**inputs)
         probs = self.__softmax(outputs.logits, dim=1)
