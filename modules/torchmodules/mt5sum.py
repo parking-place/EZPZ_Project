@@ -30,14 +30,13 @@ class MT5Sum:
             no_repeat_ngram_size=1
             num_beams=4
         elif type == 'reviews_long':
-            result_max_length=138
-            no_repeat_ngram_size=2
-            num_beams=2
+            result_max_length=128
+            no_repeat_ngram_size=4
+            num_beams=8
         elif type == 'reviews_short':
             result_max_length=84
             no_repeat_ngram_size=1
             num_beams=4
-        
         return result_max_length, no_repeat_ngram_size, num_beams
         
     def get_sum(self, text, type='news'):

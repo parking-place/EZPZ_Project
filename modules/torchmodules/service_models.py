@@ -6,8 +6,8 @@ class ServiceModels:
         self.__news_sum = MT5Sum()
         self.__news_sentiment = FinBertKR()
         
-    def news_sum(self, text):
-        return self.__news_sum.get_sum(text)
+    def get_summary(self, text, type='news'):
+        return self.__news_sum.get_sum(text, type=type)
     
-    def news_sentiment(self, text):
+    def get_sentiment(self, text):
         return self.__news_sentiment.get_sentiment(text)

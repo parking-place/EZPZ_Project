@@ -1,5 +1,9 @@
-from torchmodules.service_models import ServiceModels
 import pandas as pd
+import sys
+sys.path.append(r'/home/parking/ml/MiniProj/modules/')
+sys.path.append(r'/home/parking/ml/MiniProj/modules/torchmodules/')
+
+from torchmodules.service_models import ServiceModels
 
 DATA_PATH = '/home/parking/ml/data/MiniProj/data/'
 
@@ -15,6 +19,7 @@ class CompanyInfo:
         reviews_df, review_summarized_dict = self.__get_reviews_summarized(reviews_df)
         
         return news_df, reviews_df, review_summarized_dict
+        # return news_df, reviews_df
     
     def __get_news_df(self, company_name):
         daum_news_df = pd.read_csv(f'{DATA_PATH}/news/{company_name}_daum.csv')
@@ -25,8 +30,8 @@ class CompanyInfo:
         return news_df
     
     def __get_news_summarized_and_sentiment(self, news_df):
-        news_df['summarized'] = news_df['content'].apply(self.__service_models.news_sum)
-        news_df['sentiment'] = news_df['summarized'].apply(self.__service_models.news_sentiment)
+        news_df['summarized'] = news_df['content'].apply(self.__service_models.get_summary)
+        news_df['sentiment'] = news_df['summarized'].apply(self.__service_models.get_sentiment)
         return news_df
     
     def __get_reviews_df(self, company_name):
@@ -46,14 +51,18 @@ class CompanyInfo:
     
     def __get_reviews_summarized(self, reviews_df):
         
-        good_reviews = ''.join(reviews_df['good'].tolist())
-        bad_reviews = ''.join(reviews_df['bad'].tolist())
+        good_reviews = ''
+        bad_reviews = ''
         
-        good_summarise_long = self.__service_models.news_sum(good_reviews, type='reviews_long')
-        bad_summarise_long = self.__service_models.news_sum(bad_reviews, type='reviews_long')
+        for good_review, bad_review in zip(reviews_df['good'], reviews_df['bad']):
+            good_reviews += good_review + '. '
+            bad_reviews += bad_review + '. '
         
-        good_summarise_short = self.__service_models.news_sum(good_reviews, type='reviews_short')
-        bad_summarise_short = self.__service_models.news_sum(bad_reviews, type='reviews_short')
+        good_summarise_long = self.__service_models.get_summary(good_reviews, type='reviews_long')
+        bad_summarise_long = self.__service_models.get_summary(bad_reviews, type='reviews_long')
+        
+        good_summarise_short = self.__service_models.get_summary(good_reviews, type='reviews_short')
+        bad_summarise_short = self.__service_models.get_summary(bad_reviews, type='reviews_short')
         
         review_summarized_dict = {
             'good_summarise_long': good_summarise_long,
