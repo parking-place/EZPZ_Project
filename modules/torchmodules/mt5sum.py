@@ -24,7 +24,26 @@ class MT5Sum:
     def load_dict(self, model_name):
         self.__model.load_state_dict(torch.load(f'{DICT_PATH}/{model_name}'))
         
-    def get_sum(self, text, result_max_length=84, no_repeat_ngram_size=1, num_beams=4):
+    def __get_params(self, type='news'):
+        if type == 'news':
+            result_max_length=84
+            no_repeat_ngram_size=1
+            num_beams=4
+        elif type == 'reviews_long':
+            result_max_length=138
+            no_repeat_ngram_size=2
+            num_beams=2
+        elif type == 'reviews_short':
+            result_max_length=84
+            no_repeat_ngram_size=1
+            num_beams=4
+        
+        return result_max_length, no_repeat_ngram_size, num_beams
+        
+    def get_sum(self, text, type='news'):
+        
+        result_max_length, no_repeat_ngram_size, num_beams = self.__get_params(type)
+        
         clean_text = WHITESPACE_HANDLER(text)
         
         max_len = len(clean_text.split())

@@ -1,5 +1,5 @@
-from torchmodules.finbertkr import FinBertKR
-from torchmodules.mt5sum import MT5Sum
+from finbertkr import FinBertKR
+from mt5sum import MT5Sum
 
 class ServiceModels:
     def __init__(self):
