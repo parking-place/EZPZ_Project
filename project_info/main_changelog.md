@@ -6,4 +6,5 @@
 
 <!-- summary 아래 한칸 공백 두어야함 -->
 - 저장소 이동
+- README 개편
 </details>
