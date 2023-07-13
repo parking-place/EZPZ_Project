@@ -1,6 +1,6 @@
 import pandas as pd
 
-PATH = 'E:\Python\data\MiniProj\datas\reviews'
+PATH = r'E:\Python\data\MiniProj\datas\reviews'
 
 def set_path(path):
     global PATH
