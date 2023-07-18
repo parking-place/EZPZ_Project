@@ -1,4 +1,4 @@
 # Final Project - POC
 
-## Dicuments :
+## Documents :
 - [requests login](./login/login.ipynb)
