@@ -1,7 +1,7 @@
 # Final Project - POC
 
-## Documents :
 - [POC 관련 회의록](https://laced-garlic-bbb.notion.site/0716-149f48b14c184756b826eaf1b19f2995)
+## Documents :
 
 - [requests login](./login/login.ipynb)
 - [docker worckspace](./dockerPOC/docker.ipynb)
