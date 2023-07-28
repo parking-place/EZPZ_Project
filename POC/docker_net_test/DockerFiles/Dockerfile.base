@@ -1,0 +1,9 @@
+FROM ubuntu:22.04
+
+RUN apt-get update && apt-get install apt-utils && apt-get install -y python3.10 python3-pip
+
+RUN python3.10 -m pip install --upgrade pip
+
+RUN apt-get install -y git
+
+RUN mkdir -p /ezpz/app
