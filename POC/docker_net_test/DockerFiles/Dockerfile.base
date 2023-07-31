@@ -6,4 +6,6 @@ RUN python3.10 -m pip install --upgrade pip
 
 RUN apt-get install -y git
 
+RUN apt-get install -y mysql-client
+
 RUN mkdir -p /ezpz/app
