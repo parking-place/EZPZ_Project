@@ -4,8 +4,14 @@ import pandas as pd
 from bs4 import BeautifulSoup as bs
 import news_crawlers as nc
 
+import asyncio
+import aiohttp
+
 # BASE_URL = r'https://search.naver.com/search.naver?where=news&ie=utf8&sm=nws_hty&query={comp_name}'
 BASE_URL = r'https://search.naver.com/search.naver?where=news&sm=tab_pge&query={comp_name}&sort=0&photo=0&field=0&pd=0&ds=&de=&cluster_rank=79&mynews=0&office_type=0&office_section_code=0&news_office_checked=&nso=so:r,p:all,a:all&start={page}'
+
+user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
+HEADERS = {'User-Agent' : user_agent}
 
 SAVE_PATH = r'E:\Python\data\MiniProj\datas\news\{}_naver.csv'
 
@@ -13,7 +19,7 @@ def get_url(comp_name, page=1):
     url = BASE_URL.format(comp_name=comp_name, page=page)
     return url
 
-def get_news_in_page(comp_name, page=1):
+async def get_news_in_page(comp_name, page=1):
     url = get_url(comp_name, page)
     r = requests.get(url)
     soup = bs(r.text, 'lxml')
@@ -36,16 +42,26 @@ def get_news_in_page(comp_name, page=1):
 
     news_dict = {
         'link': [],
-        'content': []
+        'content': [],
+        'date': [],
     }
     
-    for news_link in link_list:
-        # print(news_link)
-        is_success, data = nc.get_content(news_link)
-        if is_success:
-            link, content = data
-            news_dict['link'].append(link)
-            news_dict['content'].append(content)
+    # for news_link in link_list:
+    #     # print(news_link)
+    #     is_success, data = nc.get_content(news_link)
+    #     if is_success:
+    #         link, content = data
+    #         news_dict['link'].append(link)
+    #         news_dict['content'].append(content)
+    
+    async with aiohttp.ClientSession(headers=HEADERS) as session:
+        async_result = await asyncio.gather(*[nc.get_content_async(news_link, session) for news_link in link_list])
+        for is_success, data in async_result:
+            if is_success:
+                link, content, date = data
+                news_dict['link'].append(link)
+                news_dict['content'].append(content)
+                news_dict['date'].append(date)
     
     news_df = pd.DataFrame(news_dict)
     
