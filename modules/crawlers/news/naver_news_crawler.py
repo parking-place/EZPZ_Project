@@ -82,7 +82,7 @@ def save_news(news_df, comp_name):
 
 
 if __name__ == '__main__':
-    df = get_news('SK 하이닉스', 5)
+    df = get_news('삼성전자', 5)
     
     print(df.head())
     print(df.shape)
