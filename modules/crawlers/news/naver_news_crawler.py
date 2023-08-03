@@ -42,18 +42,18 @@ async def get_news_in_page(comp_name, session, page=1):
             link_list.append(link)
 
         news_dict = {
-            'link': [],
-            'content': [],
-            'date': [],
+            'news_url': [],
+            'news_cont': [],
+            'pub_date': [],
         }
         
         results = await nc.get_content_async(link_list)
         
         for result in results:
             link, content, date = result
-            news_dict['link'].append(link)
-            news_dict['content'].append(content)
-            news_dict['date'].append(date)
+            news_dict['news_url'].append(link)
+            news_dict['news_cont'].append(content)
+            news_dict['pub_date'].append(date)
         
         news_df = pd.DataFrame(news_dict)
     
@@ -73,7 +73,7 @@ def get_news(comp_name, page=5):
     return news_df
 
 def pretreatment_data(news_df):
-    news_df['content'] = news_df['content'].apply(lambda x: re.sub(r'\s+', ' ',re.sub(r'\n+', ' ', x)).strip())
+    news_df['news_cont'] = news_df['news_cont'].apply(lambda x: re.sub(r'\s+', ' ',re.sub(r'\n+', ' ', x)).strip())
     return news_df
 
 def save_news(news_df, comp_name):
