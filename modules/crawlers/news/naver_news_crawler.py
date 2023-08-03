@@ -19,7 +19,7 @@ def get_url(comp_name, page=1):
     url = BASE_URL.format(comp_name=comp_name, page=page)
     return url
 
-async def get_news_in_page(comp_name, page=1):
+def get_news_in_page(comp_name, page=1):
     url = get_url(comp_name, page)
     r = requests.get(url)
     soup = bs(r.text, 'lxml')
@@ -46,22 +46,13 @@ async def get_news_in_page(comp_name, page=1):
         'date': [],
     }
     
-    # for news_link in link_list:
-    #     # print(news_link)
-    #     is_success, data = nc.get_content(news_link)
-    #     if is_success:
-    #         link, content = data
-    #         news_dict['link'].append(link)
-    #         news_dict['content'].append(content)
+    results = asyncio.run(nc.get_content_async(link_list))
     
-    async with aiohttp.ClientSession(headers=HEADERS) as session:
-        async_result = await asyncio.gather(*[nc.get_content_async(news_link, session) for news_link in link_list])
-        for is_success, data in async_result:
-            if is_success:
-                link, content, date = data
-                news_dict['link'].append(link)
-                news_dict['content'].append(content)
-                news_dict['date'].append(date)
+    for result in results:
+        link, content, date = result
+        news_dict['link'].append(link)
+        news_dict['content'].append(content)
+        news_dict['date'].append(date)
     
     news_df = pd.DataFrame(news_dict)
     
@@ -73,7 +64,7 @@ def get_news(comp_name, page=5):
         news_dfs.append(get_news_in_page(comp_name, i))
     news_df = pd.concat(news_dfs)
     news_df = pretreatment_data(news_df)
-    save_news(news_df, comp_name)
+    # save_news(news_df, comp_name)
     return news_df
 
 def pretreatment_data(news_df):
@@ -82,3 +73,10 @@ def pretreatment_data(news_df):
 
 def save_news(news_df, comp_name):
     news_df.to_csv(SAVE_PATH.format(comp_name), index=False, encoding='utf-8-sig')
+
+
+
+if __name__ == '__main__':
+    df = get_news('SK 하이닉스', 5)
+    
+    print(df.head())
