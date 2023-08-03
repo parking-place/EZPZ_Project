@@ -21,3 +21,10 @@
 <!-- summary 아래 한칸 공백 두어야함 -->
 - df saver 모듈 추가
 </details>
+
+<details>
+<summary> 23.08.03 </summary>
+
+<!-- summary 아래 한칸 공백 두어야함 -->
+- 장고/ 스케쥴러 개발 디렉토리 생성.
+</details>
