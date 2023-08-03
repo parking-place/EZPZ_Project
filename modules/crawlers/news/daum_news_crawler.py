@@ -81,10 +81,23 @@ async def get_content_to_link(session, link):
             html = await res.text()
             soup = bs(html, 'lxml')
             
-            # 기사 내용 따와 return
-            return ''.join([el.text for el in soup.select('.article_view p')]
-    )
-    
+            # 기사 내용, 뉴스 작성일
+            contents = ''.join([el.text for el in soup.select('.article_view p')])
+            pub_date = soup.select_one('span .num_date').text
+            # 첫 번째 크롤링 되는 날짜 : 작성일
+            # 두 번쨰 크롤링 되는 날짜 : 수정일
+            
+            # string format : "YYYY. M. D. HH:mm"
+            pub_date = pub_date[:-5] # HH:mm 부분 제거
+            pub_date = pub_date.split('. ')[: -1] # 맨 뒤 공백 string 제거
+            
+            # YYYYMMDD 형식으로 변환
+            pub_date = pub_date[0] + (2 - len(pub_date[1])) * '0' + pub_date[1] + (2 - len(pub_date[2])) * '0' + pub_date[2]
+            
+            return contents, pub_date
+
+
+
 async def get_content_list(links):
     headers = {
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36'
@@ -92,13 +105,14 @@ async def get_content_list(links):
     async with aiohttp.ClientSession(
         headers=headers, connector=aiohttp.TCPConnector(ssl=False)
     ) as session :
-        contents = await asyncio.gather(*[get_content_to_link(session, link) for link in links]) # wrapping도 내부 처리
+        result = await asyncio.gather(*[get_content_to_link(session, link) for link in links]) # wrapping도 내부 처리
     
-    return contents
+    return result
 
 
 
 def get_news(keyword, csv_save=False):
+    import re
     """
     기업 관련 키워드를 받아 링크/본문 형태의 dataframe으로 반환하는 함수
     
@@ -107,7 +121,9 @@ def get_news(keyword, csv_save=False):
         csv_save        : bool  - True 설정시 저장 및 로그 기록
         
     returns ]
-        df      : pandas.DataFrame  - col : [links, content]
+        tuple      : (str, pandas.DataFrame)
+                        str : keyword
+                        DataFrame : [news_url, content]
     """
     if csv_save:
         import os
@@ -116,15 +132,17 @@ def get_news(keyword, csv_save=False):
         st_time = time.time()
         
     links = get_links_to_keyword(keyword)
-    contents = asyncio.run(get_content_list(links))
+    result = asyncio.run(get_content_list(links))
     
     # 반환값
     df = pd.DataFrame({
-        'link': links,
-        'content': contents
+        'news_url': links,
+        'news_cont': [el[0] for el in result],
+        'pub_date': [el[1] for el in result]
     })
+    print(df)
     
-    df['content'] = df['content'].apply(lambda x: re.sub(r'\s+', ' ',re.sub(r'\n+', ' ', x)).strip())
+    df['news_cont'] = df['news_cont'].apply(lambda x: re.sub(r'\s+', ' ',re.sub(r'\n+', ' ', x)).strip())
     
     if csv_save:
         # ========== [이하는 csv 저장 로직] ==========
@@ -139,4 +157,3 @@ def get_news(keyword, csv_save=False):
         
     else: # 저장 안하고 바로 반환
         return df
-    
