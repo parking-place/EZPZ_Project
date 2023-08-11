@@ -121,9 +121,7 @@ def get_news(keyword, csv_save=False):
         csv_save        : bool  - True 설정시 저장 및 로그 기록
         
     returns ]
-        tuple      : (str, pandas.DataFrame)
-                        str : keyword
-                        DataFrame : [news_url, content]
+        df      : pandas.DataFrame  - [news_url, content]
     """
     if csv_save:
         import os
@@ -157,4 +155,3 @@ def get_news(keyword, csv_save=False):
         
     else: # 저장 안하고 바로 반환
         return df
-    
