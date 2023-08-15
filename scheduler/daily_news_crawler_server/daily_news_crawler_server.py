@@ -50,8 +50,8 @@ def get_comp_name(comp_list):
 def get_news_crawl(comp_name_list): #뉴스크롤링 테이블에 넣을 모든 정보 만들어줌 카카오 네이버 구글
     for comp in comp_name_list:
         print(comp)
-        daum_news = daum_news_crawler.get_news(comp) #다음뉴스 크롤러 실행 확인
-        naver_news = naver_news_crawler.get_news(comp) #네이버 뉴스크롤러 실행이 안되니 천천히 해보기
+        daum_news = daum_news_crawler.get_news(comp).head(1) #다음뉴스 크롤러 실행 확인
+        naver_news = naver_news_crawler.get_news(comp).head(1) #네이버 뉴스크롤러 실행이 안되니 천천히 해보기
         all_news = pd.concat([daum_news, naver_news], ignore_index=True) 
 
         #실행되는 거 확인하면 위에꺼로 하면 됨
@@ -124,14 +124,15 @@ def get_comp_news_db(all_news,comp): #만들어진 데이터프레임을 테이�
             sql += f'    , "{"00000000"}", "{"00000000"}" '
             sql += ') '
             cur.execute(sql)
+            
 
 
 if __name__ == '__main__':
-    """comp_list=['삼성전자(주)','(주)카카오','네이버(주)']
-    df = get_comp_name(comp_list)
-    
-    print(df.head())
-    print(df.shape) """
+    comp_list=['삼성전자(주)','(주)카카오','네이버(주)']
+    get_comp_name(comp_list)
     cur.execute('select * from comp_news')
     for i in cur:
         print(i)
+    ''' print(df.head())
+    print(df.shape) '''
+    
