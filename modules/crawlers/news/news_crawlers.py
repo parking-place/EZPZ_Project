@@ -153,7 +153,7 @@ async def get_naver_content(link, session):
         html = await r.text()
         soup = bs(html, 'lxml')
         # #dic_area
-        content = soup.select_one('div#dic_area').get_text()
+        content = soup.select_one('#dic_area').get_text()
         #ct > div.media_end_head.go_trans > div.media_end_head_info.nv_notrans > div.media_end_head_info_datestamp > div:nth-child(1) > span
         date = soup.select_one('#ct > div.media_end_head.go_trans > div.media_end_head_info.nv_notrans > div.media_end_head_info_datestamp > div:nth-child(1) > span').text
         # text예시) 2023.07.28. 오전 10:14
