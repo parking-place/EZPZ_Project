@@ -24,27 +24,18 @@ data_check= ServiceModels() #모델 서빙 모듈 객체
 conn = get_connection('test')
 cur = conn.cursor()
 
-"""def get_comp_name(comp_list):
-    
-    comp_name_list=[] #comp_name이 담긴 리스트
-    for i in comp_list:
-        cur.execute(f"select comp_name from comp_info where comp_name = '{i}'") #받은 회사리스트를 순서대로 comp_name 셀렉트
-        comp_name_list.append(cur.fetchall()[0][0])
-    return get_news_crawl(comp_name_list)"""
-
-def get_news_crawl(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정보 만들어줌 카카오 네이버 구글
+def crawl_and_save(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정보 만들어줌 카카오 네이버 구글
     
     
-    cur.execute('truncate table comp_news')
+    cur.execute('truncate table comp_news') #기존 뉴스정보 테이블 삭제
     
 
     for comp in comp_list:
         print(comp)
-        daum_news = daum_news_crawler.get_news(comp) #다음뉴스 크롤러 실행 확인
-        naver_news = naver_news_crawler.get_news(comp) #네이버 뉴스크롤러 실행이 안되니 천천히 해보기
-        all_news = pd.concat([daum_news, naver_news], ignore_index=True) 
-
-        #실행되는 거 확인하면 위에꺼로 하면 됨
+        daum_news = daum_news_crawler.get_news(comp).head(1) #다음뉴스 크롤러 실행 확인
+        naver_news = naver_news_crawler.get_news(comp).head(1) #네이버 뉴스크롤러 실행
+        all_news = pd.concat([daum_news, naver_news], ignore_index=True)  #뉴스 전체 합치기
+        print(all_news)
         for index, col in enumerate(all_news['news_cont']):
             if len(col)>5000:
                 all_news['news_cont'].iloc[index] = col[:5000] #5000자 이상은 cut이므로 이걸로 체크
@@ -105,11 +96,8 @@ def get_news_crawl(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정�
     return True
 
 def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이블로
-    conn = get_connection('test')
-    cur = conn.cursor()
     cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"') 
     comp_uid=cur.fetchall()[0][0]
-    
     # news_uid는 auto increment니까 자동생성되지 않을까?
     for index, row in all_news.iterrows():
             sql = 'insert into comp_news '
@@ -119,10 +107,9 @@ def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이
             sql += f'    , "{"00000000"}", "{"00000000"}" '
             sql += ') '
             cur.execute(sql)
-    conn.commit()
+            conn.commit()
 
-    cur.close()
-    conn.close()
+    
     #cur.execute('select * from comp_news')
     #for i in cur:
     #    print(i)
@@ -130,29 +117,20 @@ def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이
 
 
 if __name__ == '__main__':
-    conn = get_connection('test')
-    cur = conn.cursor()
 
     cur.execute('select * from comp_news')
     for i in cur:
         print(i)
 
-    cur.close()
-    conn.close()
-
     comp_list=['삼성전자(주)','(주)카카오','네이버(주)']
-    get_news_crawl(comp_list)
+    crawl_and_save(comp_list)
 
     print('get_news_crawl 실행 완료')
-
-    conn = get_connection('test')
-    cur = conn.cursor()
 
     cur.execute('select * from comp_news')
     for i in cur:
         print(i)
     
-    cur.close()
     conn.close()
     
     ''' print(df.head())
