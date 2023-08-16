@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <p>main html</p>
-</body>
-</html>
+{% extends 'base/index.html' %}
+    <!-- 블록 콘텐트 지정 -->
+    {% block content %}
+        <p>main html</p>
+    {% endblock %}
