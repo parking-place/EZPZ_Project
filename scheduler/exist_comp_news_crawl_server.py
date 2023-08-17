@@ -1,3 +1,4 @@
+
 import sys
 import os
 import pandas as pd
@@ -7,8 +8,8 @@ sys.path.append('/app/EZPZ_Project/modules/crawlers/news') # 뉴스 정보 크�
 sys.path.append('/app/EZPZ_Project/modules/torchmodules') # 토치 모델 뉴스 요약 및 감정평가 가져오기
 sys.path.append('/app/EZPZ_Project') #db 연동정보 경로
 
-import socket
 import cryptography
+from tqdm import tqdm
 
 from service_models import ServiceModels
 
@@ -21,17 +22,20 @@ import news_crawlers
 from privates.ezpz_db import *
 
 data_check= ServiceModels() #모델 서빙 모듈 객체
-conn = get_connection('test')
+
+
+
+conn = get_connection()
 cur = conn.cursor()
 
 def crawl_and_save(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정보 만들어줌 카카오 네이버 구글
-    
-    
-    cur.execute('truncate table comp_news') #기존 뉴스정보 테이블 삭제
-    
 
-    for comp in comp_list:
-        print(comp)
+    print('뉴스 데이터 삭제')
+    cur.execute('truncate table comp_news') #기존 뉴스정보 테이블 삭제
+
+    print('이제 크롤링시작해야지?')
+    for comp in tqdm(comp_list):
+        print(comp + '이제 시작됐겠지')
         daum_news = daum_news_crawler.get_news(comp) #다음뉴스 크롤러 실행 확인
         naver_news = naver_news_crawler.get_news(comp) #네이버 뉴스크롤러 실행
         all_news = pd.concat([daum_news, naver_news], ignore_index=True)  #뉴스 전체 합치기
@@ -48,13 +52,12 @@ def crawl_and_save(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정�
         for text in all_news['news_cont']:
             cont_sum=data_check.get_summary(text, 'news')
             cont_sum_list.append(cont_sum)
-            
-        
+
         for text in cont_sum_list:
             cont_sent=data_check.get_sentiment(text)
             cont_sent_list.append(cont_sent)
             # df_news_senti에 값을 0(중립), 1(긍정), 2(부정)으로 바꿔줘야함
-        
+
         for col in (cont_sent_list):
             if col =='neutral':
                 senti_to_int.append(0)
@@ -62,7 +65,7 @@ def crawl_and_save(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정�
                 senti_to_int.append(1)
             else:
                 senti_to_int.append(2)
-        
+
         #데이터프레임에 요약 결과와 감정평가 결과 넣어주기
         all_news['news_sum'] = cont_sum_list
         all_news['news_senti'] = senti_to_int
@@ -75,10 +78,10 @@ def crawl_and_save(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정�
         clean_cont=[]
         clean_sum=[]
         for i in all_news['news_cont']:
-            
+
             cont_clean = i.replace('"', '').replace("'", '')
             clean_cont.append(cont_clean)
-            
+
 
 
         for j in all_news['news_sum']:
@@ -86,20 +89,17 @@ def crawl_and_save(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정�
             clean_sum.append(sum_clean)
 
         all_news['news_cont']= clean_cont
-        all_news['news_sum'] = clean_sum         
-        
+        all_news['news_sum'] = clean_sum
+
         get_comp_news_db(all_news,comp) #실행될때마다 바뀌는 기업별 all_news 테이블화 시키기
-
-            
-
-                
-    return True
+    conn.commit()
+    conn.close()
 
 def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이블로
-    cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"') 
+    cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
     comp_uid=cur.fetchall()[0][0]
     # news_uid는 auto increment니까 자동생성되지 않을까?
-    for index, row in all_news.iterrows():
+    for index, row in tqdm(all_news.iterrows()):
             sql = 'insert into comp_news '
             sql += '    (comp_uid, pub_date, news_url, news_cont,news_sum, news_senti, create_date, modify_date) '
             sql += 'values ( '
@@ -107,13 +107,12 @@ def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이
             sql += f'    , "{"00000000"}", "{"00000000"}" '
             sql += ') '
             cur.execute(sql)
-            conn.commit()
 
-    
+
     #cur.execute('select * from comp_news')
     #for i in cur:
     #    print(i)
-            
+
 
 
 if __name__ == '__main__':
@@ -127,12 +126,4 @@ if __name__ == '__main__':
 
     print('get_news_crawl 실행 완료')
 
-    cur.execute('select * from comp_news')
-    for i in cur:
-        print(i)
-    
-    conn.close()
-    
-    ''' print(df.head())
-    print(df.shape) '''
-    
+
