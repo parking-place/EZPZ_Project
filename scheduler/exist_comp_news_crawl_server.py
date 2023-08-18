@@ -30,16 +30,15 @@ cur = conn.cursor()
 
 def crawl_and_save(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정보 만들어줌 카카오 네이버 구글
 
-    print('뉴스 데이터 삭제')
+    #print('뉴스 데이터 삭제')
     cur.execute('truncate table comp_news') #기존 뉴스정보 테이블 삭제
 
-    print('이제 크롤링시작해야지?')
     for comp in tqdm(comp_list):
-        print(comp + '이제 시작됐겠지')
+        #print(comp + '뉴스 크롤링시작')
         daum_news = daum_news_crawler.get_news(comp) #다음뉴스 크롤러 실행 확인
         naver_news = naver_news_crawler.get_news(comp) #네이버 뉴스크롤러 실행
         all_news = pd.concat([daum_news, naver_news], ignore_index=True)  #뉴스 전체 합치기
-        print(all_news)
+        #print(all_news)
         for index, col in enumerate(all_news['news_cont']):
             if len(col)>5000:
                 all_news['news_cont'].iloc[index] = col[:5000] #5000자 이상은 cut이므로 이걸로 체크
@@ -91,14 +90,15 @@ def crawl_and_save(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정�
         all_news['news_cont']= clean_cont
         all_news['news_sum'] = clean_sum
 
-        get_comp_news_db(all_news,comp) #실행될때마다 바뀌는 기업별 all_news 테이블화 시키기
+        get_comp_news_db(all_news,comp) #기업별 all_news 테이블화 시키기
+        #print(f'{comp} 뉴스 DB에 저장완료')
     conn.commit()
     conn.close()
 
-def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이블로
+def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이블로 만드는 함수
     cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
     comp_uid=cur.fetchall()[0][0]
-    # news_uid는 auto increment니까 자동생성되지 않을까?
+
     for index, row in tqdm(all_news.iterrows()):
             sql = 'insert into comp_news '
             sql += '    (comp_uid, pub_date, news_url, news_cont,news_sum, news_senti, create_date, modify_date) '
@@ -109,21 +109,13 @@ def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이
             cur.execute(sql)
 
 
-    #cur.execute('select * from comp_news')
-    #for i in cur:
-    #    print(i)
-
 
 
 if __name__ == '__main__':
 
-    cur.execute('select * from comp_news')
-    for i in cur:
-        print(i)
-
     comp_list=['삼성전자(주)','(주)카카오','네이버(주)']
     crawl_and_save(comp_list)
 
-    print('get_news_crawl 실행 완료')
+    #print('뉴스정보 전부 DB저장 완료')
 
 

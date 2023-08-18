@@ -41,10 +41,10 @@ def crawler_exec(comp_list):
     conn.commit()
     conn.close()
 
-#먼저 comp_info 크롤링해와서 테이블에 넣어줘야겠지? 근데 no니까 is_reged 전부 y로 바꿔주고 나중에 테이블 전부다
 def comp_info_crawl_save(comp_list):
     for comp in tqdm(comp_list):
-        comp_info_df=info_crawler.get_url(comp) #info_crawler 기업정보 데이터 프레임 잘 어울림
+        comp_info_df=info_crawler.get_url(comp) #info_crawler 기업정보 데이터 프레임 저장
+
         # 기업 정보 리스트로 저장해서 데이터프레임에 넣어줄수 있게
         col_value=[]
         for i in comp_info_df.iloc[0]:
@@ -55,22 +55,26 @@ def comp_info_crawl_save(comp_list):
         col_value[5] = col_value[5].replace(".", "")
         col_value[5] # 6글자 문자열로 변환 테이블에 형식대로
 
-        #크롤링해온 값 테이블에 저장 저장일자와 수정일자는 스케줄링단계에서 진행이므로 일단 000000 넣어두었음
-        #일단 testdb를 경로로했는데 나중에 바꿔줘야됨
-        cur.execute(f"INSERT INTO comp_info (comp_name, comp_loc, comp_thumb, comp_cont, comp_founded, comp_size, comp_url, is_reged, create_date, modify_date) VALUES (%s, %s, %s, %s, %s, %s, %s, 'N', '000000', '000000')", (col_value[1], col_value[2], col_value[3], col_value[4], col_value[5], col_value[6], col_value[7]))
-        print('insert 됨')
+        #크롤링해온 값 테이블에 저장 저장일자와 수정일자는 스케줄링단계에서 진행이므로 일단 00000000 넣어두었음
+        sql = 'INSERT INTO comp_info '
+        sql += '(comp_name, comp_loc, comp_thumb, comp_cont, comp_founded, comp_size, comp_url, is_reged, create_date, modify_date) '
+        sql += 'VALUES (%s, %s, %s, %s, %s, %s, %s, "N", "00000000", "00000000")'
+        cur.execute(sql, (col_value[1], col_value[2], col_value[3], col_value[4], col_value[5], col_value[6], col_value[7]))
+
+
+        #print(f'{comp} 정보 insert 됨')
 
 
 
 
 #얘 잘되는지는 .py 파일에서 확인
 def comp_news_crawl_save(comp_list):
-        print('실행시작')
+
         for comp in tqdm(comp_list):
             daum_news = daum_news_crawler.get_news(comp) #다음뉴스 크롤러 실행 확인
             naver_news = naver_news_crawler.get_news(comp) #네이버 뉴스크롤러 실행
             all_news = pd.concat([daum_news, naver_news], ignore_index=True)  #뉴스 전체 합치기
-            print(all_news)
+
             for index, col in enumerate(all_news['news_cont']):
                 if len(col)>5000:
                     all_news['news_cont'].iloc[index] = col[:5000] #5000자 이상은 cut이므로 이걸로 체크
@@ -80,11 +84,11 @@ def comp_news_crawl_save(comp_list):
             cont_sent_list=[] # df에 넣어줄 감정평가 리스트
             senti_to_int=[] # 감정을 정수형으로 바꿔줄 리스트
 
-            for text in all_news['news_cont']:
+            for text in all_news['news_cont']: #크롤링한 뉴스 요약
                 cont_sum=data_check.get_summary(text, 'news')
                 cont_sum_list.append(cont_sum)
 
-            for text in cont_sum_list:
+            for text in cont_sum_list: #요약한 뉴스 감정평가
                 cont_sent=data_check.get_sentiment(text)
                 cont_sent_list.append(cont_sent)
                 # df_news_senti에 값을 0(중립), 1(긍정), 2(부정)으로 바꿔줘야함
@@ -121,12 +125,12 @@ def comp_news_crawl_save(comp_list):
             all_news['news_cont']= clean_cont
             all_news['news_sum'] = clean_sum
 
-            get_comp_news_db(all_news,comp) #실행될때마다 바뀌는 기업별 all_news 테이블화 시키기
+            get_comp_news_db(all_news,comp) #기업별 news 테이블화 시키기
 
 
 
 def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이블로
-    cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"') 
+    cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
     comp_uid=cur.fetchall()[0][0]
     # news_uid는 auto increment니까 자동생성되지 않을까?
     for index, row in all_news.iterrows():
@@ -140,11 +144,11 @@ def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이
 
 
 def recruit_info_crawl(comp_list):
-    print('실행시작')
+
     for comp in tqdm(comp_list):
         #채용공고는 주 붙어있으면 안됨 제거 전처리
         recruit_comp = comp.replace('(주)',"")
-        print(recruit_comp)
+        #print(recruit_comp)
         recruit_info_df=wanted_recruit_crawler.get_recruit_info(recruit_comp, csv_save=False) # 원티드 기업정보 크롤러 모듈
         new_i=[] #집합인 uid를 int로 바꿔준 값을 넣어준 리스트/ 테이블에 넣기위한 전처리
         for i in range(len(recruit_info_df['recruit_uid'])):
@@ -154,7 +158,7 @@ def recruit_info_crawl(comp_list):
 
         cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"') 
         comp_uid=cur.fetchall()[0][0]
-        print(comp_uid)
+        #print(comp_uid)
         for index, row in recruit_info_df.iterrows():
             sql = 'insert into recruit_info '
             sql += '    (comp_uid, recruit_uid, recruit_url, recruit_position, recruit_thumb, create_date, modify_date) '
@@ -163,13 +167,12 @@ def recruit_info_crawl(comp_list):
             sql += f'    , "{"00000000"}", "{"00000000"}" '
             sql += ') '
             cur.execute(sql)
-            for i in cur:
-                print(i)
 
 
+#테스트용으로 사용하세요
 if __name__ == '__main__':
 
 
     comp_list=['삼성전자(주)','(주)카카오','네이버(주)']
     crawler_exec(comp_list)
-    print('comp_list 실행 완료')
+    #print('comp_list 실행 완료')
