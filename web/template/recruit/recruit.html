@@ -1,0 +1,75 @@
+{% extends 'base/index.html' %}
+<!-- 블록 콘텐트 지정 -->
+{% block content %}
+<style>
+    .recruit_info {
+        border: 1px solid lightgray;
+        border-radius: 7.5px;
+        padding: 5px;
+        max-width: 900px;
+        width: 95%;
+        display: inline-block;
+        margin-bottom: 2%;
+    }
+    .recruit_info > * {
+        display: inline-block;
+    }
+    .recruit_img_box {
+        width: 30%;
+        text-align: center;
+        padding-top: 10px;
+        max-width: 300px;
+    }
+    .recruit_img_box > img {
+        width: 200px;
+        height: auto;
+        vertical-align: baseline;
+    }
+    .recruit_cont_box {
+        width: 66%;
+        text-align: left;
+        padding-bottom: 10px;
+        margin-left: 2%;
+    }
+</style>
+<div style="text-align: center">
+    <h3 style="margin-bottom: 60px">{{comp_name}}의 현재 채용 공고</h3>
+    {% for recruit in recruit_infos %}
+    <div class="recruit_info" id="{{recruit.uid}}">
+        <div class="recruit_img_box">
+            <img src="{{recruit.thumb}}" alt="{{recruit.position}}" />
+        </div>
+        <div class="recruit_cont_box">
+            <h4>{{recruit.position}}</h4>
+            <div>{{recruit.content}}</div>
+        </div>
+    </div>
+
+    <div class="recruit_info" id="{{recruit.uid}}">
+        <div class="recruit_img_box">
+            <img src="{{recruit.thumb}}" alt="{{recruit.position}}" />
+        </div>
+        <div class="recruit_cont_box">
+            <h4>{{recruit.position}}</h4>
+            <div>{{recruit.content}}</div>
+        </div>
+    </div>
+
+    <div class="recruit_info" id="{{recruit.uid}}">
+        <div class="recruit_img_box">
+            <img src="{{recruit.thumb}}" alt="{{recruit.position}}" />
+        </div>
+        <div class="recruit_cont_box">
+            <h4>{{recruit.position}}</h4>
+            <div>{{recruit.content}}</div>
+        </div>
+    </div>
+
+    {% endfor %}
+</div>
+<script type="text/javascript">
+    $(".recruit_info").click(function () {
+        window.open("https://www.wanted.co.kr/wd/" + $(this).attr("id"));
+    });
+</script>
+{% endblock %}
