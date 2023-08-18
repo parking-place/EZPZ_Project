@@ -1,0 +1,338 @@
+{% extends 'base/index.html' %}
+<!DOCTYPE html>
+<html lang="ko">
+{% load static %}
+
+{% block content %}
+
+  <!-- Template Main CSS File -->
+  <link href="{% static 'css/comp.css' %}" rel="stylesheet">
+
+
+<style>
+/*--------------------------------------------------------------
+# Contents Css
+--------------------------------------------------------------*/
+
+/* 단 나누기 ( 기업 로고 | pie chart ) */
+#myChart {
+  width: 400px;
+  height: 400px;
+  margin-bottom: 72px;
+}
+
+.comp_name {
+  margin-right: 183px;
+}
+
+
+.comp_logo {
+  border: 3px solid #dddddd;
+  width: 350px;
+  height: 350px;
+  border-radius: 35px;
+  background: rgb(240, 240, 240);
+  margin-right: 425px; /* 필요한 경우 여백 조절 */
+  margin-bottom: 72px;
+}
+
+.building {
+  width: 300px;
+  height: 300px;
+  position: absolute;
+  margin-left: 23px;
+  margin-top: 23px;
+}
+
+
+.comp_text {
+  text-align: left;
+  position: absolute;
+  margin-right: 210px;
+  margin-top: 200px;
+  font-size: 24px;
+}
+
+
+/* comp info Table */
+.tbl {
+  width: 1200px;
+  border-collapse: collapse;
+  margin: auto;
+}
+
+.tbl caption {
+  display: none;
+}
+
+.tbl th,
+.tbl td { 
+  padding: 20px 0;                                          
+  border: 1px solid #c3c3c3;
+  text-align: center;
+}
+
+.tbl thead th {
+  background: #efefef;
+}
+
+.tbl tbody th {
+  background: #efefef;
+}
+
+.tbl th{
+  color: #282828;
+}
+
+.tbl td.point {
+  font-size: 100px;
+  font-weight: 600;
+}
+
+
+/*--------------------------------------------------------------
+# News_Summary_List_Box
+
+※ 전체 너비(회색 박스)
+전체 너비(회색 박스)는 몇 rem인지로 수정.
+(현재 50rem)
+> article 쪽 max-width: 50rem; 
+
+※ 박스 각각의 너비
+아래의 min(100%, 20rem) 쪽에서 몇 rem으로 할 건지 
+전체 너비(회색 박스)랑 맞춰보면서 지정
+(현재 20rem)
+> dl 쪽 grid-template-columns: 
+repeat(_, minmax(min(100%, 20rem), _))
+
+--------------------------------------------------------------*/
+  article {
+    max-width: 80rem;   /* 뉴스 요약 리스트 부 전체 너비 */
+    margin: 0 auto;
+    margin: 85px 0 85px 0;
+    margin-left: 10px
+  }
+  
+  dl {
+    display: grid;  /* 아래의 min(100%, 20rem) 쪽에서 몇 rem으로 할 건지 전체 너비랑 맞춰보면서 지정 */
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 30rem), 1fr));
+    gap: 2rem;
+    color: darkslategray;
+  }
+  
+  dl > div {
+    background: lightgrey;
+    padding: 1rem;
+    border-radius: 0.5rem;
+
+  }
+  
+  dl > div:nth-child(4n - 2) {
+    background: pink;
+  }
+  
+  dl > div:nth-child(4n - 1) {
+    background: skyblue;
+  }
+  
+  dl > div:nth-child(4n) {
+    background: skyblue;
+  }
+  
+  dd {
+    margin: 0;
+  }
+
+
+
+
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+<body>
+
+    <!-- ======= Start comp Section ======= -->
+    <div class="container">
+
+      <p><a class="comp_name" href="comp_uid"></a>정보 검색결과</p>
+
+      <div class="container d-flex justify-content-center align-items-center">
+        <!-- comp_logo -->
+        <div class="comp_logo">
+          <a href=""><img src="static/img/building.png" class="building"/></a>
+        </div>
+        <div class="comp_text">
+          <p><b>기업명</b></p>
+          <a>채용중 or 채용 종료</a>
+        </div>
+
+        
+
+        <!-- pie chart -->
+        <canvas id="myChart"></canvas>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.4.0/chart.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0-rc.1/chartjs-plugin-datalabels.js"></script>
+        <script src="chart.js"></script>
+      </div>
+
+
+
+
+      <script>
+
+        const dnct1 = document.getElementById('myChart');
+        
+        const data = {
+          labels: [' 긍정', ' 부정', ' 중립'],
+          datasets: [{
+            label: 'Sentiments Ratio',
+            data: [510, 887, 720],
+            backgroundColor: ['skyblue', 'pink', 'lightgrey'],
+            borderColor: '#fff',
+            borderWidth: 3,
+            hoverOffset: 5,
+            cutout: 0
+          }]
+        };
+        
+        const options = {
+          responsive: false,
+          layout: {
+            padding: {
+              bottom: 25
+            }
+          },
+          plugins: {
+            tooltip: {
+              enabled: true,
+              callbacks: {
+                footer: (ttItem) => {
+                  let sum = 0;
+                  let dataArr = ttItem[0].dataset.data;
+                  dataArr.map(data => {
+                    sum += Number(data);
+                  });
+                  let percentage = (ttItem[0].parsed * 100 / sum).toFixed(2) + ' %';
+                  return `비율: ${percentage}`;
+                }
+              }
+            },
+            datalabels: {
+              formatter: (value, dnct) => {
+                let sum = 0;
+                let dataArr = dnct.chart.data.datasets[0].data;
+                dataArr.map(data => {
+                  sum += Number(data);
+                });
+                let percentage = (value * 100 / sum).toFixed(2) + ' %';
+                return percentage;
+              },
+              color: 'darkslategray',
+            }
+          }
+        };
+        
+        const myChart = new Chart(dnct1, {
+          type: 'pie',
+          data: data,
+          options: options,
+          plugins: [ChartDataLabels]
+        });
+        
+        </script>
+
+
+
+
+
+
+
+      <!-- info Table -->
+      <link rel="stylesheet" href="static/css/comp/comp.css">
+
+      <table class="tbl">
+        <caption>시간표</caption>
+        <colgroup>
+            <col width="25%">
+            <col width="25%">
+            <col width="25%">
+            <col width="25%">
+        </colgroup>
+
+        <thead>
+            <tr>
+                <th>대표</th>
+                <td>김형선</td>
+                <th>기업규모</th>
+                <td>대기업</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th>산업분류</th>
+                <td>부품 도매업</td>
+                <th>직원 수</th>
+                <td>10억 명</td>
+            </tr>
+            <tr>
+                <th>기업정보 1</th>
+                <td>정보 answer</td>
+                <th>기업정보 2</th>
+                <td>정보 answer</td>
+        </tbody>
+      </table>
+
+      <!-- news summarize list box -->
+      <article>
+        <dl>
+            <div>
+                <dd>中, 네이버 석달째 차단…당국은 '모르쇠'</dd>
+            </div>
+            <div>
+                <dd>네이버, 6개월 만에 현금 반토막…투자 여력 급감</dd>
+            </div>
+            <div>
+                <dd>네이버, 개인화 추천 기술 확대에 주가 '덩실덩실'</dd>
+            </div>
+            <div>
+                <dd>"네이버웹툰 美 상장 예정"…관련주 상한가 직행</dd>
+            </div>
+            <div>
+                <dd>네이버페이가 데이터센터 재해 발생 시에도 비상대응 훈련을 실시한다.</dd>
+            </div>
+            <div>
+                <dd>"눈앞의 이익에만 치중하더니…" 네이버·카카오 입지 흔들린다</dd>
+            </div>
+        </dl>
+      </article>
+    </div>
+    <!-- End comp Section -->
+
+  </main>
+  <!-- End #main -->
+
+
+  <!-- Template Main JS File -->
+  <script src="static/js/comp/comp.js"></script>
+
+</body>
+
+
+</html>
+
+{% endblock %}
