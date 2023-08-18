@@ -26,6 +26,8 @@
 <link href="{% static 'vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
 <link href="{% static 'css/base.css' %}" rel="stylesheet">
 
+<!-- jQquery -->
+<script src="{% static 'js/jquery-3.7.0.min.js' %}"></script>
 </head>
 <body>
     <!-- 검색창 header START -->
@@ -33,10 +35,10 @@
 
         <div class="container d-flex justify-content-between align-items-center">
             <h1>
-                <a class="logo" href="main.html">Logo</a>
+                <a class="logo" href="#">Logo</a>
             </h1>
             <div class="header-middle">
-                <form id="search-form" class="search-mode" action="comp/test.html" method="GET">
+                <form id="search-form" class="search-mode" action="comp/" method="GET">
                     <input type="text" name="company_name" placeholder="기업명을 입력해주세요.">
                     <button type="submit">검색</button>
                 </form>
@@ -52,10 +54,25 @@
         <section id="#" class="#">
             <div class="container" data-aos="fade-up">
                 <div class="sub-menu">
-                    <a class="corp-menu active" href="comp.html">기업정보</a>
-                    <a class="recruit-menu" href="#">채용공고</a>
-                    <a class="review-menu" href="#">기업리뷰</a>
+                    {% if active == 'comp' %}
+                    <a class="corp-menu active" href="comp/">기업정보</a>
+                    {% else %}
+                    <a class="corp-menu" href="comp/">기업정보</a>
+                    {% endif %}
+                    
+                    {% if active == 'recruit' %}
+                    <a class="recruit-menu active" href="recruit/">채용공고</a>
+                    {% else %}
+                    <a class="recruit-menu" href="recruit/">채용공고</a>
+                    {% endif %}
+                    
+                    {% if active == 'review' %}
+                    <a class="review-menu active" href="review/">기업리뷰</a>
+                    {% else %}
+                    <a class="review-menu" href="review/">기업리뷰</a>
+                    {% endif %}
                 </div>
+
             </div>
         </section>
 
