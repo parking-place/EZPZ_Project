@@ -110,7 +110,7 @@ def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이
 
 
 
-
+#테스트용으로 사용하세요
 if __name__ == '__main__':
 
     comp_list=['삼성전자(주)','(주)카카오','네이버(주)']
