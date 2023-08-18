@@ -1,6 +1,9 @@
 {% extends 'base/index.html' %}
+{% load static %}
+
 <!-- 블록 콘텐트 지정 -->
 {% block content %}
+<!-- html 확정시 CSS 파일로 분리 -->
 <style>
     .recruit_info {
         border: 1px solid lightgray;
@@ -32,6 +35,10 @@
         margin-left: 2%;
     }
 </style>
+<script src="{% static 'js/recruit/recruit.js' %}"></script>
+
+
+<!-- recruit info body -->
 <div style="text-align: center">
     <h3 style="margin-bottom: 60px">{{comp_name}}의 현재 채용 공고</h3>
     {% for recruit in recruit_infos %}
@@ -41,35 +48,12 @@
         </div>
         <div class="recruit_cont_box">
             <h4>{{recruit.position}}</h4>
-            <div>{{recruit.content}}</div>
+            <!-- 크롤러 : recruit_desc 반영시 주석 해제
+                <div>{{recruit.desc}}</div>
+            -->
         </div>
     </div>
-
-    <div class="recruit_info" id="{{recruit.uid}}">
-        <div class="recruit_img_box">
-            <img src="{{recruit.thumb}}" alt="{{recruit.position}}" />
-        </div>
-        <div class="recruit_cont_box">
-            <h4>{{recruit.position}}</h4>
-            <div>{{recruit.content}}</div>
-        </div>
-    </div>
-
-    <div class="recruit_info" id="{{recruit.uid}}">
-        <div class="recruit_img_box">
-            <img src="{{recruit.thumb}}" alt="{{recruit.position}}" />
-        </div>
-        <div class="recruit_cont_box">
-            <h4>{{recruit.position}}</h4>
-            <div>{{recruit.content}}</div>
-        </div>
-    </div>
-
     {% endfor %}
+
 </div>
-<script type="text/javascript">
-    $(".recruit_info").click(function () {
-        window.open("https://www.wanted.co.kr/wd/" + $(this).attr("id"));
-    });
-</script>
 {% endblock %}

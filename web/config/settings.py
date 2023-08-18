@@ -83,24 +83,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": DB_ENGINE,
-        "NAME": DB_NAME,
-        "USER": DB_USER, 
-        "PASSWORD": DB_PASSWORD,
-        "HOST": DB_HOST_IP,
-        "PORT": DB_PORT
-    },
-    "test": {
-        "ENGINE": DB_ENGINE,
-        "NAME": TEST_DB_NAME,
-        "USER": TEST_DB_USER,
-        "PASSWORD": TEST_DB_PASSWORD,
-        "HOST": TEST_DB_HOST_IP,
-        "PORT": TEST_DB_PORT
-    }
-}
+DATABASES = get_django_connection()
 
 
 # Password validation
