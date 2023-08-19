@@ -30,7 +30,7 @@ class RecruitInfo(models.Model):
     recruit_url = models.CharField(max_length=2000)
     recruit_position = models.CharField(max_length=20)
     recruit_thumb = models.CharField(max_length=2000, blank=True, null=True)
-    #recruit_desc = models.CharField(max_length=200, blank=True, null=True) 크롤러 : recruit_desc 반영시 주석 해제
+    recruit_desc = models.CharField(max_length=200, blank=True, null=True)
     create_date = models.CharField(max_length=8)
     modify_date = models.CharField(max_length=8)
 

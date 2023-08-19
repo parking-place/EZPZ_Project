@@ -13,11 +13,8 @@ def recruit_page(request):
         comp_uid = request.POST['comp_uid']
     
     # 데이터 로드
-    # ===== [테스트용 코드 START] =====
     # test_db에 입력된 comp_uid:
-    #   93, 94, 95
-    comp_uid = '94'
-    # ===== [테스트용 코드 END] =====
+    #   1, 2, 3
     
     # 회사 정보 불러오기
     comp_name = CompInfo.objects.filter(
@@ -44,7 +41,7 @@ def recruit_page(request):
             'url': info.recruit_url,
             'thumb': info.recruit_thumb,
             'position': info.recruit_position,
-            #'desc': info.recruit_desc, 크롤러 : recruit_desc 반영시 주석 해제
+            'desc': info.recruit_desc,
         }
         context['recruit_infos'].append(data)
     
