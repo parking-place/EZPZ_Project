@@ -3,38 +3,7 @@
 
 <!-- 블록 콘텐트 지정 -->
 {% block content %}
-<!-- html 확정시 CSS 파일로 분리 -->
-<style>
-    .recruit_info {
-        border: 1px solid lightgray;
-        border-radius: 7.5px;
-        padding: 5px;
-        max-width: 900px;
-        width: 95%;
-        display: inline-block;
-        margin-bottom: 2%;
-    }
-    .recruit_info > * {
-        display: inline-block;
-    }
-    .recruit_img_box {
-        width: 30%;
-        text-align: center;
-        padding-top: 10px;
-        max-width: 300px;
-    }
-    .recruit_img_box > img {
-        width: 200px;
-        height: auto;
-        vertical-align: baseline;
-    }
-    .recruit_cont_box {
-        width: 66%;
-        text-align: left;
-        padding-bottom: 10px;
-        margin-left: 2%;
-    }
-</style>
+<link href="{% static 'css/recruit/recruit.css' %}" rel="stylesheet">
 <script src="{% static 'js/recruit/recruit.js' %}"></script>
 
 
@@ -48,9 +17,7 @@
         </div>
         <div class="recruit_cont_box">
             <h4>{{recruit.position}}</h4>
-            <!-- 크롤러 : recruit_desc 반영시 주석 해제
-                <div>{{recruit.desc}}</div>
-            -->
+            <div>{{recruit.desc}}</div>
         </div>
     </div>
     {% endfor %}
