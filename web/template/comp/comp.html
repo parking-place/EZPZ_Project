@@ -5,162 +5,8 @@
 
 {% block content %}
 
-  <!-- Template Main CSS File -->
-  <link href="{% static 'css/comp.css' %}" rel="stylesheet">
-
-
-<style>
-/*--------------------------------------------------------------
-# Contents Css
---------------------------------------------------------------*/
-
-/* 단 나누기 ( 기업 로고 | pie chart ) */
-#myChart {
-  width: 400px;
-  height: 400px;
-  margin-bottom: 72px;
-}
-
-.comp_name {
-  margin-right: 183px;
-}
-
-
-.comp_logo {
-  border: 3px solid #dddddd;
-  width: 350px;
-  height: 350px;
-  border-radius: 35px;
-  background: rgb(240, 240, 240);
-  margin-right: 425px; /* 필요한 경우 여백 조절 */
-  margin-bottom: 72px;
-}
-
-.building {
-  width: 300px;
-  height: 300px;
-  position: absolute;
-  margin-left: 23px;
-  margin-top: 23px;
-}
-
-
-.comp_text {
-  text-align: left;
-  position: absolute;
-  margin-right: 210px;
-  margin-top: 200px;
-  font-size: 24px;
-}
-
-
-/* comp info Table */
-.tbl {
-  width: 1200px;
-  border-collapse: collapse;
-  margin: auto;
-}
-
-.tbl caption {
-  display: none;
-}
-
-.tbl th,
-.tbl td { 
-  padding: 20px 0;                                          
-  border: 1px solid #c3c3c3;
-  text-align: center;
-}
-
-.tbl thead th {
-  background: #efefef;
-}
-
-.tbl tbody th {
-  background: #efefef;
-}
-
-.tbl th{
-  color: #282828;
-}
-
-.tbl td.point {
-  font-size: 100px;
-  font-weight: 600;
-}
-
-
-/*--------------------------------------------------------------
-# News_Summary_List_Box
-
-※ 전체 너비(회색 박스)
-전체 너비(회색 박스)는 몇 rem인지로 수정.
-(현재 50rem)
-> article 쪽 max-width: 50rem; 
-
-※ 박스 각각의 너비
-아래의 min(100%, 20rem) 쪽에서 몇 rem으로 할 건지 
-전체 너비(회색 박스)랑 맞춰보면서 지정
-(현재 20rem)
-> dl 쪽 grid-template-columns: 
-repeat(_, minmax(min(100%, 20rem), _))
-
---------------------------------------------------------------*/
-  article {
-    max-width: 80rem;   /* 뉴스 요약 리스트 부 전체 너비 */
-    margin: 0 auto;
-    margin: 85px 0 85px 0;
-    margin-left: 10px
-  }
-  
-  dl {
-    display: grid;  /* 아래의 min(100%, 20rem) 쪽에서 몇 rem으로 할 건지 전체 너비랑 맞춰보면서 지정 */
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 30rem), 1fr));
-    gap: 2rem;
-    color: darkslategray;
-  }
-  
-  dl > div {
-    background: lightgrey;
-    padding: 1rem;
-    border-radius: 0.5rem;
-
-  }
-  
-  dl > div:nth-child(4n - 2) {
-    background: pink;
-  }
-  
-  dl > div:nth-child(4n - 1) {
-    background: skyblue;
-  }
-  
-  dl > div:nth-child(4n) {
-    background: skyblue;
-  }
-  
-  dd {
-    margin: 0;
-  }
-
-
-
-
-</style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  <!-- Template Comp CSS File -->
+  <link href="{% static 'css/comp/comp.css' %}" rel="stylesheet">
 
   
 
@@ -174,7 +20,7 @@ repeat(_, minmax(min(100%, 20rem), _))
       <div class="container d-flex justify-content-center align-items-center">
         <!-- comp_logo -->
         <div class="comp_logo">
-          <a href=""><img src="static/img/building.png" class="building"/></a>
+          <a href=""><img src="/static/img/building.png" class="building"/></a>
         </div>
         <div class="comp_text">
           <p><b>기업명</b></p>
@@ -187,83 +33,14 @@ repeat(_, minmax(min(100%, 20rem), _))
         <canvas id="myChart"></canvas>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.4.0/chart.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0-rc.1/chartjs-plugin-datalabels.js"></script>
-        <script src="chart.js"></script>
+        <!-- <script src="chart.js"></script> -->
       </div>
 
 
-
-
-      <script>
-
-        const dnct1 = document.getElementById('myChart');
-        
-        const data = {
-          labels: [' 긍정', ' 부정', ' 중립'],
-          datasets: [{
-            label: 'Sentiments Ratio',
-            data: [510, 887, 720],
-            backgroundColor: ['skyblue', 'pink', 'lightgrey'],
-            borderColor: '#fff',
-            borderWidth: 3,
-            hoverOffset: 5,
-            cutout: 0
-          }]
-        };
-        
-        const options = {
-          responsive: false,
-          layout: {
-            padding: {
-              bottom: 25
-            }
-          },
-          plugins: {
-            tooltip: {
-              enabled: true,
-              callbacks: {
-                footer: (ttItem) => {
-                  let sum = 0;
-                  let dataArr = ttItem[0].dataset.data;
-                  dataArr.map(data => {
-                    sum += Number(data);
-                  });
-                  let percentage = (ttItem[0].parsed * 100 / sum).toFixed(2) + ' %';
-                  return `비율: ${percentage}`;
-                }
-              }
-            },
-            datalabels: {
-              formatter: (value, dnct) => {
-                let sum = 0;
-                let dataArr = dnct.chart.data.datasets[0].data;
-                dataArr.map(data => {
-                  sum += Number(data);
-                });
-                let percentage = (value * 100 / sum).toFixed(2) + ' %';
-                return percentage;
-              },
-              color: 'darkslategray',
-            }
-          }
-        };
-        
-        const myChart = new Chart(dnct1, {
-          type: 'pie',
-          data: data,
-          options: options,
-          plugins: [ChartDataLabels]
-        });
-        
-        </script>
-
-
-
-
-
-
+      
 
       <!-- info Table -->
-      <link rel="stylesheet" href="static/css/comp/comp.css">
+      <link rel="stylesheet" href="../static/css/comp/comp.css">
 
       <table class="tbl">
         <caption>시간표</caption>
@@ -328,7 +105,7 @@ repeat(_, minmax(min(100%, 20rem), _))
 
 
   <!-- Template Main JS File -->
-  <script src="static/js/comp/comp.js"></script>
+  <script src="../static/js/comp/comp.js"></script>
 
 </body>
 
