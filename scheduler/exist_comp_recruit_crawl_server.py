@@ -58,9 +58,9 @@ def recruit_info_update(comp_list):
 
             for index, row in filtered_recruit_info_df.iterrows():
                 sql = 'insert into recruit_info '
-                sql += '    (comp_uid, recruit_uid, recruit_url, recruit_position, recruit_thumb, create_date, modify_date) '
+                sql += '    (comp_uid, recruit_uid, recruit_url, recruit_position, recruit_thumb, recruit_desc, create_date, modify_date) '
                 sql += 'values ( '
-                sql += f'   "{comp_uid}", "{row["recruit_uid"]}", "{row["recruit_url"]}", "{row["recruit_position"]}", "{row["recruit_thumb"]}" '
+                sql += f'   "{comp_uid}", "{row["recruit_uid"]}", "{row["recruit_url"]}", "{row["recruit_position"]}", "{row["recruit_thumb"]}", "{row["recruit_desc"]}" '
                 sql += f'    , "{"00000000"}", "{"00000000"}" '
                 sql += ') '
                 cur.execute(sql)

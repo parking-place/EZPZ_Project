@@ -73,7 +73,10 @@ def comp_news_crawl_save(comp_list):
         for comp in tqdm(comp_list):
             daum_news = daum_news_crawler.get_news(comp) #다음뉴스 크롤러 실행 확인
             naver_news = naver_news_crawler.get_news(comp) #네이버 뉴스크롤러 실행
+            print(naver_news)
+
             all_news = pd.concat([daum_news, naver_news], ignore_index=True)  #뉴스 전체 합치기
+
 
             for index, col in enumerate(all_news['news_cont']):
                 if len(col)>5000:
@@ -156,14 +159,14 @@ def recruit_info_crawl(comp_list):
         recruit_info_df['recruit_uid']=new_i #int 값으로 컬럼 대체
 
 
-        cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"') 
+        cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
         comp_uid=cur.fetchall()[0][0]
         #print(comp_uid)
         for index, row in recruit_info_df.iterrows():
             sql = 'insert into recruit_info '
-            sql += '    (comp_uid, recruit_uid, recruit_url, recruit_position, recruit_thumb, create_date, modify_date) '
+            sql += '    (comp_uid, recruit_uid, recruit_url, recruit_position, recruit_thumb, recruit_desc, create_date, modify_date) '
             sql += 'values ( '
-            sql += f'   "{comp_uid}", "{row["recruit_uid"]}", "{row["recruit_url"]}", "{row["recruit_position"]}", "{row["recruit_thumb"]}" '
+            sql += f'   "{comp_uid}", "{row["recruit_uid"]}", "{row["recruit_url"]}", "{row["recruit_position"]}", "{row["recruit_thumb"]}", "{row["recruit_desc"]}" '
             sql += f'    , "{"00000000"}", "{"00000000"}" '
             sql += ') '
             cur.execute(sql)
