@@ -9,6 +9,10 @@
 
 <!-- recruit info body -->
 <div style="text-align: center">
+{% if msg %}
+    <!-- show alert messages here -->
+    <h3 style="margin-bottom: 60px;">{{msg}}</h3>
+{% else %}
     <h3 style="margin-bottom: 60px">{{comp_name}}의 현재 채용 공고</h3>
     {% for recruit in recruit_infos %}
     <div class="recruit_info" id="{{recruit.uid}}">
@@ -21,6 +25,6 @@
         </div>
     </div>
     {% endfor %}
-
+{% endif %}
 </div>
 {% endblock %}

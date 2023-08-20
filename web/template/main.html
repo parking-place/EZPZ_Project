@@ -28,15 +28,22 @@
 
 <!-- jQquery -->
 <script src="{% static 'js/jquery-3.7.0.min.js' %}"></script>
-</head>
+<script type="text/javascript">
+function search_method(){
+    keyword = document.search_form.q.value;
+    document.search_form.action = '/';
+    document.search_form.submit();
+}
 
+</script>
+</head>
 <body>
     <!-- 검색창 header START -->
     <header id="header" class="fixed-top">
         <div class="container d-flex justify-content-between align-items-center">
             <div class="d-flex justify-content-center flex-grow-1 text-center">
                 <h1>
-                    <a class="logo" href="#">Logo</a>
+                    <a class="logo" href="/">Logo</a>
                 </h1>
             </div>
         </div>
@@ -52,7 +59,7 @@
 
             <h1>Searching!</h1>
 
-            <form id="search-form" class="search-mode" action="comp.html" method="get">
+            <form id="search-form" class="search-mode" name="search_form" action="javascript:search_method()" method="get">
                 <input type="text" name="q" placeholder="기업명을 입력해주세요.">
                 <button type="submit">검색</button>
             </form>
@@ -64,6 +71,10 @@
                 <li><a href="#">추천검색어4</a></li>
                 <li><a href="#">추천검색어5</a></li>
             </ul>
+            <!-- show alert message -->
+            {% if msg is not None %}
+            <b style="color: #ff9984;">{{msg}}</b>
+            {% endif %}
         </div>
     </section>
     <!-- ======= End Hero ======= -->

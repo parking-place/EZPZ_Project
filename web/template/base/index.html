@@ -35,7 +35,7 @@
 
         <div class="container d-flex justify-content-between align-items-center">
             <h1>
-                <a class="logo" href="#">Logo</a>
+                <a class="logo" href="/">Logo</a>
             </h1>
             <div class="header-middle">
                 <form id="search-form" class="search-mode" action="comp/" method="GET">
@@ -54,22 +54,16 @@
         <section id="#" class="#">
             <div class="container" data-aos="fade-up">
                 <div class="sub-menu">
-                    {% if active == 'comp' %}
-                    <a class="corp-menu active" href="comp/">기업정보</a>
+                    {% if comp_uid %}
+                    <a class="corp-menu {% if active == 'comp' %} active {% endif %}" href="/comp/?comp_uid={{comp_uid}}">기업정보</a>
+                    <a class="recruit-menu {% if active == 'recruit' %} active {% endif %}" href="/recruit/?comp_uid={{comp_uid}}">채용공고</a>
+                    <a class="review-menu {% if active == 'review' %} active {% endif %}" href="/review/?comp_uid={{comp_uid}}">기업리뷰</a>
+                    <!-- 탭 넘김 테스트 완료시 else 구문 삭제 START -->
                     {% else %}
-                    <a class="corp-menu" href="comp/">기업정보</a>
-                    {% endif %}
-                    
-                    {% if active == 'recruit' %}
-                    <a class="recruit-menu active" href="recruit/">채용공고</a>
-                    {% else %}
-                    <a class="recruit-menu" href="recruit/">채용공고</a>
-                    {% endif %}
-                    
-                    {% if active == 'review' %}
-                    <a class="review-menu active" href="review/">기업리뷰</a>
-                    {% else %}
-                    <a class="review-menu" href="review/">기업리뷰</a>
+                    <a class="corp-menu {% if active == 'comp' %} active {% endif %}" href="/comp">기업정보</a>
+                    <a class="recruit-menu {% if active == 'recruit' %} active {% endif %}" href="/recruit">채용공고</a>
+                    <a class="review-menu {% if active == 'review' %} active {% endif %}" href="/review">기업리뷰</a>
+                    <!-- 탭 넘김 테스트 완료시 else 구문 삭제 END -->
                     {% endif %}
                 </div>
 

@@ -16,11 +16,8 @@ Including another URLconf
 """
 from django.urls import path, include
 
-from .views import main_page
-
-
 urlpatterns = [
-    path('', main_page, name='main-page'),
+    path('', include('search.urls')),
     path('comp/', include('comp.urls')),
     path('recruit/', include('recruit.urls')),
     path('review/', include('review.urls')),

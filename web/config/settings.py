@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     
     # ezpz applications
-    "comp", "recruit", "review"
+    "search", "comp", "recruit", "review"
 ]
 
 MIDDLEWARE = [
