@@ -1,28 +1,50 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.db.models import Q
 
-# Create your views here.
+from .models import CompInfo, CompNews
+
+
 
 def comp(request):
+    # 파라미터 처리
+    if request.method == 'GET':
+        comp_uid = request.GET.get('comp_uid', None)
+    if request.method == 'POST':
+        comp_uid = request.POST.get('comp_uid', None)
+    
+    # 파라미터 제대로 안 넘어온 경우 메인 페이지로
+    if comp_uid is None:
+        return redirect('/')
+    
+    
+    # 기업 정보 불러오기
+    info = CompInfo.objects.filter(comp_uid=comp_uid)[0]
     context = {
         'active': 'comp',
+        'comp_uid': comp_uid,
+        'comp_info': {
+            'name': info.comp_name,
+            'found': f'{info.comp_founded[:4]}.{info.comp_founded[4:]}',
+            'loc': info.comp_loc,
+            'size': info.comp_size,
+            'thumb': info.comp_thumb,
+            'url': info.comp_url,
+            'cont': info.comp_cont,
+        },
+        'news': [ ]
     }
-
+    
+    # 뉴스 정보 넣어주기
+    newses = CompNews.objects.filter(comp_uid=comp_uid)
+    for news in newses:
+        if news.news_sum: # 데이터가 있을때만 넣기
+            data = {
+                'sum': news.news_sum,
+                'senti': news.news_senti,
+            }
+        context['news'] += data
+        
+        # 그래프 관련 데이터 들어가야 함.
+        
+    
     return render(request, 'comp/comp.html', context)
-
-# def comp(request):
-#     context = {
-#         'active': 'recruit',
-#         'comp_uid': '198102398',
-#         'comp_name': '포자랩스',
-#         'recruit_infos': [
-#             {
-#                 'uid' : '150743',
-#                 'url': 'https://www.wanted.co.kr/wd/150743',
-#                 'thumb': r'https://image.wanted.co.kr/optimize?src=https%3A%2F%2Fstatic.wanted.co.kr%2Fimages%2Fcompany%2F9205%2Fxd05bjd3o7vbf1h4__1080_790.jpg&w=400&q=75',
-#                 'position': 'MLOps 엔지니어',
-#                 'content': '음악은 많은 곳에서 기능을 합니다. 비디오 컨텐츠에 힘을 싣고, 공간의 분위기를 바꿉니다. 사람들은 많은 종류의 컨텐츠에 내 의도를 더 강하게 표현하기 위해 음악에 신경을 씁니다.\n하지만 음악을 찾고, 사용하는 일은 꽤나 어렵습니다. 엄청난 시간을 들이거나, 많은 돈을 내거나 혹은 포기해 버리기도 합니다. 이에 따라 세계적으로 많은 인공지능 작곡 업체가 생겨나고 있지만 사람이 만든 것 이하의 퀄리티로 인하여 아직 시장을 선점하고 있는 업체는 없습니다.'[:200]
-#             }
-#         ],
-#     }
-    
-    

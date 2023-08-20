@@ -19,8 +19,7 @@ def main_page(request):
                 comp_uid = CompInfo.objects.filter(comp_name=comp_name)[0].comp_uid
                 
                 # 기업정보 페이지로 이동
-                #return redirect(f'comp/?comp_uid={comp_uid}') 기업정보 페이지 완료시 주석해제, 탭 테스트용
-                return redirect(f'recruit/?comp_uid={comp_uid}')
+                return redirect(f'comp/?comp_uid={comp_uid}')
             
             except Exception as e:
                 # 다시 검색 화면으로, 메세지 출력
