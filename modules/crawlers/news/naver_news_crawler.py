@@ -7,11 +7,22 @@ import news_crawlers as nc
 import asyncio
 import aiohttp
 
+import time
+import random
+import string
+
+from user_agent import generate_navigator
+
 # BASE_URL = r'https://search.naver.com/search.naver?where=news&ie=utf8&sm=nws_hty&query={comp_name}'
 BASE_URL = r'https://search.naver.com/search.naver?where=news&sm=tab_pge&query={comp_name}&sort=0&photo=0&field=0&pd=0&ds=&de=&cluster_rank=79&mynews=0&office_type=0&office_section_code=0&news_office_checked=&nso=so:r,p:all,a:all&start={page}'
 
-user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
-HEADERS = {'User-Agent' : user_agent}
+def set_headers():
+    global HEADERS 
+    HEADERS = generate_navigator()
+    while None in HEADERS.values():
+        HEADERS = generate_navigator()
+
+HEADERS = set_headers()
 
 SAVE_PATH = r'E:\Python\data\MiniProj\datas\news\{}_naver.csv'
 
@@ -21,6 +32,7 @@ def get_url(comp_name, page=1):
 
 async def get_news_in_page(comp_name, session, page=1):
     url = get_url(comp_name, page)
+    # time.sleep(random.randint(1, 3))
     async with session.get(url, headers=HEADERS) as r:
         html = await r.text()
         soup = bs(html, 'lxml')
@@ -47,6 +59,8 @@ async def get_news_in_page(comp_name, session, page=1):
             'pub_date': [],
         }
         
+        # print('\n\n\n\n\n', html)
+        
         results = await nc.get_content_async(link_list)
         
         for result in results:
@@ -59,16 +73,30 @@ async def get_news_in_page(comp_name, session, page=1):
     
     return news_df
 
-async def async_loop_outer(comp_name, page=5):
-    async with aiohttp.ClientSession(headers=HEADERS) as session:
+async def async_loop_outer(comp_name, cookies=None, page=5):
+    async with aiohttp.ClientSession(headers=HEADERS, cookies=cookies) as session:
         result_list = await asyncio.gather(*[get_news_in_page(comp_name, session, i) for i in range(1, page+1)])
     return result_list
 
 def get_news(comp_name, page=5):
-    result_list = asyncio.run(async_loop_outer(comp_name, page))
-    result_list = [result for result in result_list if result is not None]
-    news_df = pd.concat(result_list)
-    news_df = pretreatment_data(news_df)
+    while True:
+        set_headers()
+        # print(HEADERS)
+        
+        # 같은 단어 여러번 검색시 밴당하는 것을 방지하기 위해 랜덤한 문자열로 세션을 열어 쿠키를 받아옴
+        randstr = ''.join(random.sample(string.ascii_letters + string.digits, 8))
+        cookies = None
+        sessoin = requests.Session()
+        with sessoin.get( get_url(randstr, 1), headers=HEADERS) as r:
+            cookies = sessoin.cookies
+        
+        result_list = asyncio.run(async_loop_outer(comp_name, cookies, page))
+        result_list = [result for result in result_list if result is not None]
+        news_df = pd.concat(result_list)
+        news_df = pretreatment_data(news_df)
+        
+        if len(news_df) != 0:
+            break
     # save_news(news_df, comp_name)
     return news_df
 
@@ -82,7 +110,16 @@ def save_news(news_df, comp_name):
 
 
 if __name__ == '__main__':
+    
+    # sessoin = requests.Session()
+    # with sessoin.get( get_url('(주)삼성전자', 1), headers=HEADERS) as r:
+    #     html = r.text
+    #     print(html)
+    #     print(sessoin.cookies)
+    
     df = get_news('삼성전자', 5)
     
     print(df.head())
     print(df.shape)
+    
+    
