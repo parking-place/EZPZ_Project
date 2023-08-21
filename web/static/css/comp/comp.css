@@ -3,7 +3,7 @@
 --------------------------------------------------------------*/
 
 /* 단 나누기 ( 기업 로고 | pie chart ) */
-#myChart {
+#pieChart {
   width: 400px;
   height: 400px;
   margin-bottom: 72px;
@@ -19,7 +19,6 @@
   width: 350px;
   height: 350px;
   border-radius: 35px;
-  background: #efefef;
   margin-right: 425px; /* 필요한 경우 여백 조절 */
   margin-bottom: 72px;
 }
