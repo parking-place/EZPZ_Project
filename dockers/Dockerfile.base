@@ -1,0 +1,15 @@
+FROM ubuntu:22.04
+
+RUN apt-get update -y && apt-get install -y apt-utils && apt-get install -y python3.10 python3-pip
+
+RUN python3.10 -m pip install --upgrade pip
+
+RUN apt-get install -y git
+
+RUN apt-get install -y mysql-client
+
+RUN apt-get install -y default-libmysqlclient-dev pkg-config
+
+RUN pip3 install mysqlclient
+
+RUN mkdir -p /ezpz/app
