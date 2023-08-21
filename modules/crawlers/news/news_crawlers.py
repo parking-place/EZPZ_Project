@@ -153,7 +153,7 @@ async def get_naver_content(link, session):
         html = await r.text()
         soup = bs(html, 'lxml')
         # #dic_area
-        content = soup.select_one('div#dic_area').get_text()
+        content = soup.select_one('#dic_area').get_text()
         #ct > div.media_end_head.go_trans > div.media_end_head_info.nv_notrans > div.media_end_head_info_datestamp > div:nth-child(1) > span
         date = soup.select_one('#ct > div.media_end_head.go_trans > div.media_end_head_info.nv_notrans > div.media_end_head_info_datestamp > div:nth-child(1) > span').text
         # text예시) 2023.07.28. 오전 10:14
@@ -165,9 +165,9 @@ link_to_get_content = {
     # 'biz.chosun.com': get_chosunbiz_content,
     'www.nocutnews.co.kr': get_nocut_content,
     'www.etnews.com': get_etnews_content,
-    'www.hankyung.com': get_hankyung_content,
+    #'www.hankyung.com': get_hankyung_content,
     # 'www.joongangilbo.co.kr': get_joongang_content,
-    'news.mt.co.kr': get_moneytoday_content,
+    #'news.mt.co.kr': get_moneytoday_content,
     # 'www.news1.kr': get_newsone_content,
     'www.hankookilbo.com': get_hankookilbo_content,
     'www.zdnet.co.kr': get_zdnet_content,
