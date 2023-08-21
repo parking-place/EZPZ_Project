@@ -11,7 +11,9 @@ sys.path.append('/app/EZPZ_Project') #db 연동정보 경로
 
 import pymysql
 import cryptography
+import sql_connection as sc #mysql connection
 from tqdm import tqdm
+from datetime import datetime 
 
 from service_models import ServiceModels
 
@@ -25,9 +27,6 @@ import info_crawler #기업정보 크롤러
 from privates.ezpz_db import * #db연동 정보
 
 
-conn = get_connection()
-cur = conn.cursor()
-
 data_check= ServiceModels() #모델 서빙 모듈 객체
 
 
@@ -35,11 +34,11 @@ data_check= ServiceModels() #모델 서빙 모듈 객체
 def crawler_exec(comp_list):
     comp_info_crawl_save(comp_list)
     #값들을 전부 넣어줬으니 update y로
-    cur.execute('UPDATE comp_info SET is_reged = "Y" ')
+    sql= ' UPDATE comp_info SET is_reged = "Y" '
+    sc.conn_and_exec(sql)
+    #cur.execute('UPDATE comp_info SET is_reged = "Y" ')
     comp_news_crawl_save(comp_list)
     recruit_info_crawl(comp_list)
-    conn.commit()
-    conn.close()
 
 def comp_info_crawl_save(comp_list):
     for comp in tqdm(comp_list):
@@ -49,7 +48,8 @@ def comp_info_crawl_save(comp_list):
         col_value=[]
         for i in comp_info_df.iloc[0]:
             col_value.append(i) #테이블에 insert할 수 있는 컬럼값들을 리스트화
-
+        create_date = datetime.today().strftime('%Y%m%d')
+        modify_date = datetime.today().strftime('%Y%m%d')
 
         col_value[5]=col_value[5][0:7]
         col_value[5] = col_value[5].replace(".", "")
@@ -58,9 +58,9 @@ def comp_info_crawl_save(comp_list):
         #크롤링해온 값 테이블에 저장 저장일자와 수정일자는 스케줄링단계에서 진행이므로 일단 00000000 넣어두었음
         sql = 'INSERT INTO comp_info '
         sql += '(comp_name, comp_loc, comp_thumb, comp_cont, comp_founded, comp_size, comp_url, is_reged, create_date, modify_date) '
-        sql += 'VALUES (%s, %s, %s, %s, %s, %s, %s, "N", "00000000", "00000000")'
-        cur.execute(sql, (col_value[1], col_value[2], col_value[3], col_value[4], col_value[5], col_value[6], col_value[7]))
-
+        sql += f'VALUES (%s, %s, %s, %s, %s, %s, %s, "N", "{create_date}", "{modify_date}")'
+        #cur.execute(sql, (col_value[1], col_value[2], col_value[3], col_value[4], col_value[5], col_value[6], col_value[7]))
+        sc.conn_and_exec(sql, (col_value[1], col_value[2], col_value[3], col_value[4], col_value[5], col_value[6], col_value[7]))
 
         #print(f'{comp} 정보 insert 됨')
 
@@ -133,17 +133,23 @@ def comp_news_crawl_save(comp_list):
 
 
 def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이블로
-    cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
-    comp_uid=cur.fetchall()[0][0]
+    #cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
+    sql = f' select comp_uid from comp_info where comp_name = "{comp}" '
+    uid = sc.conn_and_exec(sql)
+    comp_uid= uid[0][0]
+
+    create_date = datetime.today().strftime('%Y%m%d')
+    modify_date = datetime.today().strftime('%Y%m%d')
     # news_uid는 auto increment니까 자동생성되지 않을까?
     for index, row in all_news.iterrows():
             sql = 'insert into comp_news '
             sql += '    (comp_uid, pub_date, news_url, news_cont,news_sum, news_senti, create_date, modify_date) '
             sql += 'values ( '
             sql += f'   "{comp_uid}", "{row["pub_date"]}", "{row["news_url"]}", "{row["news_cont"]}", "{row["news_sum"]}", "{row["news_senti"]}" '
-            sql += f'    , "{"00000000"}", "{"00000000"}" '
+            sql += f'    , "{create_date}", "{modify_date}" '
             sql += ') '
-            cur.execute(sql)
+            #cur.execute(sql)
+            sc.conn_and_exec(sql)
 
 
 def recruit_info_crawl(comp_list):
@@ -159,17 +165,23 @@ def recruit_info_crawl(comp_list):
         recruit_info_df['recruit_uid']=new_i #int 값으로 컬럼 대체
 
 
-        cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
-        comp_uid=cur.fetchall()[0][0]
+        #cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
+        sql = f'select comp_uid from comp_info where comp_name = "{comp}"'
+        uid = sc.conn_and_exec(sql)
+        comp_uid= uid[0][0]
+
+        create_date = datetime.today().strftime('%Y%m%d')
+        modify_date = datetime.today().strftime('%Y%m%d')
         #print(comp_uid)
         for index, row in recruit_info_df.iterrows():
             sql = 'insert into recruit_info '
             sql += '    (comp_uid, recruit_uid, recruit_url, recruit_position, recruit_thumb, recruit_desc, create_date, modify_date) '
             sql += 'values ( '
             sql += f'   "{comp_uid}", "{row["recruit_uid"]}", "{row["recruit_url"]}", "{row["recruit_position"]}", "{row["recruit_thumb"]}", "{row["recruit_desc"]}" '
-            sql += f'    , "{"00000000"}", "{"00000000"}" '
+            sql += f'    , "{create_date}", "{modify_date}" '
             sql += ') '
-            cur.execute(sql)
+            sc.conn_and_exec(sql)
+            #cur.execute(sql)
 
 
 #테스트용으로 사용하세요

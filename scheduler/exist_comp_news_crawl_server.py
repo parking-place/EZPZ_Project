@@ -10,6 +10,8 @@ sys.path.append('/app/EZPZ_Project') #db 연동정보 경로
 
 import cryptography
 from tqdm import tqdm
+import sql_connection as sc
+from datetime import datetime
 
 from service_models import ServiceModels
 
@@ -25,13 +27,13 @@ data_check= ServiceModels() #모델 서빙 모듈 객체
 
 
 
-conn = get_connection()
-cur = conn.cursor()
 
 def crawl_and_save(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정보 만들어줌 카카오 네이버 구글
 
     #print('뉴스 데이터 삭제')
-    cur.execute('truncate table comp_news') #기존 뉴스정보 테이블 삭제
+    #cur.execute('truncate table comp_news') #기존 뉴스정보 테이블 삭제
+    sql = 'truncate table comp_news'
+    sc.conn_and_exec(sql)
 
     for comp in tqdm(comp_list):
         #print(comp + '뉴스 크롤링시작')
@@ -93,21 +95,24 @@ def crawl_and_save(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정�
 
         get_comp_news_db(all_news,comp) #기업별 all_news 테이블화 시키기
         #print(f'{comp} 뉴스 DB에 저장완료')
-    conn.commit()
-    conn.close()
 
 def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이블로 만드는 함수
-    cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
-    comp_uid=cur.fetchall()[0][0]
+    #cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
+    sql= f'select comp_uid from comp_info where comp_name = "{comp}"'
+    uid=sc.conn_and_exec(sql)
+    comp_uid=uid[0][0]
+
+    create_date = datetime.today().strftime('%Y%m%d')
+    modify_date = datetime.today().strftime('%Y%m%d')
 
     for index, row in tqdm(all_news.iterrows()):
             sql = 'insert into comp_news '
             sql += '    (comp_uid, pub_date, news_url, news_cont,news_sum, news_senti, create_date, modify_date) '
             sql += 'values ( '
             sql += f'   "{comp_uid}", "{row["pub_date"]}", "{row["news_url"]}", "{row["news_cont"]}", "{row["news_sum"]}", "{row["news_senti"]}" '
-            sql += f'    , "{"00000000"}", "{"00000000"}" '
+            sql += f'    , "{create_date}", "{modify_date}" '
             sql += ') '
-            cur.execute(sql)
+            sc.conn_and_exec(sql)
 
 
 
