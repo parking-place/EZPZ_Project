@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 
-from .models import CompInfo, CompNews
+from .models import CompInfo
 
 # 일반 메인 페이지 접근
 def main_page(request):
