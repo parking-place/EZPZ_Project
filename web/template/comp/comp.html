@@ -1,0 +1,73 @@
+{% extends 'base/index.html' %}
+{% load static %}
+
+{% block content %}
+<!-- load CSS & JS -->
+<script src="{% static 'js/chart-3.4.0.js' %}"></script>
+<script src="{% static 'js/chart.js-datable-2.0.0.js' %}"></script>
+<link href="{% static 'css/comp/comp.css' %}" rel="stylesheet">
+
+
+<!-- comp info body -->
+<div class="container d-flex justify-content-center align-items-center" id="comp_cont">
+    <div class="comp_logo">
+        <a href="javascript:window.open('{{comp_info.url}}');"><img src="{{comp_info.thumb}}" class="building"/></a>
+    </div>
+    <div class="comp_text">
+        <a href="javascript:window.open('{{comp_info.url}}');"><b>{{comp_info.name}}</b></a>
+    </div>
+
+    <!-- pie chart -->
+    <canvas id="pieChart"></canvas>
+</div>
+
+<!-- info table -->
+<table class="tbl">
+    <colgroup>
+        <col width="25%">
+        <col width="25%">
+        <col width="25%">
+        <col width="25%">
+    </colgroup>
+
+    <thead>
+        <tr>
+            <th>설립</th>
+            <td>{{comp_info.found}}</td>
+            <th>기업규모</th>
+            <td>{{comp_info.size}}</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>산업분류</th>
+            <td>{{comp_info.cont}}</td>
+            <th>위치</th>
+            <td>{{comp_info.loc}}</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- news summarize list box -->
+<article>
+    <dl>
+        {% for data in news %}
+        <!-- 테스트용 코드임. CSS 작업 필요 -->
+        <div>
+            <dd>{{data.seti}} : {{data.sum}}</dd>
+        </div>
+        {% endfor %}
+    </dl>
+</article>
+
+
+
+
+
+<!-- script section -->
+
+<script src="{% static 'js/comp/comp.js' %}"></script>
+
+
+{% endblock %}
+

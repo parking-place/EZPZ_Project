@@ -1,0 +1,131 @@
+/*--------------------------------------------------------------
+# Contents Css
+--------------------------------------------------------------*/
+
+/* 단 나누기 ( 기업 로고 | pie chart ) */
+#pieChart {
+  width: 400px;
+  height: 400px;
+  margin-bottom: 72px;
+}
+
+.comp_name {
+  margin-right: 183px;
+}
+
+
+.comp_logo {
+  border: 3px solid #dddddd;
+  width: 350px;
+  height: 350px;
+  border-radius: 35px;
+  margin-right: 425px; /* 필요한 경우 여백 조절 */
+  margin-bottom: 72px;
+}
+
+.building {
+  width: 300px;
+  height: 300px;
+  position: absolute;
+  margin-left: 23px;
+  margin-top: 23px;
+}
+
+
+.comp_text {
+  text-align: left;
+  position: absolute;
+  margin-right: 210px;
+  margin-top: 200px;
+  font-size: 24px;
+}
+
+
+/* comp info Table */
+.tbl {
+  width: 1200px;
+  border-collapse: collapse;
+  margin: auto;
+}
+
+.tbl caption {
+  display: none;
+}
+
+.tbl th,
+.tbl td { 
+  padding: 20px 0;                                          
+  border: 1px solid #c3c3c3;
+  text-align: center;
+}
+
+.tbl thead th {
+  background: #efefef;
+}
+
+.tbl tbody th {
+  background: #efefef;
+}
+
+.tbl th{
+  color: #282828;
+}
+
+.tbl td.point {
+  font-size: 100px;
+  font-weight: 600;
+}
+
+
+/*--------------------------------------------------------------
+# News_Summary_List_Box
+
+※ 전체 너비(회색 박스)
+전체 너비(회색 박스)는 몇 rem인지로 수정.
+(현재 50rem)
+> article 쪽 max-width: 50rem; 
+
+※ 박스 각각의 너비
+아래의 min(100%, 20rem) 쪽에서 몇 rem으로 할 건지 
+전체 너비(회색 박스)랑 맞춰보면서 지정
+(현재 20rem)
+> dl 쪽 grid-template-columns: 
+repeat(_, minmax(min(100%, 20rem), _))
+
+--------------------------------------------------------------*/
+  article {
+    max-width: 80rem;   /* 뉴스 요약 리스트 부 전체 너비 */
+    margin: 0 auto;
+    margin: 85px 0 85px 0;
+    margin-left: 10px
+  }
+  
+  dl {
+    display: grid;  /* 아래의 min(100%, 20rem) 쪽에서 몇 rem으로 할 건지 전체 너비랑 맞춰보면서 지정 */
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 30rem), 1fr));
+    gap: 2rem;
+    color: darkslategray;
+  }
+  
+  dl > div {
+    background: lightgrey;
+    padding: 1rem;
+    border-radius: 0.5rem;
+
+  }
+  
+  dl > div:nth-child(4n - 2) {
+    background: pink;
+  }
+  
+  dl > div:nth-child(4n - 1) {
+    background: skyblue;
+  }
+  
+  dl > div:nth-child(4n) {
+    background: skyblue;
+  }
+  
+  dd {
+    margin: 0;
+  }

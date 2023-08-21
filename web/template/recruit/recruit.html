@@ -1,0 +1,30 @@
+{% extends 'base/index.html' %}
+{% load static %}
+
+<!-- 블록 콘텐트 지정 -->
+{% block content %}
+<link href="{% static 'css/recruit/recruit.css' %}" rel="stylesheet">
+<script src="{% static 'js/recruit/recruit.js' %}"></script>
+
+
+<!-- recruit info body -->
+<div style="text-align: center">
+{% if msg %}
+    <!-- show alert messages here -->
+    <h3 style="margin-bottom: 60px;">{{msg}}</h3>
+{% else %}
+    <h3 style="margin-bottom: 60px">{{comp_name}}의 현재 채용 공고</h3>
+    {% for recruit in recruit_infos %}
+    <div class="recruit_info" id="{{recruit.uid}}">
+        <div class="recruit_img_box">
+            <img src="{{recruit.thumb}}" alt="{{recruit.position}}" />
+        </div>
+        <div class="recruit_cont_box">
+            <h4>{{recruit.position}}</h4>
+            <div>{{recruit.desc}}</div>
+        </div>
+    </div>
+    {% endfor %}
+{% endif %}
+</div>
+{% endblock %}
