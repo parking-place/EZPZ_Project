@@ -1,5 +1,4 @@
-
-const dnct1 = document.getElementById('myChart');
+const dnct1 = document.getElementById('pieChart');
 
 const data = {
   labels: [' 긍정', ' 부정', ' 중립'],
@@ -51,7 +50,7 @@ const options = {
   }
 };
 
-const myChart = new Chart(dnct1, {
+const pieChart = new Chart(dnct1, {
   type: 'pie',
   data: data,
   options: options,

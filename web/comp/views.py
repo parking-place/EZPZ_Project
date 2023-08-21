@@ -42,7 +42,7 @@ def comp(request):
                 'sum': news.news_sum,
                 'senti': news.news_senti,
             }
-        context['news'] += data
+        context['news'].append(data)
         
         # 그래프 관련 데이터 들어가야 함.
         
