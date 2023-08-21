@@ -28,6 +28,7 @@
 
 <!-- jQquery -->
 <script src="{% static 'js/jquery-3.7.0.min.js' %}"></script>
+<script src="{% static 'js/search.js' %}"></script>
 </head>
 <body>
     <!-- 검색창 header START -->
@@ -38,8 +39,8 @@
                 <a class="logo" href="/">Logo</a>
             </h1>
             <div class="header-middle">
-                <form id="search-form" class="search-mode" action="comp/" method="GET">
-                    <input type="text" name="company_name" placeholder="기업명을 입력해주세요.">
+                <form name="search_form" class="search-mode" action="javascript:search_method()" method="GET">
+                    <input type="text" name="q" placeholder="기업명을 입력해주세요.">
                     <button type="submit">검색</button>
                 </form>
             </div>

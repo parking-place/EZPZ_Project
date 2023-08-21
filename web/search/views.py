@@ -10,11 +10,15 @@ def main_page(request):
         }
         
         # form에서 넘어온건지 체크
+        comp_name_list = [el.comp_name for el in CompInfo.objects.all()] # 전체 회사 이름 리스트
         comp_name = request.GET.get('q', None)
         
         # 파라미터가 있는 경우
         if comp_name:
             try:
+                # 검색어 보정
+                comp_name = [el for el in comp_name_list if el.find(comp_name) > -1][0]
+                
                 # comp_uid로 변환시키기
                 comp_uid = CompInfo.objects.filter(comp_name=comp_name)[0].comp_uid
                 

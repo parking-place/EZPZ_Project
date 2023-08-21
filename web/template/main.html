@@ -26,15 +26,9 @@
 <link href="{% static 'vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
 <link href="{% static 'css/main/main.css' %}" rel="stylesheet">
 
-<!-- jQquery -->
+<!-- JS -->
 <script src="{% static 'js/jquery-3.7.0.min.js' %}"></script>
-<script type="text/javascript">
-function search_method(){
-    keyword = document.search_form.q.value;
-    document.search_form.action = '/';
-    document.search_form.submit();
-}
-
+<script src="{% static 'js/search.js' %}"></script>
 </script>
 </head>
 <body>
