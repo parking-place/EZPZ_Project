@@ -5,7 +5,7 @@ import torch
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-DICT_PATH = '/home/parking/ml/data/MiniProj/models'
+DICT_PATH = '/app/data/MiniProj/models'
 
 class FinBertKR:
     def __init__(self):
