@@ -2,72 +2,53 @@
 {% load static %}
 
 {% block content %}
-<!-- load CSS & JS -->
+<!-- JS /CSS -->
 <script src="{% static 'js/chart-3.4.0.js' %}"></script>
-<script src="{% static 'js/chart.js-datable-2.0.0.js' %}"></script>
+<script src="{% static 'js/comp/comp.js' %}"></script>
 <link href="{% static 'css/comp/comp.css' %}" rel="stylesheet">
 
-
 <!-- comp info body -->
-<div class="container d-flex justify-content-center align-items-center" id="comp_cont">
+<div class="comp_cont">
     <div class="comp_logo">
-        <a href="javascript:window.open('{{comp_info.url}}');"><img src="{{comp_info.thumb}}" class="building"/></a>
+        <a href="javascript:window.open('{{comp_info.url}}');">
+            <img src="{{comp_info.thumb}}" class="building" width="300px" height="300px"/>
+        </a>
     </div>
-    <div class="comp_text">
-        <a href="javascript:window.open('{{comp_info.url}}');"><b>{{comp_info.name}}</b></a>
-    </div>
-
+    <a href="javascript:window.open('{{comp_info.url}}');"><h3 style="margin-left: 5px">{{comp_info.name}}</h3></a>
+    
     <!-- pie chart -->
-    <canvas id="pieChart"></canvas>
+    <canvas id="pieChart" width="400px" height="400px" style="display: inline-block;"></canvas>
 </div>
 
 <!-- info table -->
-<table class="tbl">
-    <colgroup>
-        <col width="25%">
-        <col width="25%">
-        <col width="25%">
-        <col width="25%">
-    </colgroup>
-
-    <thead>
-        <tr>
-            <th>설립</th>
-            <td>{{comp_info.found}}</td>
-            <th>기업규모</th>
-            <td>{{comp_info.size}}</td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th>산업분류</th>
-            <td>{{comp_info.cont}}</td>
-            <th>위치</th>
-            <td>{{comp_info.loc}}</td>
-        </tr>
-    </tbody>
+<table align="center" class="comp_table">
+    <tr align="center">
+        <td class="t_head">설립</td>
+        <td>{{comp_info.found}}</td>
+        <td class="t_head">기업규모</td>
+        <td>{{comp_info.size}}</td>
+    </tr>
+    <tr align="center">
+        <td class="t_head">산업분류</td>
+        <td>{{comp_info.cont}}</td>
+        <td class="t_head">위치</td>
+        <td>{{comp_info.loc}}</td>
+    </tr>
 </table>
 
 <!-- news summarize list box -->
-<article>
-    <dl>
-        {% for data in news %}
-        <!-- 테스트용 코드임. CSS 작업 필요 -->
-        <div>
-            <dd>{{data.seti}} : {{data.sum}}</dd>
+<div style="text-align: center;">
+    {% for data in news %}
+    <div class="news_cont">
+        <div class="senti_box">
+            <div class="senti" style="background-color: {{data.color}}"><p></p></div>
         </div>
-        {% endfor %}
-    </dl>
-</article>
+        <p>{{data.sum}}</p>
+    </div>
+    {% endfor %}
+</div>
 
-
-
-
-
-<!-- script section -->
-
-<script src="{% static 'js/comp/comp.js' %}"></script>
-
-
+<script>
+go_chart({{pos_ratio}}, {{neg_ratio}}, {{neu_ratio}});
+</script>
 {% endblock %}
-
