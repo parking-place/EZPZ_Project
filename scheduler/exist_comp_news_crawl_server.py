@@ -38,7 +38,7 @@ def crawl_and_save(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정�
     for comp in tqdm(comp_list):
         #print(comp + '뉴스 크롤링시작')
         daum_news = daum_news_crawler.get_news(comp) #다음뉴스 크롤러 실행 확인
-        naver_news = naver_news_crawler.get_news(comp) #네이버 뉴스크롤러 실행
+        naver_news = naver_news_crawler.get_news(comp) #네이버 뉴스크롤러 실행 
         print(naver_news)
         all_news = pd.concat([daum_news, naver_news], ignore_index=True)  #뉴스 전체 합치기
         #print(all_news)

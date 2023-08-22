@@ -13,7 +13,7 @@ import pymysql
 import cryptography
 import sql_connection as sc #mysql connection
 from tqdm import tqdm
-from datetime import datetime 
+from datetime import datetime
 
 from service_models import ServiceModels
 
@@ -39,6 +39,7 @@ def crawler_exec(comp_list):
     #cur.execute('UPDATE comp_info SET is_reged = "Y" ')
     comp_news_crawl_save(comp_list)
     recruit_info_crawl(comp_list)
+    comp_review_crawl_save(comp_list) #리뷰 크롤러 serving
 
 def comp_info_crawl_save(comp_list):
     for comp in tqdm(comp_list):
@@ -183,6 +184,9 @@ def recruit_info_crawl(comp_list):
             sc.conn_and_exec(sql)
             #cur.execute(sql)
 
+
+def comp_review_crawl_save(comp_list):
+    pass
 
 #테스트용으로 사용하세요
 if __name__ == '__main__':
