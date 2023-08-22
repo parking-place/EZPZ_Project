@@ -18,7 +18,7 @@ def comp(request):
     
     
     # 기업 정보 불러오기
-    info = CompInfo.objects.filter(comp_uid=comp_uid)[0]
+    info = CompInfo.objects.get(comp_uid=comp_uid)
     context = {
         'active': 'comp',
         'comp_uid': comp_uid,
@@ -41,10 +41,14 @@ def comp(request):
             data = {
                 'sum': news.news_sum,
                 'senti': news.news_senti,
+                'color': '#87ceeb' if news.news_senti == 1 else '#d3d3d3' if news.news_senti == 0 else '#ffc0cb',
             }
         context['news'].append(data)
         
-        # 그래프 관련 데이터 들어가야 함.
-        
+    # 뉴스 정보가 있다면 비율 정보 넣어주기
+    if newses is not None and len(newses) >= 1:
+        context['pos_ratio'] = len([el for el in context['news'] if el['senti'] == 1]) / len(newses) * 100
+        context['neg_ratio'] = len([el for el in context['news'] if el['senti'] == 2]) / len(newses) * 100
+        context['neu_ratio'] = len([el for el in context['news'] if el['senti'] == 0]) / len(newses) * 100
     
     return render(request, 'comp/comp.html', context)
