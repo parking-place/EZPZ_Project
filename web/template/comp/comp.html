@@ -7,6 +7,8 @@
 <script src="{% static 'js/comp/comp.js' %}"></script>
 <link href="{% static 'css/comp/comp.css' %}" rel="stylesheet">
 
+
+
 <!-- comp info body -->
 <div class="comp_cont">
     <div class="comp_logo">
@@ -37,7 +39,7 @@
 </table>
 
 <!-- news summarize list box -->
-<div style="text-align: center;">
+<div class="comp_news">
     {% for data in news %}
     <div class="news_cont">
         <div class="senti_box">
@@ -47,6 +49,7 @@
     </div>
     {% endfor %}
 </div>
+<div id="details_box"><a href="javascript:show_details()">더보기</a></div>
 
 <script>
 go_chart({{pos_ratio}}, {{neg_ratio}}, {{neu_ratio}});

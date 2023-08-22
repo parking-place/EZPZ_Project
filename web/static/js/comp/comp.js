@@ -32,6 +32,12 @@ function go_chart(pos, neg, neu){
     const pieChart = new Chart(el, config);
 }
 
+// 더보기 버튼 클릭시
+function show_details(){
+    $('.comp_news').css('height', 'auto');
+    $('#details_box').css('display', 'none');
+}
+
 function add_nbsp(el){
     const nbsp = document.createTextNode("\u00a0");
     if($(el).css('height') == '24px'){
