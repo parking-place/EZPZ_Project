@@ -5,6 +5,4 @@ WORKDIR /ezpz/app
 RUN pip3 install django &&\
 pip3 install djangorestframework &&\
 pip3 install django-cors-headers &&\
-pip3 install django-rest-knox &&\
-pip3 install pandas &&\
-pip3 install pymysql
+pip3 install django-rest-knox
