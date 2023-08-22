@@ -32,8 +32,8 @@ SECRET_KEY = "django-insecure-a3g$@gmnp_vvly7u3ff!eqw&w!cyh-9s6*cf031we%$px+k(y2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+# ALLOWED_HOSTS = []
+# ezpz_db.py에서 가져옴
 
 # Application definition
 
