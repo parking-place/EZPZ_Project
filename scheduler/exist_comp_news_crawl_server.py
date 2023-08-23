@@ -38,9 +38,10 @@ def crawl_and_save(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정�
     for comp in tqdm(comp_list):
         #print(comp + '뉴스 크롤링시작')
         daum_news = daum_news_crawler.get_news(comp) #다음뉴스 크롤러 실행 확인
-        naver_news = naver_news_crawler.get_news(comp) #네이버 뉴스크롤러 실행
-        print(naver_news)
-        all_news = pd.concat([daum_news, naver_news], ignore_index=True)  #뉴스 전체 합치기
+        #naver_news = naver_news_crawler.get_news(comp) #네이버 뉴스크롤러 실행
+        #print(naver_news)
+        #all_news = pd.concat([daum_news, naver_news], ignore_index=True)  #뉴스 전체 합치기
+        all_news= daum_news
         #print(all_news)
         for index, col in enumerate(all_news['news_cont']):
             if len(col)>5000:
@@ -98,9 +99,10 @@ def crawl_and_save(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정�
 
 def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이블로 만드는 함수
     #cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
-    sql= f'select comp_uid from comp_info where comp_name = "{comp}"'
-    uid=sc.conn_and_exec(sql)
-    comp_uid=uid[0][0]
+    replace_comp = comp.replace(' ','')
+    sql = f'select comp_uid from comp_info where replace(comp_name , " ", "") like "%{replace_comp}%" '
+    uid = sc.conn_and_exec(sql)
+    comp_uid= uid[0][0]
 
     create_date = datetime.today().strftime('%Y%m%d')
     modify_date = datetime.today().strftime('%Y%m%d')

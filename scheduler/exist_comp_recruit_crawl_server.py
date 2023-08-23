@@ -53,9 +53,10 @@ def recruit_info_update(comp_list):
             filtered_recruit_info_df = recruit_info_df[recruit_info_df['recruit_uid'].isin(sub_set)]
             #채용공고에 넣어줄 comp_id
             #cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
-            sql = f'select comp_uid from comp_info where comp_name = "{comp}"'
+            replace_comp = comp.replace(' ','')
+            sql = f'select comp_uid from comp_info where replace(comp_name , " ", "") like "%{replace_comp}%" '
             uid = sc.conn_and_exec(sql)
-            comp_uid=uid[0][0]
+            comp_uid= uid[0][0]
             #print(comp_uid)
 
             create_date = datetime.today().strftime('%Y%m%d')

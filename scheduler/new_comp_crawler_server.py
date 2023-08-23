@@ -72,10 +72,11 @@ def comp_news_crawl_save(comp_list):
 
         for comp in tqdm(comp_list):
             daum_news = daum_news_crawler.get_news(comp) #다음뉴스 크롤러 실행 확인
-            naver_news = naver_news_crawler.get_news(comp) #네이버 뉴스크롤러 실행
-            print(naver_news)
+            # naver_news = naver_news_crawler.get_news(comp) #네이버 뉴스크롤러 실행
+            # print(naver_news)
 
-            all_news = pd.concat([daum_news, naver_news], ignore_index=True)  #뉴스 전체 합치기
+            # all_news = pd.concat([daum_news, naver_news], ignore_index=True)  #뉴스 전체 합치기
+            all_news = daum_news
 
 
             for index, col in enumerate(all_news['news_cont']):
@@ -134,7 +135,8 @@ def comp_news_crawl_save(comp_list):
 
 def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이블로
     #cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
-    sql = f' select comp_uid from comp_info where comp_name = "{comp}" '
+    replace_comp = comp.replace(' ','')
+    sql = f'select comp_uid from comp_info where replace(comp_name , " ", "") like "%{replace_comp}%" '
     uid = sc.conn_and_exec(sql)
     comp_uid= uid[0][0]
 
@@ -166,7 +168,8 @@ def recruit_info_crawl(comp_list):
 
 
         #cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
-        sql = f'select comp_uid from comp_info where comp_name = "{comp}"'
+        replace_comp = comp.replace(' ','')
+        sql = f'select comp_uid from comp_info where replace(comp_name , " ", "") like "%{replace_comp}%" '
         uid = sc.conn_and_exec(sql)
         comp_uid= uid[0][0]
 
