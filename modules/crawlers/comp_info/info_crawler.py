@@ -39,6 +39,7 @@ def get_info(url):
     
 # 회사 이름 입력받아 url로 만들어주는 함수 
 def get_url(comp):
+
     url=f'https://www.jobplanet.co.kr/search?query={comp}' #여기에 회사 이름 추가해야됨
     return get_info(url)
 
