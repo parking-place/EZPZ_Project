@@ -29,7 +29,7 @@ SAVE_PATH = r'./data/'
 
 
 
-def RV_123Catch(comp = str): 
+def RV_Catch(comp = str): 
     
     search_url = 'https://www.catch.co.kr/Search/SearchList?Keyword={}'
     search_req = requests.get(search_url.format(comp)) # Keyword = comp_name
@@ -96,6 +96,17 @@ def RV_123Catch(comp = str):
 
 
 
+        # 긍/부정 리뷰들만 찢어서 합치기
+        
+        a = df.drop(['review_pos'], axis=1).rename(columns = {'review_neg':'review_cont'})
+        b = df.drop(['review_neg'], axis=1).rename(columns = {'review_pos':'review_cont'})
+
+        new_df = pd.concat([a, b])
+
+        # return new_df
+
+
+
 
         # csv 파일로 저장.
 
@@ -104,7 +115,7 @@ def RV_123Catch(comp = str):
         file_name = f"{comp_name}_catch.csv"
         save_file_path = os.path.join(SAVE_PATH, file_name)
 
-        df.to_csv(save_file_path, index=False, encoding = "utf-8")
+        new_df.to_csv(save_file_path, index=False, encoding = "utf-8")
         
         return pd.read_csv(save_file_path)
 
