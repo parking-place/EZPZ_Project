@@ -9,7 +9,6 @@ create table comp_info(
 	comp_uid bigint auto_increment,
 	comp_name varchar(20) not null,
 	comp_loc varchar(200) not null,
-	# 아래는 nullable
 	comp_thumb varchar(2000),
     comp_cont varchar(30),
 	comp_founded char(6),
