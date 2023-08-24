@@ -18,8 +18,10 @@ RUN pip3 install "apache-airflow==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT
 
 # RUN airflow db init
 
-# RUN airflow users create \
-#     --username ezpz \
-#     --firstname ezpz \
-#     --lastname ezpz \
-#     --role Admin \
+RUN airflow users create \
+    --username ezpz \
+    --firstname ezpz \
+    --lastname ezpz \
+    --role Admin \
+    --email  \
+    --password 
