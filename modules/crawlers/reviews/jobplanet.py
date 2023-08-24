@@ -28,7 +28,7 @@ JOBPLANET_URL = 'https://www.jobplanet.co.kr'
 JOBPLANET_LOGIN_URL = JOBPLANET_URL + '/users/sign_in'
 JOBPLANET_SEARCH_URL = JOBPLANET_URL + '/search?query={keyword}'
 JOBPLANET_REVIEW_URL = JOBPLANET_URL + '/companies/{jp_comp_uid}/reviews?page={p}'
-SAVE_PATH = '/app/data/reviews/{comp_name}_job_planet.csv'
+SAVE_PATH = '/app/data/reviews/'
 
 
 # 잡플래닛 로그인 세션 생성함수
@@ -282,7 +282,7 @@ def get_review(keyword, csv_save=True):
     if csv_save:
         # ========== [이하는 csv 저장 로직] ==========
         os.makedirs(SAVE_PATH, exist_ok=True) # 디렉토리 생성
-        df.to_csv(os.path.join(SAVE_PATH, f'{keyword}_daum.csv'), index=False)
+        df.to_csv(os.path.join(SAVE_PATH, f'{keyword}_job_planet.csv'), index=False)
     
         # logging
         ed_time = time.time()
