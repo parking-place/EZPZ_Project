@@ -1,10 +1,12 @@
 FROM parkingplace/ezpz_base:latest.arm
 
-RUN export AIRFLOW_HOME=~/airflow
+RUN export AIRFLOW_HOME=/airflow
 
-RUN AIRFLOW_VERSION=2.2.3
+RUN mkdir /airflow
 
-RUN PYTHON_VERSION="$(python --version | cut -d " " -f 2 | cut -d "." -f 1-2)"
+RUN export AIRFLOW_VERSION=2.2.3
+
+RUN export PYTHON_VERSION="$(python --version | cut -d " " -f 2 | cut -d "." -f 1-2)"
 
 RUN CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt"
 
