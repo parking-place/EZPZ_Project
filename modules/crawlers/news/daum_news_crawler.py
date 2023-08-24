@@ -63,18 +63,18 @@ def get_links_to_keyword(keyword):
 
 
 
-async def get_content_to_link(session, link):
+async def get_content_to_link(session, url):
     """
     url로 들어온 개별 뉴스를 크롤링 하는 co-routine 함수
     
     parameters ]
-        link    : str   - 뉴스 URL
+        url     : str   - 뉴스 URL
         
     returns ]
         context : str   - 뉴스 본문
     """
     # .article_view p
-    async with session.get(link) as res:
+    async with session.get(url) as res:
         if res.status == 200:
             
             # Beautiful Soup 객체 생성
@@ -98,14 +98,14 @@ async def get_content_to_link(session, link):
 
 
 
-async def get_content_list(links):
+async def get_content_list(urls):
     headers = {
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36'
     }
     async with aiohttp.ClientSession(
         headers=headers, connector=aiohttp.TCPConnector(ssl=False)
     ) as session :
-        result = await asyncio.gather(*[get_content_to_link(session, link) for link in links]) # wrapping도 내부 처리
+        result = await asyncio.gather(*[get_content_to_link(session, url) for url in urls]) # wrapping도 내부 처리
     
     return result
 
@@ -129,16 +129,16 @@ def get_news(keyword, csv_save=False):
         from datetime import date
         st_time = time.time()
         
-    links = get_links_to_keyword(keyword)
-    result = asyncio.run(get_content_list(links))
+    urls = get_links_to_keyword(keyword)
+    result = asyncio.run(get_content_list(urls))
     
     # 반환값
     df = pd.DataFrame({
-        'news_url': links,
+        'news_url': urls,
         'news_cont': [el[0] for el in result],
         'pub_date': [el[1] for el in result]
     })
-    print(df)
+    #print(df)
     
     df['news_cont'] = df['news_cont'].apply(lambda x: re.sub(r'\s+', ' ',re.sub(r'\n+', ' ', x)).strip())
     
@@ -153,5 +153,4 @@ def get_news(keyword, csv_save=False):
         
         print(f'[CSV SAVED] {TODATE} - {SAVE_PATH}/{keyword}_daum.csv at {(ed_time - st_time):.5f} sec')
         
-    else: # 저장 안하고 바로 반환
-        return df
+    return df
