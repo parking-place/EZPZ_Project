@@ -8,7 +8,9 @@ import sql_connection as sc
 
 if __name__ == '__main__':
     
-    sql = open('/app/EZPZ_Project/scheduler/sql_clear.sql').read()
-    sc.conn_and_exec(sql)
+    sql_ori = open('/app/EZPZ_Project/scheduler/sql_clear.sql').read().replace('\n', ' ')
+    sqls = sql_ori.split(';')
+    for sql in sqls:
+        sc.conn_and_exec(sql)
     print('SQL Clear Success!')
     sys.exit(0)
