@@ -25,11 +25,15 @@ default_args = {
     'owner': 'ezpz',
     'start_date': datetime(2023, 1, 1),
 }
-
+# ssh 서버 도커 컨테이너 내부에서 실행되는 명령어
 docker_base_command = r'docker exec --workdir /app/EZPZ_Project/scheduler ezpz_torch python3 '
+# 현재 서버 내 기본 배시 명령어
 bash_base_command = r'python3 /app/EZPZ_Project/scheduler/'
+# 테스트용 명령어
 test_cmd = r'python3 /app/test/test.py'
 ssh_test_cmd = r'docker exec --workdir /app/test ezpz_torch python3 test.py'
+# ssh 서버 도커 컨테이너 시작 명령어
+ssh_docker_start_cmd = r'docker start ezpz_torch'
 
 scripts = {
     'new_comp_crawler': 'new_comp_crawler_server.py',
@@ -63,6 +67,20 @@ with DAG(
     SSHOperator(
         task_id='ssh_test_task',
         command=ssh_test_cmd,
+        ssh_hook=ssh_hook_torch,
+    )
+
+# SSH DOCKER START DAG
+# 한번만 실행
+with DAG(
+    dag_id='ssh_docker_start',
+    default_args=default_args,
+    schedule_interval='@once',
+    catchup=False, ):
+    
+    SSHOperator(
+        task_id='ssh_docker_start',
+        command= ssh_docker_start_cmd,
         ssh_hook=ssh_hook_torch,
     )
 
