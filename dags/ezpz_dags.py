@@ -18,6 +18,7 @@ scripts = {
     'exist_comp_news_crawler': 'exist_comp_news_crawl_server.py',
     'exist_comp_recruit_crawler': 'exist_comp_recruit_crawl_server.py',
     'sql_clear': 'sql_clear.py',
+    'set_start_comp_list': 'set_start_comp_list.py',
 }
 
 test_cmd = r'docker exec --workdir /app/test ezpz_torch python3 test.py'
@@ -44,6 +45,18 @@ with DAG(
     BashOperator(
         task_id='docker_exec_sql_clear',
         bash_command=base_command + scripts['sql_clear'],
+    )
+    
+# SQL start set DAG
+# 한번만 실행
+with DAG(
+    dag_id='sql_start_set',
+    default_args=default_args,
+    schedule_interval='@once', ):
+    
+    BashOperator(
+        task_id='docker_exec_sql_start_set',
+        bash_command=base_command + scripts['set_start_comp_list'],
     )
 
 # 크롤러 태스크 DAG
