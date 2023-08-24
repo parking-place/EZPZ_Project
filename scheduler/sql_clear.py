@@ -110,4 +110,8 @@ create table sum_review(
 #describe sum_review;
 '''
 
-sc.conn_and_exec(sql)
+if __name__ == '__main__':
+    sc.conn_and_exec(sql)
+    print('SQL Clear Success!')
+    
+    sys.exit(0)
