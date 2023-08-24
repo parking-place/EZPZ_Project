@@ -17,3 +17,5 @@ RUN pip3 install pymysql
 RUN pip3 install pandas
 
 RUN mkdir -p /ezpz/app
+
+RUN ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
