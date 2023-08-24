@@ -57,11 +57,11 @@ with DAG(
     )
 
 # SSH TEST DAG
-# 매분 실행
+# 매 10분마다 실행
 with DAG(
     dag_id='ssh_test_dag',
     default_args=default_args,
-    schedule_interval='* * * * *',
+    schedule_interval='*/10 * * * *',
     catchup=False, ):
     
     SSHOperator(
