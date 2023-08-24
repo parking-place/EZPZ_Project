@@ -22,14 +22,14 @@ create table comp_info(
 	comp_loc varchar(200) not null,
 	# 아래는 nullable
 	comp_thumb varchar(2000),
-  	comp_cont varchar(30),
+    comp_cont varchar(30),
 	comp_founded char(6),
 	comp_size varchar(20), # 회사 규모 : 대기업, 중견기업 등
 	comp_url varchar(2000),
 	is_reged char(1) default 'N' not null
-		 check (is_reged in ('Y', 'N')),
+        check (is_reged in ('Y', 'N')),
 	
- 	create_date char(8) not null, # DB 입력 날짜
+    create_date char(8) not null, # DB 입력 날짜
 	modify_date char(8) not null, # 최종 수정 날짜
 	
 	primary key comp_info(comp_uid),
@@ -113,5 +113,4 @@ create table sum_review(
 if __name__ == '__main__':
     sc.conn_and_exec(sql)
     print('SQL Clear Success!')
-    
     sys.exit(0)
