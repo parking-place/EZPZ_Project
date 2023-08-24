@@ -1,7 +1,7 @@
 import re
 import requests
 import pandas as pd
-from bs4 import BeautifulSoup 
+from bs4 import BeautifulSoup
 
 
 user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
@@ -9,7 +9,7 @@ HEADERS = {'User-Agent' : user_agent}
 
 
 '''
-get_url 함수에 '기업명' 인자로 주면 기업정보 크롤링해줌 
+get_url 함수에 '기업명' 인자로 주면 기업정보 크롤링해줌
 '''
 
 # 회사 정보 가져오는 함수 (잡플래닛)
