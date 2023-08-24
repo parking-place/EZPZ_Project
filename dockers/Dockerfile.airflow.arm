@@ -21,5 +21,3 @@ RUN pip3 install "apache-airflow==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT
 #     --firstname ezpz \
 #     --lastname ezpz \
 #     --role Admin \
-#     --email ezpz.py@gmail.com \
-#     --password ezpzlmsz
