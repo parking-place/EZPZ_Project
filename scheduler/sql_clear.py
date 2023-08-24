@@ -6,8 +6,7 @@ sys.path.append('/app/EZPZ_Project/scheduler') #db 연동정보 경로
 from privates.ezpz_db import *
 import sql_connection as sc
 
-sql = r'''
-# 테이블 일괄 삭제
+sql = r'''# 테이블 일괄 삭제
 use testdb;
 drop table if exists comp_news;
 drop table if exists recruit_info;
