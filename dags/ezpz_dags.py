@@ -8,7 +8,7 @@ from airflow.operators.bash import BashOperator
 # 디폴트 인자를 dictionary 형태로 정의
 default_args = {
     'owner': 'ezpz',
-    'start_date': datetime(2023, 8, 23),
+    'start_date': datetime(2023, 1, 1),
 }
 
 base_command = r'docker exec --workdir /app/EZPZ_Project/scheduler ezpz_torch python3 '
@@ -24,11 +24,12 @@ scripts = {
 test_cmd = r'docker exec --workdir /app/test ezpz_torch python3 test.py'
 
 # Test DAG
-# 한번만 실행
+# 매일 00:00:00에 실행
 with DAG(
     dag_id='test_dag',
     default_args=default_args,
-    schedule_interval='@once', ): 
+    schedule_interval='0 0 * * *',
+    catchup=False, ): 
     
     BashOperator(
         task_id='docker_exec_test',
@@ -40,7 +41,8 @@ with DAG(
 with DAG(
     dag_id='sql_clear',
     default_args=default_args,
-    schedule_interval='@once', ):
+    schedule_interval='@once', 
+    catchup=False, ):
     
     BashOperator(
         task_id='docker_exec_sql_clear',
@@ -52,7 +54,8 @@ with DAG(
 with DAG(
     dag_id='sql_start_set',
     default_args=default_args,
-    schedule_interval='@once', ):
+    schedule_interval='@once', 
+    catchup=False, ):
     
     db_clear = BashOperator(
         task_id='docker_exec_sql_clear',
@@ -72,7 +75,8 @@ with DAG(
 with DAG(
     dag_id='crawler_task',
     default_args=default_args,
-    schedule_interval='0 0 * * *', ): 
+    schedule_interval='0 0 * * *', 
+    catchup=False, ): 
     # 기존 회사 뉴스 크롤러
     exist_comp_news_crawler = BashOperator(
         task_id='docker_exec_exist_comp_news_crawler',
@@ -98,7 +102,8 @@ with DAG(
 with DAG(
     dag_id='new_comp_crawler_test',
     default_args=default_args,
-    schedule_interval='@once', ): 
+    schedule_interval='@once', 
+    catchup=False, ): 
     
     BashOperator(
         task_id='docker_exec_new_comp_crawler_test',
@@ -110,7 +115,8 @@ with DAG(
 with DAG(
     dag_id='exist_comp_news_crawler_test',
     default_args=default_args,
-    schedule_interval='@once', ):
+    schedule_interval='@once', 
+    catchup=False, ):
     
     BashOperator(
         task_id='docker_exec_exist_comp_news_crawler_test',
@@ -122,7 +128,8 @@ with DAG(
 with DAG(
     dag_id='exist_comp_recruit_crawler_test',
     default_args=default_args,
-    schedule_interval='@once', ):
+    schedule_interval='@once', 
+    catchup=False, ):
     
     BashOperator(
         task_id='docker_exec_exist_comp_recruit_crawler_test',
