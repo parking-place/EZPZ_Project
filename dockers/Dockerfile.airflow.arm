@@ -10,6 +10,10 @@ RUN CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints
 
 RUN pip3 install "apache-airflow==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT_URL}"
 
+# WORKDIR ~/airflow
+
+# COPY ./airflow.cfg .
+
 # RUN airflow db init
 
 # RUN airflow users create \
