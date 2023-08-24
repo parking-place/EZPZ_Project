@@ -54,10 +54,17 @@ with DAG(
     default_args=default_args,
     schedule_interval='@once', ):
     
-    BashOperator(
+    db_clear = BashOperator(
+        task_id='docker_exec_sql_clear',
+        bash_command=base_command + scripts['sql_clear'],
+    )
+    
+    db_start_set = BashOperator(
         task_id='docker_exec_sql_start_set',
         bash_command=base_command + scripts['set_start_comp_list'],
     )
+    
+    db_clear >> db_start_set
 
 # 크롤러 태스크 DAG
 # 매일 00:00:00에 실행
