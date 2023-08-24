@@ -32,11 +32,11 @@ data_check= ServiceModels() #모델 서빙 모듈 객체
 
 #여기서 함수를 실행해서 각종 정보들 실행
 def crawler_exec(comp_list):
-    comp_info_crawl_save(comp_list)
-    #값들을 전부 넣어줬으니 update y로
-    sql= ' UPDATE comp_info SET is_reged = "Y" '
-    sc.conn_and_exec(sql)
-    #cur.execute('UPDATE comp_info SET is_reged = "Y" ')
+    # comp_info_crawl_save(comp_list)
+    # #값들을 전부 넣어줬으니 update y로
+    # sql= ' UPDATE comp_info SET is_reged = "Y" '
+    # sc.conn_and_exec(sql)
+    # cur.execute('UPDATE comp_info SET is_reged = "Y" ')
     comp_news_crawl_save(comp_list)
     recruit_info_crawl(comp_list)
 
@@ -51,6 +51,7 @@ def comp_info_crawl_save(comp_list):
         create_date = datetime.today().strftime('%Y%m%d')
         modify_date = datetime.today().strftime('%Y%m%d')
 
+        col_value[1] = col_value[1].strip() #좌우 공백제거
         col_value[5]=col_value[5][0:7]
         col_value[5] = col_value[5].replace(".", "")
         col_value[5] # 6글자 문자열로 변환 테이블에 형식대로
@@ -135,8 +136,11 @@ def comp_news_crawl_save(comp_list):
 
 def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이블로
     #cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
+    print(comp)
     replace_comp = comp.replace(' ','')
+    print(replace_comp)
     sql = f'select comp_uid from comp_info where replace(comp_name , " ", "") like "%{replace_comp}%" '
+    print(sql)
     uid = sc.conn_and_exec(sql)
     comp_uid= uid[0][0]
 
@@ -189,8 +193,10 @@ def recruit_info_crawl(comp_list):
 
 #테스트용으로 사용하세요
 if __name__ == '__main__':
+    df = pd.read_csv('/app/data/datas/comp_lsit/top100_comp.csv', encoding='utf-8')
+    comp_list = df['Company'].tolist()
 
-
-    comp_list=['삼성전자(주)','(주)카카오','네이버(주)']
-    crawler_exec(comp_list)
+    # comp_list=['삼성전자(주)','(주)카카오','네이버(주)']
+    print(comp_list[63:65])
+    crawler_exec(comp_list[63:65])
     #print('comp_list 실행 완료')
