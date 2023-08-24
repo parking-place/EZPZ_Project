@@ -6,11 +6,15 @@ sys.path.append('/app/EZPZ_Project/scheduler') #db 연동정보 경로
 from privates.ezpz_db import *
 import sql_connection as sc
 
+from pprint import pprint
+
 if __name__ == '__main__':
     
-    sql_ori = open('/app/EZPZ_Project/scheduler/sql_clear.sql').read().replace('\n', ' ')
+    sql_ori = open('/app/EZPZ_Project/scheduler/clear.sql').read().replace('\n', ' ')
     sqls = sql_ori.split(';')
-    for sql in sqls:
+
+    # pprint(sqls)
+    for sql in sqls[:-1]:
         sc.conn_and_exec(sql)
     print('SQL Clear Success!')
     sys.exit(0)
