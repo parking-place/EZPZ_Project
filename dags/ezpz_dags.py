@@ -22,11 +22,11 @@ scripts = {
 test_cmd = r'docker exec --workdir /app/test ezpz_torch python3 test.py'
 
 # Test DAG
-# 매일 00:00:00에 실행
+# 한번만 실행
 with DAG(
     dag_id='test_dag',
     default_args=default_args,
-    schedule_interval='0 0 * * *', ): 
+    schedule_interval='@once', ): 
     
     BashOperator(
         task_id='docker_exec_test',
