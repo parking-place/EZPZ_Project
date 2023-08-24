@@ -44,11 +44,11 @@ scripts = {
 }
 
 # TEST DAG
-# 매일 00:00:00에 실행
+# 한번만 실행
 with DAG(
     dag_id='test_dag',
     default_args=default_args,
-    schedule_interval='0 0 * * *',
+    schedule_interval='@once',
     catchup=False, ):
     
     BashOperator(
@@ -57,11 +57,11 @@ with DAG(
     )
 
 # SSH TEST DAG
-# 매일 00:00:00에 실행
+# 매분 실행
 with DAG(
     dag_id='ssh_test_dag',
     default_args=default_args,
-    schedule_interval='0 0 * * *',
+    schedule_interval='* * * * *',
     catchup=False, ):
     
     SSHOperator(
@@ -161,7 +161,7 @@ with DAG(
     )
 
 # 기존 회사 뉴스 크롤러 DAG
-# 매일 00:00:00에 실행
+# 한번만 실행
 with DAG(
     dag_id='exist_comp_news_crawler_test',
     default_args=default_args,
@@ -175,7 +175,7 @@ with DAG(
     )
     
 # 기존 회사 채용 크롤러 DAG
-# 매일 00:00:00에 실행
+# 한번만 실행
 with DAG(
     dag_id='exist_comp_recruit_crawler_test',
     default_args=default_args,
