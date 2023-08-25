@@ -29,7 +29,7 @@ SAVE_PATH = r'./data/'
 
 
 
-def RV_Catch(comp = str): 
+def get_review(comp = str): 
     
     search_url = 'https://www.catch.co.kr/Search/SearchList?Keyword={}'
     search_req = requests.get(search_url.format(comp)) # Keyword = comp_name
@@ -68,20 +68,18 @@ def RV_Catch(comp = str):
         df = pd.DataFrame(data)
 
 
-        df.drop(['idx', 'CompID', 'CompName', 'CI', 'Gender2', 'Answer', 'UsefulY', 'CareerYearYN',  'MyUsefulY', 'MyOpinion', 
-                'Keyword1', 'Keyword2', 'Keyword3', 'Keyword1YN', 'Keyword2YN', 'Keyword3YN', 
-                'EmployType', 'NewOld', 'CareerYear', 'Area'], 
+        df.drop(['idx', 'CompID', 'CI', 'Gender2', 'EmployType', 'NewOld', 'Answer', 'UsefulY', 
+                'RecomName', 'CareerYearYN', 'MyUsefulY', 'MyOpinion', 'Area', 'CareerYear', 
+                'Keyword1', 'Keyword2', 'Keyword3', 'Keyword1YN', 'Keyword2YN', 'Keyword3YN'], 
                 axis=1, inplace=True)
         
 
         df['Good'] = df['Good'].apply(lambda x: re.sub(r'\s+', ' ', re.sub(r'\n+', ' ', x)).strip())
         df['Bad'] = df['Bad'].apply(lambda x: re.sub(r'\s+', ' ', re.sub(r'\n+', ' ', x)).strip())
 
-        df['RegDate'] = df['RegDate'].apply(lambda x: re.sub(r'[^0-9]', '', x)[:8].strip())
+        df['RegDate'] = df['RegDate'].apply(lambda x: re.sub(r'[^0-9]', '', x)[:6].strip())
 
         df['EmployText'] = df['EmployText'].apply(lambda x: x.replace('현직', '1').strip() == '1')
-
-        df['RecomName'] = df['RecomName'].replace(['추천', '비추'], [1, 0])
 
 
         df.rename(columns=
@@ -91,8 +89,11 @@ def RV_Catch(comp = str):
            'Bad':'review_neg', 
            'MyStarScore':'review_rate', 
            'JobName':'position',
-           'RecomName':'review_senti'       # 임의로 쓰는 값 (나중에 모델 돌려서 나온 결과 값으로 대체 할 것.)
            }, inplace=True)
+        
+
+        df['review_rate'] = df['review_rate'].round(0).astype(int)
+
 
 
 
