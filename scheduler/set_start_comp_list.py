@@ -11,7 +11,7 @@ import pandas as pd
 
 from datetime import datetime
 
-top_comp_list_path = '/app/data/datas/comp_list/top100_comp.csv'
+top_comp_list_path = '/app/data/datas/comp_list/top1000_comp.csv'
 
 if __name__ == '__main__':
     

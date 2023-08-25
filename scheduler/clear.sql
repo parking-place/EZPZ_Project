@@ -7,7 +7,7 @@ drop table if exists comp_info;
 
 create table comp_info(
 	comp_uid bigint auto_increment,
-	comp_name varchar(20) not null,
+	comp_name varchar(40) not null,
 	comp_loc varchar(200),
 	comp_thumb varchar(2000),
     comp_cont varchar(30),
