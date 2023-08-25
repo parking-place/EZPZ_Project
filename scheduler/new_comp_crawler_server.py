@@ -209,6 +209,13 @@ def recruit_info_crawl(comp_list):
         modify_date = datetime.today().strftime('%Y%m%d')
         #print(comp_uid)
         for index, row in recruit_info_df.iterrows():
+            # uid 중복 확인 (중복시 insert 안함)
+            uid = row['recruit_uid']
+            sql = f'select count(*) from recruit_info where recruit_uid = "{uid}"'
+            result = sc.conn_and_exec(sql)
+            if result[0][0] > 0:
+                continue
+            
             sql = 'insert into recruit_info '
             sql += '    (comp_uid, recruit_uid, recruit_url, recruit_position, recruit_thumb, recruit_desc, create_date, modify_date) '
             sql += 'values ( '
