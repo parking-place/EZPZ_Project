@@ -13,44 +13,37 @@ get_url 함수에 '기업명' 인자로 주면 기업정보 크롤링해줌
 '''
 
 # 회사 정보 가져오는 함수 (잡플래닛)
-def get_comp_info(urls):
+def get_comp_info(urls, comp):
     
     for url in urls:
+        print(url)
         r = requests.get(url, headers=HEADERS) #requests로 url 접근 요청
         soup = BeautifulSoup(r.content, 'lxml') #r변수에 저장된 content를 파싱해서 soup객체에  content 저장
         #req에 저장한 html을 파싱해서 soup 이라는 변수에 저장
-        tag_text=soup.find('div', class_="is_company_card").find_all('a') #is_company_card 클래스인 div 태그에서 a 붙은 태그(a href 찾음)
-        # url에서 회사이름 가져오기 : `=` 기호 이후의 문자열 추출
-        match = re.search('=(.*)', url)
-
-        if match:
-            comp_name = match.group(1)
+        tags = soup.find_all('dt', class_="us_titb_l3") #is_company_card 클래스인 div 태그에서 a 붙은 태그(a href 찾음)
         
-        try: #예외처리로 tag_text 더 뽑을거 없으면 에러 메세지
-            i = 0
-            while True:
-                #print(tag_text[i]) #주 떼야됨
-                if comp_name in str(tag_text[i]): #회사 이름이 tag_text안에 들어있으면
-                    #tag_text[i] = tag_text[i].replace('(주)',"") #주 부분을 떼고 tag 체크해야됨
-                    tag_text=str(tag_text[i]) # 찾은 올바른 회사 태그 str로 변환 후에 그걸 다시 tag_text로 저장
-                    comp_uid = tag_text.split('/')[2] # '/'로 분할 후 3번째 문자열(찾은 태그에서 뽑고자 하는 기업 번호)
-                    new_url= f'https://www.jobplanet.co.kr/companies/{comp_uid}/landing'# 찾고자 하는 기업번호가 추가된 최종 url
-                    return get_comp_info_crawl(new_url,comp_uid)
-                i+=1
-        except:
-            print('there is no comp founded in this page')
+        if len(tags) == 0:
+            break
+        
+        for tag in tags:
+            name = tag.select('a')[0].text
+            if name == comp:
+                comp_uid = tag.select('a')[0]['href'].split('/')[2]
+                new_url = f'https://www.jobplanet.co.kr/companies/{comp_uid}/landing'
+                return get_comp_info_crawl(new_url,comp_uid)
+            
     print('there is no comp founded in all pages')
     return False, None
 
 #회사 정보 요청 함수
-def get_info(urls):
-    return get_comp_info(urls)
+def get_info(urls, comp):
+    return get_comp_info(urls, comp)
 
 # 회사 이름 입력받아 url로 만들어주는 함수 
 def get_url(comp):
     url=r'https://www.jobplanet.co.kr/search/companies/{comp}?page={page}' #여기에 회사 이름 추가해야됨
     urls = [ url.format(comp=comp, page=page) for page in range(1, 99) ] # 1페이지부터 2페이지까지 url 생성
-    return get_info(urls)
+    return get_info(urls, comp)
 
 
 '''
@@ -129,7 +122,7 @@ def get_comp_info_df(comp_info_dict):
     return df
 
 if __name__ == '__main__':
-    print(get_url('지쿱'))
+    print(get_url('씨제이(주)'))
 
 
 
