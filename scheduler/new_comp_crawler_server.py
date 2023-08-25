@@ -33,14 +33,14 @@ data_check= ServiceModels() #모델 서빙 모듈 객체
 
 #여기서 함수를 실행해서 각종 정보들 실행
 def crawler_exec(comp_list):
-    #comp_info_crawl_save(comp_list)
+    comp_info_crawl_save(comp_list)
     # #값들을 전부 넣어줬으니 update y로
     #sql= ' UPDATE comp_info SET is_reged = "Y" '
     #sc.conn_and_exec(sql)
     # cur.execute('UPDATE comp_info SET is_reged = "Y" ')
-    #comp_news_crawl_save(comp_list)
+    comp_news_crawl_save(comp_list)
     recruit_info_crawl(comp_list)
-    #comp_review_crawl_save(comp_list) #리뷰 크롤러 serving
+    comp_review_crawl_save(comp_list) #리뷰 크롤러 serving
 
 
 def get_comp_list():
