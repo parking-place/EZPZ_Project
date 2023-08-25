@@ -33,14 +33,14 @@ data_check= ServiceModels() #모델 서빙 모듈 객체
 
 #여기서 함수를 실행해서 각종 정보들 실행
 def crawler_exec(comp_list):
-    comp_info_crawl_save(comp_list)
+    #comp_info_crawl_save(comp_list)
     # #값들을 전부 넣어줬으니 update y로
     #sql= ' UPDATE comp_info SET is_reged = "Y" '
     #sc.conn_and_exec(sql)
     # cur.execute('UPDATE comp_info SET is_reged = "Y" ')
-    comp_news_crawl_save(comp_list)
+    #comp_news_crawl_save(comp_list)
     recruit_info_crawl(comp_list)
-    comp_review_crawl_save(comp_list) #리뷰 크롤러 serving
+    #comp_review_crawl_save(comp_list) #리뷰 크롤러 serving
 
 
 def get_comp_list():
@@ -178,6 +178,7 @@ def recruit_info_crawl(comp_list):
 
     for comp in tqdm(comp_list):
         #채용공고는 주 붙어있으면 안됨 제거 전처리
+
         recruit_comp = comp.replace('(주)',"")
         #print(recruit_comp)
         recruit_info_df=wanted_recruit_crawler.get_recruit_info(recruit_comp, csv_save=False) # 원티드 기업정보 크롤러 모듈
@@ -186,6 +187,17 @@ def recruit_info_crawl(comp_list):
             new_i.append(list(recruit_info_df['recruit_uid'][i])[0])
         recruit_info_df['recruit_uid']=new_i #int 값으로 컬럼 대체
 
+        desc_list= []
+        position_list = []
+        for desc in recruit_info_df['recruit_desc']:
+            desc = desc.replace('"', '').replace("'", '')
+            desc_list.append(desc)
+        recruit_info_df['recruit_desc'] = desc_list
+
+        for position in recruit_info_df['recruit_position']:
+            position = position.replace('"', '').replace("'", '')
+            position_list.append(position)
+        recruit_info_df['recruit_position'] = position_list
 
         #cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
         replace_comp = comp.replace(' ','')
