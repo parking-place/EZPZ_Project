@@ -19,6 +19,8 @@ ssh_hook_torch = SSHHook(
     username=ezpz_db.TORCH_SERVER_USER,
     port=ezpz_db.TORCH_SERVER_PORT,
     key_file='/app/airflow/.ssh/id_rsa',
+    cmd_timeout=None,
+    keepalive_interval=20,
 )
 
 default_args = {
