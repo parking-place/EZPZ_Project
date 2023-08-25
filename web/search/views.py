@@ -15,8 +15,17 @@ def main_page(request):
         # 파라미터가 있는 경우
         if comp_name:
             try:
-                # comp_uid로 변환시키기
-                comp_uid = CompInfo.objects.get(comp_name__contains=comp_name).comp_uid
+                # DB 검색
+                search_result = CompInfo.objects.filter(comp_name__contains=comp_name)
+                
+                # 여러기업이 검색된 경우
+                if len(search_result) > 1:
+                    context['search_result'] = [el.comp_name for el in search_result]
+                    
+                # 검색결과 : 없거나 하나만 있는경우
+                else:
+                    # comp_uid로 변환시키기
+                    comp_uid = search_result[0].comp_uid
                 
                 # 기업정보 페이지로 이동
                 return redirect(f'comp/?comp_uid={comp_uid}')
@@ -25,7 +34,6 @@ def main_page(request):
                 # 다시 검색 화면으로, 메세지 출력
                 print(e)
                 context['msg'] = f'{comp_name}는(은) 아직 등록되지 않은 기업명입니다.'
-                
-                
+        
         # 일반 접근 : 파라미터가 없는 경우
         return render(request, 'main.html', context)

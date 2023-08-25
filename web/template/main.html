@@ -24,7 +24,8 @@
 <link href="{% static 'vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
 <link href="{% static 'vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
 <link href="{% static 'vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
-<link href="{% static 'css/main/main.css' %}" rel="stylesheet">
+<link href="{% static 'css/base.css' %}" rel="stylesheet">
+<link href="{% static 'css/search/search.css' %}" rel="stylesheet">
 
 <!-- JS -->
 <script src="{% static 'js/jquery-3.7.0.min.js' %}"></script>
@@ -56,6 +57,14 @@
             <form id="search-form" class="search-mode" name="search_form" action="javascript:search_method()" method="get">
                 <input type="text" name="q" placeholder="기업명을 입력해주세요.">
                 <button type="submit">검색</button>
+                {% if search_result is not None %}
+                <div id="search_result_container">
+                    <div id="search_result_header">검색 가능한 기업이 {{search_result|length}}개가 있습니다.</div>
+                    {% for result in search_result %}
+                    <p style="padding-left: 30px;">{{result}}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
             </form>
 
             <ul class="search-suggestion">
