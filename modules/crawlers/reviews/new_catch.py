@@ -55,7 +55,7 @@ def get_review(comp = str):
 
         while True : 
 
-            url = f'https://www.catch.co.kr/api/v1.0/comp/reviewInfo/{comp_id}/commentList?currentPage={p_num}&pageSize=5000&isNew=false&employType=1&isEmploy=false&jobCode='
+            url = f'https://www.catch.co.kr/api/v1.0/comp/reviewInfo/{comp_id}/commentList?currentPage={p_num}&pageSize=5000&isNew=false&employType=0&isEmploy=false&jobCode='
             rv.append(requests.get(url).json()['reviewList'])
 
             p_num += 1
