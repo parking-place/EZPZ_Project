@@ -10,247 +10,243 @@
 # General
 --------------------------------------------------------------*/
 body {
-  font-family: "Noto Sans KR", sans-serif;
-  color: #282828;
+    font-family: "Noto Sans KR", sans-serif;
+    color: #282828;
 }
 
 a {
-  color: #FF9984;
-  text-decoration: none;
+    color: #FF9984;
+    text-decoration: none;
 }
 
 a:hover {
-  color: #FFC5B9;
-  text-decoration: none;
+    color: #FFC5B9;
+    text-decoration: none;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: "Noto Sans KR", sans-serif;
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Noto Sans KR", sans-serif;
 }
 
 #main {
-  margin-top: 50px;
-  height: 100%;
+    margin-top: 50px;
+    height: 100%;
 }
 
 @media (max-width: 992px) {
-  #main {
-    margin-top: 30px;
-  }
+    #main {
+        margin-top: 30px;
+    }
 }
 
 /*--------------------------------------------------------------
 # Preloader
 --------------------------------------------------------------*/
 #preloader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 9999;
-  overflow: hidden;
-  background: #fdfdfd;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    overflow: hidden;
+    background: #fdfdfd;
 }
 
 #preloader:before {
-  content: "";
-  position: fixed;
-  top: calc(50% - 30px);
-  left: calc(50% - 30px);
-  border: 6px solid #FF9984;
-  border-top-color: #fdfdfd;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  animation: animate-preloader 1s linear infinite;
+    content: "";
+    position: fixed;
+    top: calc(50% - 30px);
+    left: calc(50% - 30px);
+    border: 6px solid #FF9984;
+    border-top-color: #fdfdfd;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: animate-preloader 1s linear infinite;
 }
 
 @keyframes animate-preloader {
-  0% {
-    transform: rotate(0deg);
-  }
+    0% {
+        transform: rotate(0deg);
+    }
 
-  100% {
-    transform: rotate(360deg);
-  }
+    100% {
+        transform: rotate(360deg);
+    }
 }
+
 
 /*--------------------------------------------------------------
 # Header(Navibar)
 --------------------------------------------------------------*/
 #header {
-  background: #fdfdfd;
-  box-shadow: 0px 0px 25px 0 rgba(0, 0, 0, 0.08);
-  z-index: 997;
-  padding: 12px 0; 
+    background: #fdfdfd;
+    box-shadow: 0px 0px 25px 0 rgba(0, 0, 0, 0.08);
+    z-index: 997;
+    padding: 12px 0; 
 }
 
 #header .logo {
-  font-size: 32px;
-  color: #282828;
-  margin: 0;
-  padding: 0;
-  line-height: 1;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+    font-size: 32px;
+    color: #282828;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
 
 #header .logo img {
-  max-height: 32px;
+    max-height: 32px;
 }
 
 #header .header-middle {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 
 #header .search-mode input {
-  border: 1px solid #282828;
-  border-radius: 50px;
-  width: 100%;
-  min-width: 240px;
-  padding: 10px 10px 10px 14px;
-  font-size: 14px;
+    border: 1px solid #282828;
+    border-radius: 50px;
+    width: 100%;
+    min-width: 240px;
+    padding: 10px 10px 10px 14px;
+    font-size: 14px;
 }
 
 #header button {
-  justify-content: space-between;
-  position: absolute;
-  top: 5.5px;
-  right: 10px;
+    justify-content: space-between;
+    position: absolute;
+    top: 5.5px;
+    right: 10px;
 
-  border: none;
-  background-color: #efefef;
-  border-radius: 20px;
-  padding: 7px;
-  font-size: 12px;
+    border: none;
+    background-color: #efefef;
+    border-radius: 20px;
+    padding: 7px;
+    font-size: 12px;
 
-  transition: all .2s;
+    transition: all .2s;
 
-  &:hover {
-    background-color: #FF9984;
-    color: #fdfdfd;
-    cursor: pointer;
-  }
+    &:hover {
+        background-color: #FF9984;
+        color: #fdfdfd;
+        cursor: pointer;
+    }
 }
 
 @media (max-width: 992px) {
-  #header .logo {
-    font-size: 28px;
-  }
+    #header .logo {
+        font-size: 28px;
+    }
 }
 
 /*--------------------------------------------------------------
 # Hero Section
 --------------------------------------------------------------*/
 #hero {
-  width: 100%;
-  height: 100vh;
-  background-color: #fdfdfd;
+    width: 100%;
+    height: 100vh;
+    background-color: #fdfdfd;
 }
 
 #hero .container {
-  padding-top: 70px;
-  position: relative;
+    padding-top: 70px;
+    position: relative;
 }
 
 @media (max-width: 992px) {
-  #hero .container {
-    padding-top: 58px;
-  }
+    #hero .container {
+        padding-top: 58px;
+    }
 }
 
 #hero h1 {
-  margin: 0;
-  font-size: 48px;
-  font-weight: 700;
-  line-height: 56px;
-  color: #FF9984;
-  margin-bottom: 30px;
+    margin: 0;
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 56px;
+    color: #FF9984;
+    margin-bottom: 30px;
 }
 
 @media (min-width: 1024px) {
-  #hero {
-    background-attachment: fixed;
-  }
+    #hero {
+        background-attachment: fixed;
+    }
 }
 
 @media (max-width: 992px) {
-  #hero:before {
-    content: "";
-    background: #fdfdfd;
-    position: absolute;
-    bottom: 0;
-    top: 0;
-    left: 0;
-    right: 0;
-  }
+    #hero:before {
+        content: "";
+        background: #fdfdfd;
+        position: absolute;
+        bottom: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+    }
 
-  #hero h1 {
-    font-size: 32px;
-    line-height: 36px;
-  }
+    #hero h1 {
+        font-size: 32px;
+        line-height: 36px;
+    }
 
-  #hero h2 {
-    font-size: 24px;
-    line-height: 24px;
-  }
+    #hero h2 {
+        font-size: 24px;
+        line-height: 24px;
+    }
 
-  #hero .search-mode {
-    font-size: 14px;
-  }
+    #hero .search-mode {
+        font-size: 14px;
+    }
 
-  #hero .search-suggestion {
-    font-size: 14px;
-  }
+    #hero .search-suggestion {
+        font-size: 14px;
+    }
 }
 
 /*--------------------------------------------------------------
 # Menu Bar
 --------------------------------------------------------------*/
 .sub-menu {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 96px;
+    display: flex;
+    justify-content: space-around;
+    margin-top: 96px;
 }
 
 .sub-menu a {
-  font-weight: 700;
-  text-decoration: none;
-  color: #fdfdfd;
-  padding: 16px 20px;
-  background-color: #efefef;
-  border-radius: 20px 20px 0px 0px;
-  transition: background-color 0.3s;
-  flex-grow: 1;
-  text-align: center;
+    font-weight: 700;
+    text-decoration: none;
+    color: #fdfdfd;
+    padding: 16px 20px;
+    background-color: #efefef;
+    border-radius: 20px 20px 0px 0px;
+    transition: background-color 0.3s;
+    flex-grow: 1;
+    text-align: center;
 }
 
 /* 클릭하고있지 않을 때 */
 .sub-menu a:not(.active):hover {
-  background-color: #FF9984;
+    background-color: #FF9984;
 }
 
 /* 현재 페이지일 경우 */
 .sub-menu a.active {
-  background-color: #FF9984;
-  cursor: default; /* 마우스 포인터를 기본값으로 변경 */
-  pointer-events: none; /* 클릭 비활성화 */
+    background-color: #FF9984;
+    cursor: default; /* 마우스 포인터를 기본값으로 변경 */
+    pointer-events: none; /* 클릭 비활성화 */
 }
 
 @media (max-width: 992px) {
-  #main .sub-menu a {
-    font-size: 14px ;
-  }
+    #main .sub-menu a {
+        font-size: 14px ;
+    }
 }
 
 
@@ -258,91 +254,91 @@ h6 {
 # Sections General
 --------------------------------------------------------------*/
 section {
-  padding: 60px 0;
+    padding: 60px 0;
 }
 
 .section-bg {
-  background-color: #fdfdfd;
+    background-color: #fdfdfd;
 }
 
 .section-title {
-  text-align: center;
-  padding-bottom: 30px;
+    text-align: center;
+    padding-bottom: 30px;
 }
 
 .section-title h2 {
-  font-size: 32px;
-  font-weight: bold;
-  text-transform: uppercase;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  position: relative;
+    font-size: 32px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    position: relative;
 }
 
 .section-title h2::after {
-  content: "";
-  position: absolute;
-  display: block;
-  width: 50px;
-  height: 3px;
-  background: #FF9984;
-  bottom: 0;
-  left: calc(50% - 25px);
+    content: "";
+    position: absolute;
+    display: block;
+    width: 50px;
+    height: 3px;
+    background: #FF9984;
+    bottom: 0;
+    left: calc(50% - 25px);
 }
 
 .section-title p {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 /*--------------------------------------------------------------
 # Back to top button
 --------------------------------------------------------------*/
 .back-to-top {
-  position: fixed;
-  visibility: hidden;
-  opacity: 0;
-  right: 15px;
-  bottom: 15px;
-  z-index: 996;
-  background: #FF9984;
-  width: 40px;
-  height: 40px;
-  border-radius: 50px;
-  transition: all 0.4s;
+    position: fixed;
+    visibility: hidden;
+    opacity: 0;
+    right: 15px;
+    bottom: 15px;
+    z-index: 996;
+    background: #FF9984;
+    width: 40px;
+    height: 40px;
+    border-radius: 50px;
+    transition: all 0.4s;
 }
 
 .back-to-top i {
-  font-size: 24px;
-  color: #fdfdfd;
-  line-height: 0;
+    font-size: 24px;
+    color: #fdfdfd;
+    line-height: 0;
 }
 
 .back-to-top:hover {
-  background: #FFC5B9;
-  color: #fdfdfd;
+    background: #FFC5B9;
+    color: #fdfdfd;
 }
 
 .back-to-top.active {
-  visibility: visible;
-  opacity: 1;
+    visibility: visible;
+    opacity: 1;
 }
 
 /*--------------------------------------------------------------
 # Footer
 --------------------------------------------------------------*/
 #footer {
-  background: #282828;
-  padding: 30px 0;
-  color: #fdfdfd;
-  font-size: 14px;
-  text-align: center;
+    background: #282828;
+    padding: 30px 0;
+    color: #fdfdfd;
+    font-size: 14px;
+    text-align: center;
 }
 
 #footer .credits {
-  padding-top: 5px;
-  font-size: 13px;
+    padding-top: 5px;
+    font-size: 13px;
 }
 
 #footer .credits a {
-  color: #FF9984;
+    color: #FF9984;
 }
