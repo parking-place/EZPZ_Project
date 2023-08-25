@@ -268,7 +268,7 @@ def get_review(keyword, csv_save=False):
             'review_rate' : review_rate,
             'review_cont' : neg_cont,
         }) ], join='outer') # union, default
-    print(df)
+    #print(df)
     
     
     if csv_save:
@@ -280,7 +280,7 @@ def get_review(keyword, csv_save=False):
         ed_time = time.time()
         TODATE = date.today().strftime("%Y%m%d")
         
-        print(f'[CSV SAVED] {TODATE} - {SAVE_PATH.format(comp_name=keyword)} at {(ed_time - st_time):.5f} sec')
+        print(f'[CSV SAVED] {TODATE} - {SAVE_PATH}{keyword}_job_planet.csv at {(ed_time - st_time):.5f} sec')
         
     return df 
 
