@@ -16,7 +16,7 @@ get_url 함수에 '기업명' 인자로 주면 기업정보 크롤링해줌
 def get_comp_info(urls, comp):
     
     for url in urls:
-        print(url)
+        # print(url)
         r = requests.get(url, headers=HEADERS) #requests로 url 접근 요청
         soup = BeautifulSoup(r.content, 'lxml') #r변수에 저장된 content를 파싱해서 soup객체에  content 저장
         #req에 저장한 html을 파싱해서 soup 이라는 변수에 저장
