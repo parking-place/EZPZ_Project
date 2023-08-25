@@ -19,6 +19,8 @@ ssh_hook_torch = SSHHook(
     username=ezpz_db.TORCH_SERVER_USER,
     port=ezpz_db.TORCH_SERVER_PORT,
     key_file='/app/airflow/.ssh/id_rsa',
+    cmd_timeout=None,
+    keepalive_interval=20,
 )
 
 default_args = {
@@ -57,17 +59,18 @@ with DAG(
     )
 
 # SSH TEST DAG
-# 매분 실행
+# 매 10분마다 실행
 with DAG(
     dag_id='ssh_test_dag',
     default_args=default_args,
-    schedule_interval='* * * * *',
+    schedule_interval='*/10 * * * *',
     catchup=False, ):
     
     SSHOperator(
         task_id='ssh_test_task',
         command=ssh_test_cmd,
         ssh_hook=ssh_hook_torch,
+        get_pty=True,
     )
 
 # SSH DOCKER START DAG
@@ -82,6 +85,7 @@ with DAG(
         task_id='ssh_docker_start',
         command= ssh_docker_start_cmd,
         ssh_hook=ssh_hook_torch,
+        get_pty=True,
     )
 
 # SQL Clear DAG
@@ -130,18 +134,21 @@ with DAG(
         task_id='ssh_exist_comp_news_crawler',
         command=docker_base_command + scripts['exist_comp_news_crawler'],
         ssh_hook=ssh_hook_torch,
+        get_pty=True,
     )
     # 기존 회사 채용 크롤러
     exist_comp_recruit_crawler = SSHOperator(
         task_id='ssh_exist_comp_recruit_crawler',
         command=docker_base_command + scripts['exist_comp_recruit_crawler'],
         ssh_hook=ssh_hook_torch,
+        get_pty=True,
     )
     # 새 회사 크롤러
     new_comp_crawler = SSHOperator(
         task_id='ssh_new_comp_crawler',
         command=docker_base_command + scripts['new_comp_crawler'],
         ssh_hook=ssh_hook_torch,
+        get_pty=True,
     )
     # 순서대로 파이프라인을 구성
     exist_comp_news_crawler >> exist_comp_recruit_crawler >> new_comp_crawler
@@ -158,6 +165,7 @@ with DAG(
         task_id='ssh_new_comp_crawler_test',
         command=docker_base_command + scripts['new_comp_crawler'],
         ssh_hook=ssh_hook_torch,
+        get_pty=True,
     )
 
 # 기존 회사 뉴스 크롤러 DAG
@@ -172,6 +180,7 @@ with DAG(
         task_id='ssh_exist_comp_news_crawler_test',
         command=docker_base_command + scripts['exist_comp_news_crawler'],
         ssh_hook=ssh_hook_torch,
+        get_pty=True,
     )
     
 # 기존 회사 채용 크롤러 DAG
@@ -186,4 +195,5 @@ with DAG(
         task_id='ssh_exist_comp_recruit_crawler_test',
         command=docker_base_command + scripts['exist_comp_recruit_crawler'],
         ssh_hook=ssh_hook_torch,
+        get_pty=True,
     )

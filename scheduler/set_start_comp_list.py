@@ -11,13 +11,14 @@ import pandas as pd
 
 from datetime import datetime
 
-top_comp_list_path = '/app/data/datas/comp_list/top1000_comp.csv'
+top_comp_list_path = '/app/data/datas/comp_list/top9080_comp.csv'
 
 if __name__ == '__main__':
     
     df = pd.read_csv(top_comp_list_path, encoding='utf-8')
     
     comp_list = df['Company'].tolist()
+    jp_uid_list = df['JP_UID'].tolist()
     
     create_date = datetime.today().strftime('%Y%m%d')
     modify_date = datetime.today().strftime('%Y%m%d')
