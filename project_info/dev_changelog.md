@@ -31,10 +31,10 @@
 
 
 <details>
-<summary> 23.08.21 에자일1 완료 </summary>
+<summary> 23.08.21 </summary>
 
 <!-- summary 아래 한칸 공백 두어야함 -->
-- 장고 웹 개발
+- 장고 웹 개발 에자일1 완료
     - DB 커넥션
     - 메인 페이지
     - 기업 정보 페이지
@@ -52,4 +52,30 @@
 
 - 도커파일 추가
     - docker readme.md 추가
+</details>
+
+<details>
+<summary> 23.08.22 </summary>
+
+<!-- summary 아래 한칸 공백 두어야함 -->
+- 장고 웹 에자일1 수정
+    - 뉴스 감성평가 결과 반영
+    - 뉴스 더보기 기능 추가
+<br>
+
+- 도커파일 버전 1.0.3
+    - torch 이미지 셀레늄/크롬 제거
+    - arm64 지원
+</details>
+
+<details>
+<summary> 23.08.24 </summary>
+
+<!-- summary 아래 한칸 공백 두어야함 -->
+- airflow 개발 디렉토리
+    - DAG 개발
+    - DAG 파일 이동용 스크립트 개발
+<br>
+
+- 크롤러 픽스
 </details>

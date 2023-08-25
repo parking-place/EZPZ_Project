@@ -5,11 +5,10 @@ WORKDIR /ezpz/app
 
 RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
-RUN pip3 install pandas &&\
-pip3 install requests &&\
+RUN pip3 install requests &&\
 pip3 install bs4 &&\
 pip3 install lxml &&\
-pip3 install selenium &&\
+# pip3 install selenium &&\
 pip3 install transformers
 
 # # pkg-config 설치
@@ -17,13 +16,18 @@ RUN apt-get install -y pkg-config && \
 apt-get install -y libcairo2-dev && \
 apt-get install -y libgirepository1.0-dev
 
-# 크롬 설치
-RUN apt-get install wget -y
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
-RUN apt-get update -y && apt-get install google-chrome-stable -y
-RUN wget http://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_114.0.5735.198-1_amd64.deb && \
-dpkg -i google-chrome-stable_114.0.5735.198-1_amd64.deb && \
-apt-mark hold google-chrome-stable
-# 크롬 설치파일 삭제
-RUN rm google-chrome-stable_114.0.5735.198-1_amd64.deb
+# # 크롬 설치
+# RUN apt-get install wget -y
+# RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+# RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+# RUN apt-get update -y && apt-get install google-chrome-stable -y
+# RUN wget http://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_114.0.5735.198-1_amd64.deb && \
+# dpkg -i google-chrome-stable_114.0.5735.198-1_amd64.deb && \
+# apt-mark hold google-chrome-stable
+# # 크롬 설치파일 삭제
+# RUN rm google-chrome-stable_114.0.5735.198-1_amd64.deb
+
+# # firefox 설치
+# RUN apt-get install firefox-esr -y
+# # 파이어폭스 드라이버 설치
+# RUN apt install -y firefox-geckodriver

@@ -12,4 +12,10 @@ RUN apt-get install -y default-libmysqlclient-dev pkg-config
 
 RUN pip3 install mysqlclient
 
+RUN pip3 install pymysql
+
+RUN pip3 install pandas
+
 RUN mkdir -p /ezpz/app
+
+RUN ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime

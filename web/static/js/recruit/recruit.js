@@ -1,5 +1,4 @@
-// 이벤트 삽입 외엔 document ready 사용하지 않습니다.
-function add_p_tag(el){
+function add_nbsp(el){
     const nbsp = document.createTextNode("\u00a0"); 
     height = $(el).css('height');
     height = height.substring(0, (height.length - 2));
@@ -22,6 +21,6 @@ $(document).ready(function(){
         window.open("https://www.wanted.co.kr/wd/" + $(this).attr("id"));
     });
     $.each($('.recruit_cont_box > div'), function(){
-        add_p_tag(this);
+        add_nbsp(this);
     });
 });
