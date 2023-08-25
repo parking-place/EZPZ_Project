@@ -7,7 +7,7 @@ drop table if exists comp_info;
 
 create table comp_info(
 	comp_uid bigint auto_increment,
-	comp_name varchar(20) not null,
+	comp_name varchar(40) not null,
 	comp_loc varchar(200),
 	comp_thumb varchar(2000),
     comp_cont varchar(30),
@@ -16,6 +16,8 @@ create table comp_info(
 	comp_url varchar(2000),
 	is_reged char(1) default 'N' not null
         check (is_reged in ('Y', 'N')),
+	comp_jpuid varchar(10),
+	comp_ctuid varchar(10),
 	
     create_date char(8) not null,
 	modify_date char(8) not null,

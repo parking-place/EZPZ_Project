@@ -33,14 +33,14 @@ data_check= ServiceModels() #모델 서빙 모듈 객체
 
 #여기서 함수를 실행해서 각종 정보들 실행
 def crawler_exec(comp_list):
-    #comp_info_crawl_save(comp_list)
+    comp_info_crawl_save(comp_list)
     # #값들을 전부 넣어줬으니 update y로
     #sql= ' UPDATE comp_info SET is_reged = "Y" '
     #sc.conn_and_exec(sql)
     # cur.execute('UPDATE comp_info SET is_reged = "Y" ')
-    #comp_news_crawl_save(comp_list)
+    comp_news_crawl_save(comp_list)
     recruit_info_crawl(comp_list)
-    #comp_review_crawl_save(comp_list) #리뷰 크롤러 serving
+    comp_review_crawl_save(comp_list) #리뷰 크롤러 serving
 
 
 def get_comp_list():
@@ -209,6 +209,13 @@ def recruit_info_crawl(comp_list):
         modify_date = datetime.today().strftime('%Y%m%d')
         #print(comp_uid)
         for index, row in recruit_info_df.iterrows():
+            # uid 중복 확인 (중복시 insert 안함)
+            uid = row['recruit_uid']
+            sql = f'select count(*) from recruit_info where recruit_uid = "{uid}"'
+            result = sc.conn_and_exec(sql)
+            if result[0][0] > 0:
+                continue
+            
             sql = 'insert into recruit_info '
             sql += '    (comp_uid, recruit_uid, recruit_url, recruit_position, recruit_thumb, recruit_desc, create_date, modify_date) '
             sql += 'values ( '
