@@ -11,6 +11,45 @@ HEADERS = {'User-Agent' : user_agent}
 '''
 get_url 함수에 '기업명' 인자로 주면 기업정보 크롤링해줌
 '''
+#캐치 uid 가져오는 함수
+def get_catch_uid(headers, keyword):
+    """
+    헤더 정보와 기업 명을 받아
+    캐치 내부 기업 id로 반환합니다.
+    
+    return ]
+        str - 캐치 내부 기업 ID
+    """
+    # (주) 글자 제거
+    if keyword.endswith('(주)'):
+        keyword = keyword[:-3]
+    elif keyword.startswith('(주)'):
+        keyword = keyword[3:]
+        
+    # 크롤링 준비
+    CATCH_URL = 'https://www.catch.co.kr'
+    CATCH_SEARCH_URL = CATCH_URL + '/Search/SearchList?Keyword={keyword}' #캐치 url 가져오는 링크
+
+    res = requests.get(CATCH_SEARCH_URL.format(keyword=keyword), headers= HEADERS)
+    soup = BeautifulSoup(res.text, 'lxml')
+    
+    a_tag = soup.select('p.name > a')
+    try:
+        if a_tag is not None: # 검색 결과가 있는 경우에만
+            # 검색정보가 하나일때
+            if len(a_tag) == 1:
+                return [el.attrs['href'].split('/')[3] for el in a_tag][0]
+            
+            elif len(a_tag) > 1: # 검색 정보가 여러개
+                # 검색어를 포함하는 단어 중 최상단에 위치한 것을 가져옵니다.
+                print(a_tag)
+                a_tag = [el for el in a_tag if el.text.strip().find(keyword) > -1][0]
+                
+                return a_tag.attrs['href'].split('/')[3]
+
+    except:
+        return None #오류인경우 null값 저장        
+
 
 # 회사 정보 가져오는 함수 (잡플래닛)
 def get_comp_info(urls, comp):
@@ -131,15 +170,20 @@ def get_comp_info_crawl(new_url,comp_uid): #get_url(기업명)실행으로 받�
     elements_comp_url = soup.find('ul', class_="basic_info_more").find('a')
     comp_url = str(elements_comp_url).split('"')[1]
     
+    #캐치 uid
+    comp_ctuid = get_catch_uid(HEADERS,comp_name) #위에서 가져온 회사이름 토대로 캐치 uid찾기
+    #여기 부분 고치기
+    
     comp_info_dict={
-        'comp_uid' : comp_uid,
+        #'comp_uid' : comp_uid, uid 안 갖고 와도 됨
         'comp_name': comp_name,
         'comp_loc' : comp_loc,
         'comp_thumb' : comp_thumb,
         'comp_cont' : comp_cont,
         'comp_founded': comp_founded,
         'comp_size' : comp_size,
-        'comp_url' : comp_url
+        'comp_url' : comp_url,
+        'comp_ctuid' : comp_ctuid
         
     } #기업 정보 key, value로 담은 딕셔너리
     return get_comp_info_df(comp_info_dict) #기업정보들 튜플로 반환
@@ -149,6 +193,7 @@ def get_comp_info_df(comp_info_dict):
     return df
 
 if __name__ == '__main__':
+    #catch_uid = get_catch_uid(HEADERS,'씨제이(주)')
     print(get_url('씨제이(주)'))
 
 
