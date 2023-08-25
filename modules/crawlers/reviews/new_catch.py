@@ -29,7 +29,7 @@ SAVE_PATH = r'./data/'
 
 
 
-def get_review(comp = str): 
+def get_review(comp = str, save = True): 
     
     search_url = 'https://www.catch.co.kr/Search/SearchList?Keyword={}'
     search_req = requests.get(search_url.format(comp)) # Keyword = comp_name
@@ -39,7 +39,7 @@ def get_review(comp = str):
     # search_soup.text
     search_soup.select('li:nth-child(1) > div.txt > p.name > a')
 
-    comp_id = re.sub(r'[^0-9]', '', str(search_soup.select('li:nth-child(1) > div.txt > p.name > a')))
+    comp_id = re.findall('/([^"]*)"', str(search_soup.select('li:nth-child(1) > div.txt > p.name > a')))[0].split('/')[2]
     comp_name = re.findall('>([^"]*)<', re.sub(r'\s', '', str(search_soup.select('li:nth-child(1) > div.txt > p.name > a'))))[0]
 
 
@@ -69,7 +69,7 @@ def get_review(comp = str):
 
 
         df.drop(['idx', 'CompID', 'CI', 'Gender2', 'EmployType', 'NewOld', 'Answer', 'UsefulY', 
-                'RecomName', 'CareerYearYN', 'MyUsefulY', 'MyOpinion', 'Area', 'CareerYear', 
+                'RecomName', 'CareerYearYN', 'MyUsefulY', 'MyOpinion', 'Area', 'CareerYear',
                 'Keyword1', 'Keyword2', 'Keyword3', 'Keyword1YN', 'Keyword2YN', 'Keyword3YN'], 
                 axis=1, inplace=True)
         
@@ -82,23 +82,23 @@ def get_review(comp = str):
         df['EmployText'] = df['EmployText'].apply(lambda x: x.replace('현직', '1').strip() == '1')
 
 
+
         df.rename(columns=
            {'RegDate':'review_date', 
            'EmployText':'is_office', 
            'Good':'review_pos', 
            'Bad':'review_neg', 
            'MyStarScore':'review_rate', 
-           'JobName':'position',
+           'JobName':'position'
            }, inplace=True)
-        
+
 
         df['review_rate'] = df['review_rate'].round(0).astype(int)
 
 
 
-
         # 긍/부정 리뷰들만 찢어서 합치기
-        
+
         a = df.drop(['review_pos'], axis=1).rename(columns = {'review_neg':'review_cont'})
         b = df.drop(['review_neg'], axis=1).rename(columns = {'review_pos':'review_cont'})
 
@@ -116,10 +116,15 @@ def get_review(comp = str):
         file_name = f"{comp_name}_catch.csv"
         save_file_path = os.path.join(SAVE_PATH, file_name)
 
-        new_df.to_csv(save_file_path, index=False, encoding = "utf-8")
-        
-        return pd.read_csv(save_file_path)
 
+        if save is True :  
+            new_df.to_csv(save_file_path, index=False, encoding = "utf-8")
+            print('결과를 저장했습니다.')
+            return pd.read_csv(save_file_path)
+        
+        else : 
+            print('결과가 저장되지 않습니다.')
+            return new_df
 
         
     except : 
