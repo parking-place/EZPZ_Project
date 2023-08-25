@@ -17,16 +17,18 @@ if __name__ == '__main__':
     
     df = pd.read_csv(top_comp_list_path, encoding='utf-8')
     
+    df = df[:1000]
+    
     comp_list = df['Company'].tolist()
     jp_uid_list = df['JP_UID'].tolist()
     
     create_date = datetime.today().strftime('%Y%m%d')
     modify_date = datetime.today().strftime('%Y%m%d')
     
-    for comp_name in comp_list:
+    for comp_name, jp_uid in zip(comp_list, jp_uid_list):
         sql = 'INSERT INTO comp_info '
-        sql += '(comp_name, comp_loc, comp_thumb, comp_cont, comp_founded, comp_size, comp_url, is_reged, create_date, modify_date) '
-        sql += f'VALUES ("{comp_name}", "null", "null", "null", "null", "null", "null", "N", "{create_date}", "{modify_date}")'
+        sql += '(comp_name, comp_loc, comp_thumb, comp_cont, comp_founded, comp_size, comp_url, is_reged, comp_jpuid, comp_ctuid, create_date, modify_date) '
+        sql += f'VALUES ("{comp_name}", "null", "null", "null", "null", "null", "null", "N", "{jp_uid}", "null", "{create_date}", "{modify_date}")'
         
         sc.conn_and_exec(sql)
     
