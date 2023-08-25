@@ -16,6 +16,8 @@ create table comp_info(
 	comp_url varchar(2000),
 	is_reged char(1) default 'N' not null
         check (is_reged in ('Y', 'N')),
+	comp_jpuid varchar(10),
+	comp_ctuid varchar(10),
 	
     create_date char(8) not null,
 	modify_date char(8) not null,
