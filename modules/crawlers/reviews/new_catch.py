@@ -29,7 +29,7 @@ SAVE_PATH = r'./data/'
 
 
 
-def get_review(comp = str, save = True): 
+def get_review(comp = str, save = False): 
     
     search_url = 'https://www.catch.co.kr/Search/SearchList?Keyword={}'
     search_req = requests.get(search_url.format(comp)) # Keyword = comp_name
@@ -102,7 +102,7 @@ def get_review(comp = str, save = True):
         a = df.drop(['review_pos'], axis=1).rename(columns = {'review_neg':'review_cont'})
         b = df.drop(['review_neg'], axis=1).rename(columns = {'review_pos':'review_cont'})
 
-        new_df = pd.concat([a, b])
+        new_df = pd.concat([a, b], ignore_index = True)
 
         # return new_df
 
@@ -111,13 +111,12 @@ def get_review(comp = str, save = True):
 
         # csv 파일로 저장.
 
-        os.makedirs(SAVE_PATH, exist_ok=True)
-
         file_name = f"{comp_name}_catch.csv"
         save_file_path = os.path.join(SAVE_PATH, file_name)
 
 
         if save is True :  
+            os.makedirs(SAVE_PATH, exist_ok=True)
             new_df.to_csv(save_file_path, index=False, encoding = "utf-8")
             print('결과를 저장했습니다.')
             return pd.read_csv(save_file_path)
@@ -129,6 +128,4 @@ def get_review(comp = str, save = True):
         
     except : 
         print("리뷰가 존재하지 않습니다.")
-
-
 
