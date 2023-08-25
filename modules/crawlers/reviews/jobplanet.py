@@ -26,7 +26,7 @@ import aiohttp
 # constants
 JOBPLANET_URL = 'https://www.jobplanet.co.kr'
 JOBPLANET_LOGIN_URL = JOBPLANET_URL + '/users/sign_in'
-JOBPLANET_SEARCH_URL = JOBPLANET_URL + '/search?query={keyword}'
+JOBPLANET_SEARCH_URL = JOBPLANET_URL + '/search/companies/{keyword}?page={p}'
 JOBPLANET_REVIEW_URL = JOBPLANET_URL + '/companies/{jp_comp_uid}/reviews?page={p}'
 SAVE_PATH = '/app/data/reviews/'
 
@@ -91,15 +91,19 @@ def get_jobplanet_uid(headers, keyword):
         str - 잡플래닛 내부 기업 ID
     """
     # 크롤링 준비
-    res = req.get(JOBPLANET_SEARCH_URL.format(keyword=keyword), headers=headers)
-    soup = bs(res.text, 'lxml')
-    
-    # 잡플래닛 내부 회사 ID 크롤링
-    # b 태그 갖고 있는 a 태그만 추출 : 정확도 높은게 볼드체 처리됨
-    a_tag = [el for el in soup.select('div.is_company_card a') if el.select_one('b')][0]
-    
-    # href format : /companies/{잡플래닛_회사ID}/info/{회사이름}?_rs_act=index&_rs_con=search&_rs_element=federated_search
-    return a_tag.attrs['href'].split('/')[2]
+    for i in range(30): # 30 페이지동안 서치합니다.
+        s_url = JOBPLANET_SEARCH_URL.format(keyword=keyword, p=i+1)
+        res = req.get(s_url, headers=headers)
+        soup = bs(res.text, 'lxml')
+        
+        # 잡플래닛 내부 회사 ID 크롤링
+        a_tags = soup.select('dt.us_titb_l3 > a')
+        
+        # 정확도 높은 것으로 검사합니다.
+        for a_tag in a_tags:
+            if a_tag.text.find(keyword) > -1:
+                # href format : /companies/{잡플래닛_회사ID}/info/{회사이름}?_rs_act=index&_rs_con=search&_rs_element=federated_search
+                return a_tag.attrs['href'].split('/')[2]
 
 
 
