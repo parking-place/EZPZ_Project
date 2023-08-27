@@ -9,7 +9,7 @@ HEADERS = {'User-Agent' : user_agent}
 
 
 '''
-get_url 함수에 '기업명' 인자로 주면 기업정보 크롤링해줌
+get_url 함수에 '잡플 uid' 인자로 주면 기업정보 크롤링해줌
 '''
 #캐치 uid 가져오는 함수
 def get_catch_uid(headers, keyword):
@@ -42,18 +42,18 @@ def get_catch_uid(headers, keyword):
             
             elif len(a_tag) > 1: # 검색 정보가 여러개
                 # 검색어를 포함하는 단어 중 최상단에 위치한 것을 가져옵니다.
-                print(a_tag)
+                #print(a_tag)
                 a_tag = [el for el in a_tag if el.text.strip().find(keyword) > -1][0]
-                
+
                 return a_tag.attrs['href'].split('/')[3]
 
     except:
-        return None #오류인경우 null값 저장        
+        return None #오류인경우 null값 저장
 
 
 # 회사 정보 가져오는 함수 (잡플래닛)
-def get_comp_info(urls, comp):
-    ## 원래버전으로 먼저 찾기
+#def get_comp_info(urls, comp): 일단은 new_url을 바로 받아올 수 있게돼서 이과정 필요없어보임
+    """## 원래버전으로 먼저 찾기
     url_1 = r'https://www.jobplanet.co.kr/search?query={comp}'.format(comp=comp)
     
     r = requests.get(url_1, headers=HEADERS) #requests로 url 접근 요청
@@ -99,17 +99,19 @@ def get_comp_info(urls, comp):
                 return get_comp_info_crawl(new_url,comp_uid)
             
     print('there is no comp founded in all pages')
-    return False, None
+    return False, None"""
 
 #회사 정보 요청 함수
-def get_info(urls, comp):
-    return get_comp_info(urls, comp)
-
-# 회사 이름 입력받아 url로 만들어주는 함수 
-def get_url(comp):
-    url=r'https://www.jobplanet.co.kr/search/companies/{comp}?page={page}' #여기에 회사 이름 추가해야됨
-    urls = [ url.format(comp=comp, page=page) for page in range(1, 99) ] # 1페이지부터 2페이지까지 url 생성
-    return get_info(urls, comp)
+def get_info(url):
+    #return get_comp_info(url, comp)
+    return get_comp_info_crawl(url)
+# 회사 이름 입력받아 url로 만들어주는 함수
+def get_url(jpuid):
+    #url=r'https://www.jobplanet.co.kr/search/companies/{comp}?page={page}' #여기에 회사 이름 추가해야됨
+    url = f'https://www.jobplanet.co.kr/companies/{jpuid}/landing/'
+    print(url)
+    #urls = [ url.format(comp=comp, page=page) for page in range(1, 99) ] # 1페이지부터 2페이지까지 url 생성
+    return get_info(url)
 
 
 '''
@@ -120,23 +122,23 @@ def get_url(comp):
 사업 내용 (산업) 완료
 회사 설립 년월(설립(df로 저장하고 나중에 저장형식대로 .빼기),저장은 YYYYMM형식의 string) 완료
 회사 규모((기업형태)중소/대 기업등) 완료
-기업 대표 사이트(웹사이트 링크 주기 링크 없으면 예외처리) 
+기업 대표 사이트(웹사이트 링크 주기 링크 없으면 예외처리)
 처리 여부(처리되면 Y 아니면 N)
 최초 저장 일자 (YYYYMMDD)
-수정 일자 (YYYYMMDD) 
+수정 일자 (YYYYMMDD)
 '''
-def get_comp_info_crawl(new_url,comp_uid): #get_url(기업명)실행으로 받은 기업정보 url로 접속 테스트는 그냥 바로 기업정보 url로 해보기
-    r = requests.get(new_url, headers=HEADERS) #requests로 url 접근 요청
+def get_comp_info_crawl(url): #get_url(기업명)실행으로 받은 기업정보 url로 접속 테스트는 그냥 바로 기업정보 url로 해보기
+    r = requests.get(url, headers=HEADERS) #requests로 url 접근 요청
     soup = BeautifulSoup(r.content, 'lxml') #r변수에 저장된 content를 파싱해서 soup객체에  content 저장
     #추출해야할 정보들 죄다 zip로 묶어줌 uid는 저위에 comp_uid
 
     #회사 uid
     #uid는 get_comp_info 함수에서 인자로 받음
-    
+
     #회사이름
     elements_comp_name = soup.find('div',class_="company_name").find('a')
     comp_name_temp=str(elements_comp_name).split('>')[1]
-    comp_name=comp_name_temp.split('<')[0] 
+    comp_name=comp_name_temp.split('<')[0]
 
     #회사 주소
     elements_comp_loc= soup.find('ul',class_='basic_info_more')#.find('dl',class_= 'info_item_more') #회사주소'
@@ -150,7 +152,7 @@ def get_comp_info_crawl(new_url,comp_uid): #get_url(기업명)실행으로 받�
     #사업 내용
     elements_comp_cont = soup.find('strong', class_ = 'info_item_subject')
     comp_cont = elements_comp_cont.text
-    
+
     elements_comp_cont = soup.find('strong', class_ = 'info_item_subject')
     pattern = r"(?<=\>).+?(?=\<)" # 정규표현식 패턴
     comp_cont = re.findall(pattern, str(elements_comp_cont)) # re.findall() 메서드로 일치하는 패턴 추출
@@ -169,11 +171,11 @@ def get_comp_info_crawl(new_url,comp_uid): #get_url(기업명)실행으로 받�
     #기업 대표 사이트
     elements_comp_url = soup.find('ul', class_="basic_info_more").find('a')
     comp_url = str(elements_comp_url).split('"')[1]
-    
+
     #캐치 uid
     comp_ctuid = get_catch_uid(HEADERS,comp_name) #위에서 가져온 회사이름 토대로 캐치 uid찾기
     #여기 부분 고치기
-    
+
     comp_info_dict={
         #'comp_uid' : comp_uid, uid 안 갖고 와도 됨
         'comp_name': comp_name,
@@ -184,7 +186,7 @@ def get_comp_info_crawl(new_url,comp_uid): #get_url(기업명)실행으로 받�
         'comp_size' : comp_size,
         'comp_url' : comp_url,
         'comp_ctuid' : comp_ctuid
-        
+
     } #기업 정보 key, value로 담은 딕셔너리
     return get_comp_info_df(comp_info_dict) #기업정보들 튜플로 반환
 
@@ -194,7 +196,8 @@ def get_comp_info_df(comp_info_dict):
 
 if __name__ == '__main__':
     #catch_uid = get_catch_uid(HEADERS,'씨제이(주)')
-    print(get_url('씨제이(주)'))
+    #get_url 하고 잡플래닛 uid 입력시 바로 크롤링됨
+    print(get_url(30139))
 
 
 
