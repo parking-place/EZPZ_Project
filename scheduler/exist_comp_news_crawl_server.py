@@ -112,7 +112,7 @@ def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이
             sql += '    (comp_uid, pub_date, news_url, news_cont,news_sum, news_senti, create_date, modify_date) '
             sql += 'values ( '
             sql += f'   "{comp_uid}", "{row["pub_date"]}", "{row["news_url"]}", "{row["news_cont"]}", "{row["news_sum"]}", "{row["news_senti"]}" '
-            sql += f'    , "{create_date}", "{modify_date}" '
+            sql += f'    ,"{create_date}", "{modify_date}" '
             sql += ') '
             sc.conn_and_exec(sql)
 
