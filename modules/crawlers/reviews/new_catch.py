@@ -119,12 +119,8 @@ def get_review(comp = str, save = False):
             os.makedirs(SAVE_PATH, exist_ok=True)
             new_df.to_csv(save_file_path, index=False, encoding = "utf-8")
             print('결과를 저장했습니다.')
-            return pd.read_csv(save_file_path)
         
-        else : 
-            print('결과가 저장되지 않습니다.')
-            return new_df
-
+        return new_df
         
     except : 
         print("리뷰가 존재하지 않습니다.")
