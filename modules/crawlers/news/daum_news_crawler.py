@@ -138,7 +138,7 @@ def get_news(keyword, csv_save=False):
         'news_cont': [el[0] for el in result],
         'pub_date': [el[1] for el in result]
     })
-    #print(df)
+    # print(df)
     
     df['news_cont'] = df['news_cont'].apply(lambda x: re.sub(r'\s+', ' ',re.sub(r'\n+', ' ', x)).strip())
     

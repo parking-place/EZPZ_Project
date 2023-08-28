@@ -67,3 +67,15 @@
     - torch 이미지 셀레늄/크롬 제거
     - arm64 지원
 </details>
+
+<details>
+<summary> 23.08.24 </summary>
+
+<!-- summary 아래 한칸 공백 두어야함 -->
+- airflow 개발 디렉토리
+    - DAG 개발
+    - DAG 파일 이동용 스크립트 개발
+<br>
+
+- 크롤러 픽스
+</details>
