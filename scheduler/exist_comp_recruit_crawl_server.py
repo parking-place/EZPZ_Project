@@ -6,6 +6,7 @@ import pandas as pd
 import cryptography
 import sql_connection as sc
 from datetime import datetime
+from tqdm import tqdm
 
 
 sys.path.append('/app/EZPZ_Project') #db 연동정보 경로
@@ -25,7 +26,7 @@ def get_all_comp_name():
     return comp_list #리스트 받아와서 is reged y 회사마다 바꿔주고 modify_date만 바꿔주면됨
 
 def recruit_info_update(comp_list):
-    for comp in comp_list:
+    for comp in tqdm(comp_list):
         #채용공고는 회사이름에 (주) 붙어있으면 안됨 제거 전처리
         recruit_comp = comp.replace('(주)',"")
         #print(recruit_comp)
@@ -81,11 +82,20 @@ def recruit_info_update(comp_list):
             modify_date = datetime.today().strftime('%Y%m%d')
 
             for index, row in filtered_recruit_info_df.iterrows():
+
+                # uid 중복 확인 (중복시 insert 안함)
+                uid = row['recruit_uid']
+                sql = f'select count(*) from recruit_info where recruit_uid = "{uid}"'
+                result = sc.conn_and_exec(sql)
+                if result[0][0] > 0:
+                    continue
+
+
                 sql = 'insert into recruit_info '
                 sql += '    (comp_uid, recruit_uid, recruit_url, recruit_position, recruit_thumb, recruit_desc, create_date, modify_date) '
                 sql += 'values ( '
                 sql += f'   "{comp_uid}", "{row["recruit_uid"]}", "{row["recruit_url"]}", "{row["recruit_position"]}", "{row["recruit_thumb"]}", "{row["recruit_desc"]}" '
-                sql += f'    , "{"00000000"}", "{"00000000"}" '
+                sql += f'    , "{create_date}", "{modify_date}" '
                 sql += ') '
                 #cur.execute(sql)
                 sc.conn_and_exec(sql)
