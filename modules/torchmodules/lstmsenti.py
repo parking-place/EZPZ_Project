@@ -10,6 +10,6 @@ class LSTMSenti:
     def __init__(self):
         self.__model = LSTMModel()
         pass
-    
+
     def get_sentiment(self, text):
         return 'POSITIVE'
