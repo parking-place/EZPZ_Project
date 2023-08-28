@@ -26,7 +26,7 @@ import aiohttp
 # constants
 JOBPLANET_URL = 'https://www.jobplanet.co.kr'
 JOBPLANET_LOGIN_URL = JOBPLANET_URL + '/users/sign_in'
-JOBPLANET_SEARCH_URL = JOBPLANET_URL + '/search/companies/{keyword}?page={p}'
+JOBPLANET_SEARCH_URL = JOBPLANET_URL + '/search?query={keyword}'
 JOBPLANET_REVIEW_URL = JOBPLANET_URL + '/companies/{jp_comp_uid}/reviews?page={p}'
 SAVE_PATH = '/app/data/reviews/'
 
@@ -82,28 +82,49 @@ def get_login_session():
 
 
 
+# 잡플래닛 내부 회사 uid 가져오는 함수
 def get_jobplanet_uid(headers, keyword):
-    """
-    헤더 정보와 기업 명을 받아
-    잡플래닛 내부 기업 id로 반환합니다.
-    
-    return ]
-        str - 잡플래닛 내부 기업 ID
-    """
     # 크롤링 준비
-    for i in range(30): # 30 페이지동안 서치합니다.
-        s_url = JOBPLANET_SEARCH_URL.format(keyword=keyword, p=i+1)
-        res = req.get(s_url, headers=headers)
-        soup = bs(res.text, 'lxml')
+    res = req.get(JOBPLANET_SEARCH_URL.format(keyword=keyword), headers=headers)
+    soup = bs(res.text, 'lxml')
+
+    # 잡플래닛 내부 회사 ID 크롤링
+    # b 태그 갖고 있는 a 태그만 추출 : 정확도 높은게 볼드체 처리됨
+    a_tag = [el for el in soup.select('div.is_company_card a') if el.select_one('b')][0]
+
+    # href format : /companies/{잡플래닛_회사ID}/info/{회사이름}?_rs_act=index&_rs_con=search&_rs_element=federated_search
+    return a_tag.attrs['href'].split('/')[2]
+
+
+
+
+def get_links_to_keyword(headers, jp_comp_uid):
+    """
+    제목까지 받아와야 하는 경우, 해당 함수의 주석과 get_news_list 함수의 주석을 해제 후 사용해야 합니다.
+    parameter ]
+        headers : dict  - header 정보
+        keyword : str   - 해당 단어로 다음 검색(입력시 global 변수로 저장)
         
-        # 잡플래닛 내부 회사 ID 크롤링
-        a_tags = soup.select('dt.us_titb_l3 > a')
+    return ]
+        links   : list[str] - 리뷰 페이지들 링크
+    """
+    review_list = []
+    p = 1
+    
+    for p in range(99):
+        now_url = JOBPLANET_REVIEW_URL.format(jp_comp_uid=jp_comp_uid, p=p+1)
+    
+        # res = req.get(now_url, headers=headers)
+        # soup = bs(res.text, 'lxml')
         
-        # 정확도 높은 것으로 검사합니다.
-        for a_tag in a_tags:
-            if a_tag.text.find(keyword) > -1:
-                # href format : /companies/{잡플래닛_회사ID}/info/{회사이름}?_rs_act=index&_rs_con=search&_rs_element=federated_search
-                return a_tag.attrs['href'].split('/')[2]
+        # # 리뷰 없는 경우
+        # if soup.select_one('article.no_result > .txt'): # '리뷰가 없습니다' 태그
+        #     break
+        
+        # 통과한 경우 : 리뷰 있음, 리스트에 추가
+        review_list.append(now_url)
+        
+    return review_list
 
 
 
@@ -129,7 +150,7 @@ async def filter_reviewer_info(info):
 
 async def filter_review_rate(rate):
     """
-    비동기 전환용 함수 : 별점 정보 변환
+    비동기 전환용 코드 : 별점 정보 변환
     
     parameters ]
         rate    : str   - 별점(형식 : width:{percent}%)
@@ -159,7 +180,6 @@ async def get_content_to_link(session, url):
             if soup.select_one('article.no_result > .txt'): # '리뷰가 없습니다' 태그
                 return None
             
-            # 통과 : 크롤링 시작
             # =========================
             # 작성자 정보 크롤링
             # =========================
@@ -168,7 +188,7 @@ async def get_content_to_link(session, url):
             
             # 한 사람 단위로 잘라주기
             reviewer_infos = [reviewer_infos[i*4:(i*4+4)] for i in range(int(len(reviewer_infos) / 4))]
-            
+
             # split
             reviewer_infos = asyncio.gather(*[filter_reviewer_info(info) for info in reviewer_infos])
             review_rates = asyncio.gather(*[filter_review_rate(el.attrs['style']) for el in soup.select('div.star_score')])
@@ -192,7 +212,7 @@ async def get_content_list(cookies, urls):
 
 
 
-def get_review(keyword, csv_save=False):
+def get_review(keyword, csv_save=True):
     """
     회사 명을 키워드를 받아 dataframe으로 반환하는 함수
     
@@ -203,7 +223,6 @@ def get_review(keyword, csv_save=False):
     returns ]
         pandas.DataFrame
         columns ]
-            position    : str       - 직무
             review_cont : str       - 리뷰 본문
             review_rate : int       - 별점
             is_office   : boolean   - 전직원/현직원 여부
@@ -220,18 +239,12 @@ def get_review(keyword, csv_save=False):
     
     # 크롤링 준비
     jp_comp_uid = get_jobplanet_uid(req_session.headers, keyword)
-    
-    # 검색 결과 없는 경우
-    if jp_comp_uid is None:
-        print(f'[SEARCH FAILED] 잡플래닛 리뷰 검색 "{keyword}" 실패')
-        return None
-    
-    # 성공 : 크롤링 url 생성
-    urls = [JOBPLANET_REVIEW_URL.format(jp_comp_uid=jp_comp_uid, p=i+1) for i in range(99)]
+    urls = get_links_to_keyword(req_session.headers, jp_comp_uid)
     
     # 데이터 크롤링
     results = asyncio.run(get_content_list(req_cookies, urls))
-    # None 제거 : 리뷰 없는 페이지
+    
+    # result 중 None 제거
     results = [data for data in results if data is not None]
     
     # 데이터 프레임으로 변환
@@ -268,23 +281,22 @@ def get_review(keyword, csv_save=False):
             'review_rate' : review_rate,
             'review_cont' : neg_cont,
         }) ], join='outer') # union, default
-    #print(df)
+    print(df)
     
     
     if csv_save:
         # ========== [이하는 csv 저장 로직] ==========
         os.makedirs(SAVE_PATH, exist_ok=True) # 디렉토리 생성
         df.to_csv(os.path.join(SAVE_PATH, f'{keyword}_job_planet.csv'), index=False)
-        
+    
         # logging
         ed_time = time.time()
         TODATE = date.today().strftime("%Y%m%d")
         
-        print(f'[CSV SAVED] {TODATE} - {SAVE_PATH}{keyword}_job_planet.csv at {(ed_time - st_time):.5f} sec')
+        print(f'[CSV SAVED] {TODATE} - {SAVE_PATH.format(comp_name=keyword)} at {(ed_time - st_time):.5f} sec')
         
     return df 
 
 
 if __name__ == '__main__':
-    # 테스트 코드
     get_review('삼성전자', csv_save=True)
