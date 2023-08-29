@@ -29,8 +29,10 @@ SAVE_PATH = r'./data/'
 
 
 
-def get_review(comp = str, save = False): 
+def get_review(comp , uid, save = False): 
     
+    if uid == None :
+        return False
     search_url = 'https://www.catch.co.kr/Search/SearchList?Keyword={}'
     search_req = requests.get(search_url.format(comp)) # Keyword = comp_name
     # print(search_req.text)
