@@ -43,6 +43,7 @@ scripts = {
     'exist_comp_recruit_crawler': 'exist_comp_recruit_crawl_server.py',
     'sql_clear': 'sql_clear.py',
     'set_start_comp_list': 'set_start_comp_list.py',
+    'exist_comp_review_crawler': 'exist_comp_review_crawl_server.py',
 }
 
 # TEST DAG
@@ -194,6 +195,21 @@ with DAG(
     SSHOperator(
         task_id='ssh_exist_comp_recruit_crawler_test',
         command=docker_base_command + scripts['exist_comp_recruit_crawler'],
+        ssh_hook=ssh_hook_torch,
+        get_pty=True,
+    )
+
+# 기존 회사 리뷰 크롤러 DAG
+# 한번만 실행
+with DAG(
+    dag_id='exist_comp_review_crawler_test',
+    default_args=default_args,
+    schedule_interval='@once', 
+    catchup=False, ):
+    
+    SSHOperator(
+        task_id='ssh_exist_comp_review_crawler_test',
+        command=docker_base_command + scripts['exist_comp_review_crawler'],
         ssh_hook=ssh_hook_torch,
         get_pty=True,
     )
