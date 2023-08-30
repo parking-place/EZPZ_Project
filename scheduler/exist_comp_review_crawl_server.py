@@ -16,27 +16,37 @@ import jobplanetv2
 
 from privates.ezpz_db import *
 
+from tqdm import tqdm
+
 def get_all_comp_name_and_uid():
     comp_list = []
     sql = ' select comp_name, comp_jpuid, comp_ctuid from comp_info where is_reged = "Y" ' #처리안된 회사들만 가져옴
     comp_temp_list = sc.conn_and_exec(sql)
-    for comp in comp_temp_list:
-        comp_list.append(comp[0])
+    comp_list = list(comp_temp_list)
     return comp_list #리스트 받아와서 is reged y 회사마다 바꿔주고 modify_date만 바꿔주면됨
 
 def crawl_and_save(comp_list):
     sql = 'truncate table comp_review'
     sc.conn_and_exec(sql)
-    
-    for comp_name in comp_list:
-        catch_review = new_catch.get_review(comp_name, save = False)
-        jobplanet_review = jobplanetv2.get_review(comp_name, csv_save = False)
+    # print(comp_list[0])
+    for comp_name, jp_uid, ct_uid in tqdm(comp_list):
+        print(comp_name)
+        catch_reviews = new_catch.get_review(comp_name, ct_uid, save = False)
+        jobplanet_reviews = jobplanetv2.get_review(comp_name, jp_uid, csv_save = False)
+        # jobplanet_reviews = False
+        # print(catch_reviews)
+        # print(jobplanet_reviews)
+        if catch_reviews is False and jobplanet_reviews is False:
+            print(comp_name, '리뷰 없음')
+            continue
+        elif catch_reviews is False:
+            all_reviews = jobplanet_reviews
+        elif jobplanet_reviews is False:
+            all_reviews = catch_reviews
+        else:
+            all_reviews = pd.concat([catch_reviews, jobplanet_reviews], ignore_index=True)
         
-        print(catch_review)
-        
-        all_review = pd.concat([catch_review, jobplanet_review], ignore_index=True)
-        
-        print(all_review)
+        print(len(all_reviews))
         pass
     pass
 
@@ -44,7 +54,7 @@ def crawl_and_save(comp_list):
 if __name__ == '__main__':
 
     comp_list = get_all_comp_name_and_uid()
-    comp_list = ['한국은행']
-    crawl_and_save(comp_list)
+    # comp_list = [('이롭게', '89342', None)]
+    crawl_and_save(comp_list[:50])
 
     #print('뉴스정보 전부 DB저장 완료')
