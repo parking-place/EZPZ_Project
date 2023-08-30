@@ -29,19 +29,25 @@ SAVE_PATH = r'./data/'
 
 
 
-def get_review(comp = str, save = False): 
+def get_review(comp , uid, save = False): 
     
-    search_url = 'https://www.catch.co.kr/Search/SearchList?Keyword={}'
-    search_req = requests.get(search_url.format(comp)) # Keyword = comp_name
-    # print(search_req.text)
+    if uid == None :
+        return False
+    
+    # search_url = 'https://www.catch.co.kr/Search/SearchList?Keyword={}'
+    # search_req = requests.get(search_url.format(comp)) # Keyword = comp_name
+    # # print(search_req.text)
 
-    search_soup = BeautifulSoup(search_req.text, 'lxml')
-    # search_soup.text
-    search_soup.select('li:nth-child(1) > div.txt > p.name > a')
+    # search_soup = BeautifulSoup(search_req.text, 'lxml')
+    # # search_soup.text
+    # search_soup.select('li:nth-child(1) > div.txt > p.name > a')
 
-    comp_id = re.findall('/([^"]*)"', str(search_soup.select('li:nth-child(1) > div.txt > p.name > a')))[0].split('/')[2]
-    comp_name = re.findall('>([^"]*)<', re.sub(r'\s', '', str(search_soup.select('li:nth-child(1) > div.txt > p.name > a'))))[0]
-
+    # comp_id = re.findall('/([^"]*)"', str(search_soup.select('li:nth-child(1) > div.txt > p.name > a')))[0].split('/')[2]
+    # comp_name = re.findall('>([^"]*)<', re.sub(r'\s', '', str(search_soup.select('li:nth-child(1) > div.txt > p.name > a'))))[0]
+    
+    # (주), (유), (재), (사) 등등 제거
+    comp_name = re.sub(r'\([^)]*\)', '', comp).strip()
+    comp_id = uid
 
 
 
@@ -68,7 +74,7 @@ def get_review(comp = str, save = False):
         df = pd.DataFrame(data)
 
 
-        df.drop(['idx', 'CompID', 'CI', 'Gender2', 'EmployType', 'NewOld', 'Answer', 'UsefulY', 
+        df.drop(['CompName', 'idx', 'CompID', 'CI', 'Gender2', 'EmployType', 'NewOld', 'Answer', 'UsefulY', 
                 'RecomName', 'CareerYearYN', 'MyUsefulY', 'MyOpinion', 'Area', 'CareerYear',
                 'Keyword1', 'Keyword2', 'Keyword3', 'Keyword1YN', 'Keyword2YN', 'Keyword3YN'], 
                 axis=1, inplace=True)
@@ -102,6 +108,12 @@ def get_review(comp = str, save = False):
         a = df.drop(['review_pos'], axis=1).rename(columns = {'review_neg':'review_cont'})
         b = df.drop(['review_neg'], axis=1).rename(columns = {'review_pos':'review_cont'})
 
+        pos_senti = ['P'] * len(b)
+        neg_senti = ['N'] * len(a)
+        
+        a = a.assign(review_senti_orig = neg_senti)
+        b = b.assign(review_senti_orig = pos_senti)
+        
         new_df = pd.concat([a, b], ignore_index = True)
 
         # return new_df
@@ -123,5 +135,6 @@ def get_review(comp = str, save = False):
         return new_df
         
     except : 
-        print("리뷰가 존재하지 않습니다.")
+        # print(comp_name, "리뷰가 존재하지 않습니다.")
+        return False
 

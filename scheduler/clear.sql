@@ -61,13 +61,13 @@ create table comp_news(
 create table comp_review(
 	review_uid bigint auto_increment,
 	comp_uid bigint not null,
-	review_cont varchar(500) not null,
+	review_cont varchar(2000) not null,
 	review_senti_orig char(1) not null,
 	review_senti_pred char(1),
 	review_rate int(1) not null,
 	is_office boolean not null,
 	review_date char(8) not null,
-	position varchar(10) not null,
+	position varchar(30) not null,
 	
 	create_date char(8) not null,
 	modify_date char(8) not null,
