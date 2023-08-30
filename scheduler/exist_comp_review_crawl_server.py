@@ -25,19 +25,26 @@ def get_all_comp_name_and_uid():
     comp_list = list(comp_temp_list)
     return comp_list #리스트 받아와서 is reged y 회사마다 바꿔주고 modify_date만 바꿔주면됨
 
-def crawl_and_save(comp_list):
+def crawl_review(comp_list):
     sql = 'truncate table comp_review'
     sc.conn_and_exec(sql)
+    
     # print(comp_list[0])
-    for comp_name, jp_uid, ct_uid in tqdm(comp_list):
-        print(comp_name)
+    comp_bar = tqdm(comp_list,
+                    position=0,
+                    leave=True,
+                    )
+    for comp_name, jp_uid, ct_uid in comp_bar:
+        
+        comp_bar.set_description(comp_name)
+        
         catch_reviews = new_catch.get_review(comp_name, ct_uid, save = False)
         jobplanet_reviews = jobplanetv2.get_review(comp_name, jp_uid, csv_save = False)
         # jobplanet_reviews = False
         # print(catch_reviews)
         # print(jobplanet_reviews)
         if catch_reviews is False and jobplanet_reviews is False:
-            print(comp_name, '리뷰 없음')
+            comp_bar.set_description(comp_name + ' : ' + 'No Reviews')
             continue
         elif catch_reviews is False:
             all_reviews = jobplanet_reviews
@@ -45,16 +52,51 @@ def crawl_and_save(comp_list):
             all_reviews = catch_reviews
         else:
             all_reviews = pd.concat([catch_reviews, jobplanet_reviews], ignore_index=True)
+        comp_bar.set_description(comp_name + ' : ' + str(len(all_reviews)))
         
-        print(len(all_reviews))
-        pass
-    pass
+        save_to_db(all_reviews, comp_name)
+        
+    comp_bar.close()
+    
+    return 
+
+def save_to_db(df, comp_name):
+    #cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
+    replace_comp_name = comp_name.replace(' ','')
+    sql = f'select comp_uid from comp_info where replace(comp_name , " ", "") like "%{replace_comp_name}%" '
+    comp_uid= sc.conn_and_exec(sql)[0][0]
+
+    create_date = datetime.today().strftime('%Y%m%d')
+    modify_date = datetime.today().strftime('%Y%m%d')
+    
+    df_bar = tqdm(df.iterrows(),
+                position=1,
+                leave=False,
+                )
+
+    for index, row in df_bar:
+        review = row['review_cont'][:1000].replace('"', '').replace("'", '')
+        
+        sql = 'insert into comp_review '
+        sql += '    (comp_uid, review_cont, review_senti_orig, review_rate, is_office, review_date, position, create_date, modify_date) '
+        sql += 'values ( '
+        sql += f'   "{comp_uid}", "{review}", "{row["review_senti_orig"]}", "{row["review_rate"]}", "{int(row["is_office"])}", "{row["review_date"]}", "{row["position"]}" '
+        sql += f'    ,"{create_date}", "{modify_date}" '
+        sql += ') '
+        try :
+            sc.conn_and_exec(sql)
+        except Exception as e:
+            print(sql)
+            print(row)
+            print(e)
+            continue
 
 #테스트용으로 사용하세요
 if __name__ == '__main__':
 
     comp_list = get_all_comp_name_and_uid()
+    crawl_review(comp_list)
     # comp_list = [('이롭게', '89342', None)]
-    crawl_and_save(comp_list[:50])
+    # crawl_review(comp_list)
 
     #print('뉴스정보 전부 DB저장 완료')

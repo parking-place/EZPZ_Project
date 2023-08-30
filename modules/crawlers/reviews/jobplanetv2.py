@@ -101,7 +101,7 @@ def get_jobplanet_uid(headers, keyword):
 
 
 
-def get_links_to_keyword(headers, jp_comp_uid):
+def get_links_to_keyword(headers, jp_comp_uid, page):
     """
     제목까지 받아와야 하는 경우, 해당 함수의 주석과 get_news_list 함수의 주석을 해제 후 사용해야 합니다.
     parameter ]
@@ -114,7 +114,7 @@ def get_links_to_keyword(headers, jp_comp_uid):
     review_list = []
     p = 1
     
-    for p in range(99):
+    for p in range(page):
         now_url = JOBPLANET_REVIEW_URL.format(jp_comp_uid=jp_comp_uid, p=p+1)
     
         # res = req.get(now_url, headers=headers)
@@ -175,6 +175,8 @@ def get_elemenet_text(el):
 async def get_content_to_link(session, url):
     async with session.get(url) as res:
         if res.status == 200:
+            
+            # print(f'[SUCCESS] {url}')
             
             html = await res.text()
             soup = bs(html, 'lxml')
@@ -298,6 +300,20 @@ async def get_content_list(cookies, urls):
     
     return result
 
+def get_pages(session, url):
+    
+    r = session.get(url)
+    soup = bs(r.text, 'lxml')
+    
+    # #viewCompaniesMenu > ul > li.viewReviews > a > span
+    page = soup.select_one('#viewCompaniesMenu > ul > li.viewReviews > a > span').text
+    
+    if int(page) == 0:
+        return 0
+    
+    page = int(page)//5+1
+    
+    return page
 
 
 def get_review(keyword, uid, csv_save=False):
@@ -325,9 +341,14 @@ def get_review(keyword, uid, csv_save=False):
     # 헤더 정보부터 만듭니다.
     req_session, req_cookies = get_login_session()
     
+    page = get_pages(req_session, JOBPLANET_REVIEW_URL.format(jp_comp_uid=uid, p=1))
+    
+    if page == 0:
+        return False
+    
     # 크롤링 준비
     # jp_comp_uid = get_jobplanet_uid(req_session.headers, keyword)
-    urls = get_links_to_keyword(req_session.headers, uid)
+    urls = get_links_to_keyword(req_session.headers, uid, page)
     
     # 데이터 크롤링
     results = asyncio.run(get_content_list(req_cookies, urls))
@@ -420,5 +441,13 @@ def get_review(keyword, uid, csv_save=False):
 
 
 if __name__ == '__main__':
-    get_review('넥슨게임즈', '392405', csv_save=False)
-    # get_review('삼성전자(주)', '30139', csv_save=False)
+    # df = get_review('넥슨게임즈', '392405', csv_save=False)
+    df = get_review('삼성전자(주)', '30139', csv_save=False)
+    # df = get_review('(주)엔코어벤처스', '376861', csv_save=False)
+    # df = get_review('(주)한스클린', '349519', csv_save=False)
+    if df is not False:
+        print(len(df))
+        print(df)
+    else:
+        print('리뷰가 존재하지 않습니다.')
+        
