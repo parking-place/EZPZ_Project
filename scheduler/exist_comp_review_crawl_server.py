@@ -97,7 +97,7 @@ if __name__ == '__main__':
 
     comp_list = get_all_comp_name_and_uid()
     crawl_review(comp_list)
-    # comp_list = [('이롭게', '89342', None)]
+    # comp_list = [('(주)트레드링스', '318498', None)]
     # crawl_review(comp_list)
 
     #print('뉴스정보 전부 DB저장 완료')

@@ -202,6 +202,9 @@ async def get_content_to_link(session, url):
                 # div.card_right.flag_review
                 if review.select_one('div.card_right.flag_review'):
                     continue
+                # div.job_tooltip_box.top.hover
+                if review.select_one('div.job_tooltip_box.top.hover'):
+                    continue
                 
                 # 작성자 정보
                 # div.content_top_ty2 : 작성자 정보가 담겨있는 태그
