@@ -70,6 +70,7 @@ def save_to_db(df, comp_name):
     modify_date = datetime.today().strftime('%Y%m%d')
     
     df_bar = tqdm(df.iterrows(),
+                total=len(df),
                 position=1,
                 leave=False,
                 )

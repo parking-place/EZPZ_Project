@@ -198,6 +198,10 @@ async def get_content_to_link(session, url):
                 # div.cont_discontinu.discontinu_category
                 if review.select_one('div.cont_discontinu.discontinu_category'):
                     continue
+                # 기업 추천 리뷰인 경우
+                # div.card_right.flag_review
+                if review.select_one('div.card_right.flag_review'):
+                    continue
                 
                 # 작성자 정보
                 # div.content_top_ty2 : 작성자 정보가 담겨있는 태그
