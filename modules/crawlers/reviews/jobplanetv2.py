@@ -228,6 +228,10 @@ def get_review(keyword, uid, csv_save=False):
     # result 중 None 제거
     results = [data for data in results if data is not None]
     
+    # 데이터가 없는 경우
+    if results == []:
+        return False
+    
     # 데이터프레임으로 변환
     df = pd.concat(results, ignore_index=True, join='outer', axis=0)
     
@@ -246,10 +250,24 @@ def get_review(keyword, uid, csv_save=False):
 
 
 if __name__ == '__main__':
-    # df = get_review('넥슨게임즈', '392405', csv_save=False)
-    df = get_review('삼성전자(주)', '30139', csv_save=False)
-    # df = get_review('(주)엔코어벤처스', '376861', csv_save=False)
-    # df = get_review('(주)한스클린', '349519', csv_save=False)
+    
+    comp_list = [
+        ('넥슨게임즈', '392405'),
+        ('삼성전자(주)', '30139'),
+        ('(주)엔코어벤처스', '376861'),
+        ('(주)한스클린', '349519'),
+        ('세이리서치(주)', '351150'),
+        ('(주)하룹', '347332')
+    ]
+    
+    df_list = []
+    for comp in comp_list:
+        df = get_review(comp[0], comp[1], csv_save=False)
+        if df is not False:
+            df_list.append(df)
+    
+    df = pd.concat(df_list, ignore_index=True, join='outer', axis=0)
+    
     if df is not False:
         print(len(df))
         print(df)
