@@ -107,6 +107,13 @@ ul li {
     float: right;
 }
 
+/* Clear floats after the columns */
+.average_cont::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
 
 
 /* review pos review and neg reviews */
