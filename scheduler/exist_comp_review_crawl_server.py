@@ -68,14 +68,8 @@ def save_to_db(df, comp_name):
 
     create_date = datetime.today().strftime('%Y%m%d')
     modify_date = datetime.today().strftime('%Y%m%d')
-    
-    df_bar = tqdm(df.iterrows(),
-                total=len(df),
-                position=1,
-                leave=False,
-                )
 
-    for index, row in df_bar:
+    for index, row in df.iterrows():
         review = row['review_cont'][:1000].replace('"', '').replace("'", '')
         
         sql = 'insert into comp_review '
