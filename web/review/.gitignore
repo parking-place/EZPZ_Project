@@ -1,1 +1,1 @@
-migrations/*_initial.py
+migrations/000*.py

@@ -9,20 +9,23 @@ from django.db import models
 
 class CompInfo(models.Model):
     comp_uid = models.BigAutoField(primary_key=True)
-    comp_name = models.CharField(unique=True, max_length=20)
-    comp_loc = models.CharField(max_length=50)
+    comp_name = models.CharField(unique=True, max_length=40)
+    comp_loc = models.CharField(max_length=200, blank=True, null=True)
     comp_thumb = models.CharField(max_length=2000, blank=True, null=True)
     comp_cont = models.CharField(max_length=30, blank=True, null=True)
     comp_founded = models.CharField(max_length=6, blank=True, null=True)
-    comp_size = models.CharField(max_length=10, blank=True, null=True)
+    comp_size = models.CharField(max_length=20, blank=True, null=True)
     comp_url = models.CharField(max_length=2000, blank=True, null=True)
     is_reged = models.CharField(max_length=1)
+    comp_jpuid = models.CharField(max_length=10, blank=True, null=True)
+    comp_ctuid = models.CharField(max_length=10, blank=True, null=True)
     create_date = models.CharField(max_length=8)
     modify_date = models.CharField(max_length=8)
-
+    
     class Meta:
         managed = False
         db_table = 'comp_info'
+
 
 
 class CompNews(models.Model):
@@ -35,7 +38,7 @@ class CompNews(models.Model):
     news_senti = models.IntegerField(blank=True, null=True)
     create_date = models.CharField(max_length=8)
     modify_date = models.CharField(max_length=8)
-
+    
     class Meta:
         managed = False
         db_table = 'comp_news'

@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from django.db.models import Q
 
 from .models import RecruitInfo, CompInfo
 
@@ -15,9 +14,7 @@ def recruit_page(request):
         redirect('/')
     
     # 파라미터 넘어옴 : 회사 정보 불러오기
-    comp_name = CompInfo.objects.filter(
-        Q(comp_uid=comp_uid)
-    )[0].comp_name
+    comp_name = CompInfo.objects.get(comp_uid=comp_uid).comp_name
     
     # html에 넘겨줄 데이터들
     context = {
@@ -28,9 +25,7 @@ def recruit_page(request):
     }
     
     # 채용공고 불러오기
-    recruit_infos = RecruitInfo.objects.filter(
-        Q(comp_uid=comp_uid)
-    )
+    recruit_infos = RecruitInfo.objects.filter(comp_uid=comp_uid)
     
     # 공고가 없는 경우
     if len(recruit_infos) == 0:
