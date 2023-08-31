@@ -1,7 +1,88 @@
 {% extends 'base/index.html' %}
+{% load static %}
+
 {% block content %}
-<script type="text/javascript">
-    alert('준비중인 컨텐츠입니다.');
-    document.location = '/';
-</script>
+<script src="{% static 'js/chart-3.4.0.js' %}"></script>
+<script src="{% static 'js/review/review.js' %}"></script>
+<link href="{% static 'css/review/review.css' %}" rel="stylesheet">
+
+
+<!-- sub_detail_menu -->
+<div class="detail_menu">
+    <button class="tablinks" onclick="openMenu(event, 'HalfYear')">반기별</button>
+    <button class="tablinks" onclick="openMenu(event, 'Quarter')">분기별</button>
+</div>
+
+<!-- 리뷰는 더보기? 아니면 무제한 스크롤? -->
+
+<!-- Halfyear -->
+<div id="HalfYear" class="tabcontent">
+
+    <!-- review body -->
+    <div class="review_all_view_cont">
+
+        <div class="review_chart_cont">
+            <!-- review graph -->
+            <canvas id="reviewChart"></canvas>
+
+            <!-- review keyword -->
+            <canvas id="reviewWordcloud"></canvas>
+        </div>
+
+        <div class="average_cont">
+            <!-- review all rate -->
+            <p class="all_rate">총 별점</br><img class="star" src="{% static 'img/star.png' %}" alt="star"/><b class="rate_num">4.5</b></p>
+
+            <!-- review best keyword 5 -->
+            <ul class="best_keyword">
+                <li>추천키워드</li>
+                <li>추천키워드</li>
+                <li>추천키워드</li>
+                <li>추천키워드</li>
+                <li>추천키워드</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <!-- pos / neg review -->
+    <div class="review_detail_cont">
+
+        <!-- pos review -->
+        <div class="pos_reivews">
+            <!-- incumbent / resigned reviews -->
+            <div class="pos_incumbent_reviews">
+                <ul>
+                    <li>현직자긍정리뷰들</li>
+                </ul>
+            </div>
+            <div class="pos_resigned_reviews">
+                <ul>
+                    <li>퇴사자긍정리뷰들</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- neg review -->
+        <div class="neg_reivews">
+            <!-- incumbent / resigned reviews -->
+            <div class="neg_incumbent_reviews">
+                <ul>
+                    <li>현직자부정리뷰들</li>
+                </ul>
+            </div>
+            <div class="neg_resigned_reviews">
+                <ul>
+                    <li>퇴사자부정리뷰들</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Quarter -->
+<div id="Quarter" class="tabcontent">
+</div>
+
 {% endblock %}

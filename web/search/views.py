@@ -20,7 +20,7 @@ def main_page(request):
                 
                 # 여러기업이 검색된 경우
                 if len(search_result) > 1:
-                    context['search_result'] = [el.comp_name for el in search_result]
+                    context['search_result'] = [(el.comp_name, el.comp_uid) for el in search_result]
                     
                 # 검색결과 : 없거나 하나만 있는경우
                 else:

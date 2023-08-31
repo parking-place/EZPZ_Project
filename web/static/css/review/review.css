@@ -1,0 +1,155 @@
+/* * */
+/* 모든 ul안에 있는 list style 없애기 */
+ul li {
+    list-style-type: none;
+}
+
+
+
+/* sub_detail_menu */
+.detail_menu {
+    display: Flex;
+    justify-content : space-between;
+    /* 처음에 투명하게 설정 */
+    opacity: 0;
+    /* 애니메이션 이름과 지속 시간, 방향 설정 */
+    animation: fadeIn 1.5s forwards;
+    /* 애니메이션 시작을 0.5초 동안 지연 */
+    animation-delay: 0.5s;
+}
+
+/* @keyframes 규칙으로 애니메이션 정의 */
+@keyframes fadeIn {
+    /* 최종적으로 도달할 투명도 값 */
+    to {opacity: 1;}
+}
+
+.tablinks {
+    /* 기존 버튼 style 없애기 */
+    border: none;
+    outline: none;
+    padding: 0;
+    background: none;
+
+    /* 새로운 버튼 style 입히기 */
+    width: 100%;  
+    font-weight: 700;
+    text-decoration: none;
+    color: #fdfdfd;
+    padding: 16px 20px;
+    background-color: #efefef;
+    border-radius: 20px 20px 0px 0px;
+    transition: background-color 0.3s;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.tablinks:hover {
+    background-color: #FF9984;
+    text-decoration: none;
+}
+
+
+
+/* review chart */
+.review_all_view_cont{
+    width: 100%;
+}
+
+.review_chart_cont {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* review graph */
+.reviewChart {
+    width: 45%;
+}
+
+/* review wordcloud */
+.reviewWordcloud {
+    width: 45%;
+}
+
+/* review all_rate & review keyword */
+.average_cont > p.all_rate,
+.average_cont > ul.best_keyword{
+    box-sizing:border-box;
+    width : 45%;
+    border-radius: 20px;
+    border: solid #282828 3px;
+    padding: 20px ;
+    margin-bottom :32px ;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+    flex: 1;
+}
+
+/* review all_rate */
+.all_rate {
+    float: left;
+}
+
+.star {
+    margin-top: -15px;
+    margin-right: 8px;
+    width: 35px;
+    height: auto;
+}
+
+.average_cont .all_rate b {
+    font-size: 32px;
+}
+
+/* review keyword */
+.best_keyword {
+    float: right;
+}
+
+/* Clear floats after the columns */
+.average_cont::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+
+
+/* review pos review and neg reviews */
+.review_detail_cont {
+    display:flex;
+    justify-content : space-between;
+}
+
+/* pos reviews */
+
+
+
+/* neg reviews */
+
+
+
+
+/* tablet & mobile */
+@media (max-width: 768px) {
+    .review_chart_cont {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .review_detail_cont{
+        flex-direction : column;
+        align-items: center;
+    }
+
+    .average_cont{
+        flex-direction : column ;
+        align-items: center;
+    }
+
+    .average_cont > p.all_rate,
+    .average_cont > ul.best_keyword{
+        width :100%;
+    }
+}
