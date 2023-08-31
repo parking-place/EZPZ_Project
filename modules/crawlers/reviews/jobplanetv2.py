@@ -261,7 +261,11 @@ if __name__ == '__main__':
     ]
     
     df_list = []
-    for comp in comp_list:
+    
+    from tqdm import tqdm
+    bars = tqdm(comp_list)
+    for comp in bars:
+        bars.set_description(f'[{comp[0]}] : 진행중')
         df = get_review(comp[0], comp[1], csv_save=False)
         if df is not False:
             df_list.append(df)
