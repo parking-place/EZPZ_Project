@@ -6,6 +6,7 @@ import pandas as pd
 import cryptography
 import sql_connection as sc
 from datetime import datetime
+from tqdm import tqdm
 
 
 sys.path.append('/app/EZPZ_Project') #db 연동정보 경로
@@ -16,10 +17,16 @@ import wanted_recruit_crawler
 from privates.ezpz_db import *
 
 
-
+def get_all_comp_name():
+    comp_list = []
+    sql = ' select comp_name from comp_info where is_reged = "Y" ' #처리안된 회사들만 가져옴
+    comp_temp_list = sc.conn_and_exec(sql)
+    for comp in comp_temp_list:
+        comp_list.append(comp[0])
+    return comp_list #리스트 받아와서 is reged y 회사마다 바꿔주고 modify_date만 바꿔주면됨
 
 def recruit_info_update(comp_list):
-    for comp in comp_list:
+    for comp in tqdm(comp_list):
         #채용공고는 회사이름에 (주) 붙어있으면 안됨 제거 전처리
         recruit_comp = comp.replace('(주)',"")
         #print(recruit_comp)
@@ -31,6 +38,18 @@ def recruit_info_update(comp_list):
         for i in range(len(recruit_info_df['recruit_uid'])):
             new_i.append(list(recruit_info_df['recruit_uid'][i])[0])
         recruit_info_df['recruit_uid']=new_i
+
+        desc_list= []
+        position_list = []
+        for desc in recruit_info_df['recruit_desc']:
+            desc = desc.replace('"', '').replace("'", '')
+            desc_list.append(desc)
+        recruit_info_df['recruit_desc'] = desc_list
+
+        for position in recruit_info_df['recruit_position']:
+            position = position.replace('"', '').replace("'", '')
+            position_list.append(position)
+        recruit_info_df['recruit_position'] = position_list
 
         #회사이름이 comp_info와 같은 recruit_info에서 recruit_info_uid 정보 전부 빼옴
         sql = 'SELECT recruit_info.recruit_uid '
@@ -53,20 +72,30 @@ def recruit_info_update(comp_list):
             filtered_recruit_info_df = recruit_info_df[recruit_info_df['recruit_uid'].isin(sub_set)]
             #채용공고에 넣어줄 comp_id
             #cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
-            sql = f'select comp_uid from comp_info where comp_name = "{comp}"'
+            replace_comp = comp.replace(' ','')
+            sql = f'select comp_uid from comp_info where replace(comp_name , " ", "") like "%{replace_comp}%" '
             uid = sc.conn_and_exec(sql)
-            comp_uid=uid[0][0]
+            comp_uid= uid[0][0]
             #print(comp_uid)
 
             create_date = datetime.today().strftime('%Y%m%d')
             modify_date = datetime.today().strftime('%Y%m%d')
 
             for index, row in filtered_recruit_info_df.iterrows():
+
+                # uid 중복 확인 (중복시 insert 안함)
+                uid = row['recruit_uid']
+                sql = f'select count(*) from recruit_info where recruit_uid = "{uid}"'
+                result = sc.conn_and_exec(sql)
+                if result[0][0] > 0:
+                    continue
+
+
                 sql = 'insert into recruit_info '
                 sql += '    (comp_uid, recruit_uid, recruit_url, recruit_position, recruit_thumb, recruit_desc, create_date, modify_date) '
                 sql += 'values ( '
                 sql += f'   "{comp_uid}", "{row["recruit_uid"]}", "{row["recruit_url"]}", "{row["recruit_position"]}", "{row["recruit_thumb"]}", "{row["recruit_desc"]}" '
-                sql += f'    , "{"00000000"}", "{"00000000"}" '
+                sql += f'    , "{create_date}", "{modify_date}" '
                 sql += ') '
                 #cur.execute(sql)
                 sc.conn_and_exec(sql)
@@ -95,17 +124,8 @@ def recruit_info_update(comp_list):
 #테스트용으로 사용하세요
 if __name__ == '__main__':
 
-    comp_list=['삼성전자(주)','(주)카카오','네이버(주)']
-    #테스트용으로 아무거나 delete =>공고 추가되나 확인용
-    #cur.execute('delete from recruit_info where recruit_position = "[신입] iOS개발"')
-    sql = 'delete from recruit_info where recruit_position = "[신입] iOS개발"'
-    sc.conn_and_exec(sql)
 
-    #cur.execute('select * from recruit_info')
-    #for i in cur:
-    #    print(i)
-
-    #함수테스트완료
+    comp_list = get_all_comp_name()
     recruit_info_update(comp_list)
 
 
