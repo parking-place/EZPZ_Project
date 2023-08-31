@@ -70,7 +70,7 @@ def save_to_db(df, comp_name):
     modify_date = datetime.today().strftime('%Y%m%d')
 
     for index, row in df.iterrows():
-        review = row['review_cont'][:1000].replace('"', '').replace("'", '')
+        review = row['review_cont'][:1000].replace('"', '').replace("'", '').replace('\\', '').replace('\n', ' ')
         
         sql = 'insert into comp_review '
         sql += '    (comp_uid, review_cont, review_senti_orig, review_rate, is_office, review_date, position, create_date, modify_date) '
