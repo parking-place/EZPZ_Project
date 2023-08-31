@@ -60,8 +60,8 @@
                 {% if search_result is not None %}
                 <div id="search_result_container">
                     <div id="search_result_header">검색 가능한 기업이 {{search_result|length}}개가 있습니다.</div>
-                    {% for result in search_result %}
-                    <p style="padding-left: 30px;">{{result}}</p>
+                    {% for result, uid in search_result %}
+                    <a href="/comp/?comp_uid={{uid}}"><p style="padding-left: 30px;">{{result}}</p></a>
                     {% endfor %}
                 </div>
                 {% endif %}
