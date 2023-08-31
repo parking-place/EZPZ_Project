@@ -56,6 +56,8 @@ def crawl_review(comp_list):
         
         save_to_db(all_reviews, comp_name)
         
+        comp_bar.set_description(comp_name + ' : ' + 'Saved')
+        
     comp_bar.close()
     
     return 
@@ -68,7 +70,7 @@ def save_to_db(df, comp_name):
 
     create_date = datetime.today().strftime('%Y%m%d')
     modify_date = datetime.today().strftime('%Y%m%d')
-
+    
     for index, row in df.iterrows():
         review = row['review_cont'][:1000].replace('"', '').replace("'", '').replace('\\', '').replace('\n', ' ')
         
