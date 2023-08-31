@@ -7,9 +7,14 @@ from privates.ezpz_db import *
 def conn_and_exec(sql,param=None): #return문이 필요할 때
 	conn = get_connection()
 	cur = conn.cursor()
-	cur.execute(sql,param)
-	exec = cur.fetchall()
-	conn.commit()
+	try:	
+		cur.execute(sql,param)
+		exec = cur.fetchall()
+		conn.commit()
+	except Exception as e:
+		print('Error : ', e)
+		print('SQL : ', sql)
+		conn.rollback()
 	conn.close()
 
 	#select 문 정보를 저장해서 사용해야되는경우 반환값이 있어야함(ex comp_uid)
