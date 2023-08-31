@@ -9,11 +9,9 @@
 
 <!-- sub_detail_menu -->
 <div class="detail_menu">
-    <button class="tablinks" onclick="openMenu(event, 'HalfYear')">반기별</button>
-    <button class="tablinks" onclick="openMenu(event, 'Quarter')">분기별</button>
+    <button class="tablinks {% if review_tab == 'half' %} activate {% endif %}" onclick="openMenu(event, 'HalfYear')">반기별</button>
+    <button class="tablinks {% if review_tab == 'quart' %} activate {% endif %}" onclick="openMenu(event, 'Quarter')">분기별</button>
 </div>
-
-<!-- 리뷰는 더보기? 아니면 무제한 스크롤? -->
 
 <!-- Halfyear -->
 <div id="HalfYear" class="tabcontent">
@@ -51,6 +49,12 @@
         <!-- pos review -->
         <div class="pos_reivews">
             <!-- incumbent / resigned reviews -->
+            <!-- 데이터 꺼내게 될 경우 이렇게 사용
+            {% for pos in pos_review %}
+            <h4 style="color: {{pos.color}};">{{pos.is_office}}</h4>
+            <p>{{pos.cont}}</p>
+            {% endfor %}
+            -->
             <div class="pos_incumbent_reviews">
                 <ul>
                     <li>현직자긍정리뷰들</li>
@@ -66,7 +70,14 @@
         <!-- neg review -->
         <div class="neg_reivews">
             <!-- incumbent / resigned reviews -->
-            <div class="neg_incumbent_reviews">
+            <!-- 데이터 꺼내게 될 경우 이렇게 사용
+            {% for neg in neg_review %}
+            <h4 style="color: {{neg.color}};">{{neg.is_office}}</h4>
+            <p>{{neg.cont}}</p>
+            {% endfor %}
+            -->
+            <!-- 문주 작성 -->
+                <div class="neg_incumbent_reviews">
                 <ul>
                     <li>현직자부정리뷰들</li>
                 </ul>
