@@ -285,6 +285,7 @@ ul li {
     .average_cont > p.all_rate,
     .average_cont > .best_keyword{
         width: 100%;
+        margin: 0 24px;
     }
 
     .average_cont > p.all_rate {
