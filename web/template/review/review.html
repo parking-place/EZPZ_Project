@@ -29,16 +29,19 @@
 
         <div class="average_cont">
             <!-- review all rate -->
-            <p class="all_rate">총 별점</br><img class="star" src="{% static 'img/star.png' %}" alt="star"/><b class="rate_num">4.5</b></p>
+            <p class="all_rate">총 별점<span class="rate_num"><img class="star" src="{% static 'img/star.png' %}" alt="star"/>4.5</span></p>
 
             <!-- review best keyword 5 -->
-            <ul class="best_keyword">
-                <li>추천키워드</li>
-                <li>추천키워드</li>
-                <li>추천키워드</li>
-                <li>추천키워드</li>
-                <li>추천키워드</li>
-            </ul>
+            <div class="best_keyword">
+                <p class="best_keyword_title">이 회사의 중요 키워드</p>
+                <ul class="best_keyword_text">
+                    <li>추천키워드</li>
+                    <li>추천키워드</li>
+                    <li>추천키워드</li>
+                    <li>추천키워드</li>
+                    <li>추천키워드</li>
+                </ul>
+            </div>
         </div>
 
     </div>
@@ -47,7 +50,7 @@
     <div class="review_detail_cont">
 
         <!-- pos review -->
-        <div class="pos_reivews">
+        <div class="pos_reviews">
             <!-- incumbent / resigned reviews -->
             <!-- 데이터 꺼내게 될 경우 이렇게 사용
             {% for pos in pos_review %}
@@ -55,6 +58,11 @@
             <p>{{pos.cont}}</p>
             {% endfor %}
             -->
+            <div class="review_pos_title">
+                <h1><span class="positive">긍정적</span>&nbsp;리뷰</h1>
+                <h2>긍정적 리뷰 요약 내용</h2>
+            </div>
+            <!-- 문주 작성 -->
             <div class="pos_incumbent_reviews">
                 <ul>
                     <li>현직자긍정리뷰들</li>
@@ -67,8 +75,10 @@
             </div>
         </div>
 
+        <div class="center_line"></div>
+
         <!-- neg review -->
-        <div class="neg_reivews">
+        <div class="neg_reviews">
             <!-- incumbent / resigned reviews -->
             <!-- 데이터 꺼내게 될 경우 이렇게 사용
             {% for neg in neg_review %}
@@ -76,8 +86,12 @@
             <p>{{neg.cont}}</p>
             {% endfor %}
             -->
+            <div class="review_neg_title">
+                <h1><span class="negative">부정적</span>&nbsp;리뷰</h1>
+                <h2>부정적 리뷰 요약 내용</h2>
+            </div>
             <!-- 문주 작성 -->
-                <div class="neg_incumbent_reviews">
+            <div class="neg_incumbent_reviews">
                 <ul>
                     <li>현직자부정리뷰들</li>
                 </ul>
@@ -94,6 +108,93 @@
 
 <!-- Quarter -->
 <div id="Quarter" class="tabcontent">
+    <!-- review body -->
+    <div class="review_all_view_cont">
+
+        <div class="review_chart_cont">
+            <!-- review graph -->
+            <canvas id="reviewChart"></canvas>
+
+            <!-- review keyword -->
+            <canvas id="reviewWordcloud"></canvas>
+        </div>
+
+        <div class="average_cont">
+            <!-- review all rate -->
+            <p class="all_rate">총 별점<span class="rate_num"><img class="star" src="{% static 'img/star.png' %}" alt="star"/>4.5</span></p>
+
+            <!-- review best keyword 5 -->
+            <div class="best_keyword">
+                <p class="best_keyword_title">이 회사의 중요 키워드</p>
+                <ul class="best_keyword_text">
+                    <li>추천키워드</li>
+                    <li>추천키워드</li>
+                    <li>추천키워드</li>
+                    <li>추천키워드</li>
+                    <li>추천키워드</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- pos / neg review -->
+    <div class="review_detail_cont">
+
+        <!-- pos review -->
+        <div class="pos_reviews">
+            <!-- incumbent / resigned reviews -->
+            <!-- 데이터 꺼내게 될 경우 이렇게 사용
+            {% for pos in pos_review %}
+            <h4 style="color: {{pos.color}};">{{pos.is_office}}</h4>
+            <p>{{pos.cont}}</p>
+            {% endfor %}
+            -->
+            <div class="review_pos_title">
+                <h1><span class="positive">긍정적</span>&nbsp;리뷰</h1>
+                <h2>긍정적 리뷰 요약 내용</h2>
+            </div>
+            <!-- 문주 작성 -->
+            <div class="pos_incumbent_reviews">
+                <ul>
+                    <li>현직자긍정리뷰들</li>
+                </ul>
+            </div>
+            <div class="pos_resigned_reviews">
+                <ul>
+                    <li>퇴사자긍정리뷰들</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="center_line"></div>
+
+        <!-- neg review -->
+        <div class="neg_reviews">
+            <!-- incumbent / resigned reviews -->
+            <!-- 데이터 꺼내게 될 경우 이렇게 사용
+            {% for neg in neg_review %}
+            <h4 style="color: {{neg.color}};">{{neg.is_office}}</h4>
+            <p>{{neg.cont}}</p>
+            {% endfor %}
+            -->
+            <div class="review_neg_title">
+                <h1><span class="negative">부정적</span>&nbsp;리뷰</h1>
+                <h2>부정적 리뷰 요약 내용</h2>
+            </div>
+            <!-- 문주 작성 -->
+            <div class="neg_incumbent_reviews">
+                <ul>
+                    <li>현직자부정리뷰들</li>
+                </ul>
+            </div>
+            <div class="neg_resigned_reviews">
+                <ul>
+                    <li>퇴사자부정리뷰들</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

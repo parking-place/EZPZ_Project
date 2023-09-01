@@ -29,8 +29,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementsByClassName('tablinks')[0].click();
 });
 
-
-
 // ========================================
 // Graph 관련
 // ========================================
