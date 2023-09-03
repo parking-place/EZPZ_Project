@@ -1,6 +1,6 @@
-// ========================================
-// Sub_detail_menu 관련
-// ========================================
+/*  ========================================
+    Sub_detail_menu 관련
+    ======================================== */
 /*
 function openMenu(evt, menuName) {
     var i, tabcontent, tablinks;
@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementsByClassName('tablinks')[0].click();
 });
 */
+// 리뷰 페이지 내 세부 탭 이동
 function go_page(type, comp_uid){
     if(type && type=='half'){
         document.location = '/review/half?comp_uid=' + comp_uid;
@@ -37,11 +38,11 @@ function go_page(type, comp_uid){
         document.location = '/review/quarter?comp_uid=' + comp_uid;
     }
 }
-// ========================================
-// Graph 관련
-// ========================================
+/*  ========================================
+    Graph 관련
+    ======================================== */
 
 
-// ========================================
-// Wordcloud 관련
-// ========================================
+/*  ========================================
+    Wordcloud 관련
+    ======================================== */
