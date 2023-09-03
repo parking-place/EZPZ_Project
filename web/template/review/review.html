@@ -9,8 +9,8 @@
 
 <!-- sub_detail_menu -->
 <div class="detail_menu">
-    <button class="tablinks {% if review_tab == 'half' %} activate {% endif %}" onclick="openMenu(event, 'HalfYear')">반기별</button>
-    <button class="tablinks {% if review_tab == 'quart' %} activate {% endif %}" onclick="openMenu(event, 'Quarter')">분기별</button>
+    <button class="tablinks {% if review_tab == 'half' %} activate {% endif %}" onclick="javascript:go_page('half', {{comp_uid}})">반기별</button>
+    <button class="tablinks {% if review_tab == 'quart' %} activate {% endif %}" onclick="javascript:go_page('quart', {{comp_uid}})">분기별</button>
 </div>
 
 <!-- Halfyear -->
@@ -18,28 +18,26 @@
 
     <!-- review body -->
     <div class="review_all_view_cont">
+        <!-- Chart Section -->
 
         <div class="review_chart_cont">
-            <!-- review graph -->
+            <!-- line graph : keyword & rates -->
             <canvas id="reviewChart"></canvas>
-
-            <!-- review keyword -->
+            <!-- word cloud : keyword -->
             <canvas id="reviewWordcloud"></canvas>
         </div>
 
         <div class="average_cont">
             <!-- review all rate -->
-            <p class="all_rate">총 별점<span class="rate_num"><img class="star" src="{% static 'img/star.png' %}" alt="star"/>4.5</span></p>
+            <p class="all_rate">총 별점<span class="rate_num"><img class="star" src="{% static 'img/star.png' %}" alt="star"/>{{rate_sum}}</span></p>
 
             <!-- review best keyword 5 -->
             <div class="best_keyword">
                 <p class="best_keyword_title">이 회사의 중요 키워드</p>
                 <ul class="best_keyword_text">
-                    <li>추천키워드</li>
-                    <li>추천키워드</li>
-                    <li>추천키워드</li>
-                    <li>추천키워드</li>
-                    <li>추천키워드</li>
+                    {% for keyword in total_keywords %}
+                    <li>{{keyword}}</li>
+                    {% endfor %}
                 </ul>
             </div>
         </div>
@@ -49,57 +47,35 @@
     <!-- pos / neg review -->
     <div class="review_detail_cont">
 
-        <!-- pos review -->
+        <!-- pos review container -->
         <div class="pos_reviews">
-            <!-- incumbent / resigned reviews -->
-            <!-- 데이터 꺼내게 될 경우 이렇게 사용
-            {% for pos in pos_review %}
-            <h4 style="color: {{pos.color}};">{{pos.is_office}}</h4>
-            <p>{{pos.cont}}</p>
-            {% endfor %}
-            -->
             <div class="review_pos_title">
                 <h1><span class="positive">긍정적</span>&nbsp;리뷰</h1>
-                <h2>긍정적 리뷰 요약 내용</h2>
+                <h2>{{pos_sum}}</h2>
             </div>
-            <!-- 문주 작성 -->
-            <div class="pos_incumbent_reviews">
-                <ul>
-                    <li>현직자긍정리뷰들</li>
-                </ul>
-            </div>
-            <div class="pos_resigned_reviews">
-                <ul>
-                    <li>퇴사자긍정리뷰들</li>
-                </ul>
+            <!-- pos review conts -->
+            <div>
+                {% for pos in pos_review %}
+                <h4 style="color: {{pos.color}}">{{pos.is_office}}</h4>
+                <p style="margin-bottom: 20px;">{{pos.cont}}</p>
+                {% endfor %}
             </div>
         </div>
 
         <div class="center_line"></div>
 
-        <!-- neg review -->
+        <!-- neg review container -->
         <div class="neg_reviews">
-            <!-- incumbent / resigned reviews -->
-            <!-- 데이터 꺼내게 될 경우 이렇게 사용
-            {% for neg in neg_review %}
-            <h4 style="color: {{neg.color}};">{{neg.is_office}}</h4>
-            <p>{{neg.cont}}</p>
-            {% endfor %}
-            -->
             <div class="review_neg_title">
                 <h1><span class="negative">부정적</span>&nbsp;리뷰</h1>
-                <h2>부정적 리뷰 요약 내용</h2>
+                <h2>{{neg_sum}}</h2>
             </div>
-            <!-- 문주 작성 -->
-            <div class="neg_incumbent_reviews">
-                <ul>
-                    <li>현직자부정리뷰들</li>
-                </ul>
-            </div>
-            <div class="neg_resigned_reviews">
-                <ul>
-                    <li>퇴사자부정리뷰들</li>
-                </ul>
+            <!-- neg reivew conts -->
+            <div>
+                {% for neg in neg_review %}
+                <h4 style="color:{{neg.color}}">{{neg.is_office}}</h4>
+                <p style="margin-bottom: 20px;">{{neg.cont}}</p>
+                {% endfor %}
             </div>
         </div>
     </div>

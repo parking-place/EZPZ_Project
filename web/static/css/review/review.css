@@ -45,6 +45,10 @@ ul li {
     flex-grow: 1;
     text-align: center;
 }
+.tablinks.activate {
+    background-color: #FF9984;
+    text-decoration: none;
+}
 
 .tablinks:hover {
     background-color: #FF9984;

@@ -1,6 +1,7 @@
 // ========================================
 // Sub_detail_menu 관련
 // ========================================
+/*
 function openMenu(evt, menuName) {
     var i, tabcontent, tablinks;
 
@@ -28,7 +29,14 @@ function openMenu(evt, menuName) {
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementsByClassName('tablinks')[0].click();
 });
-
+*/
+function go_page(type, comp_uid){
+    if(type && type=='half'){
+        document.location = '/reivew/half?comp_uid=' + comp_uid;
+    } else if(type && type=='quart'){
+        document.location = '/review/quarter?comp_uid=' + comp_uid;
+    }
+}
 // ========================================
 // Graph 관련
 // ========================================
