@@ -57,7 +57,7 @@ ul li {
 
 
 
-#HalfYear, #Quarter {
+#reivew_cont {
     opacity: 0;
     /* 애니메이션 이름과 지속 시간, 방향 설정 */
     animation: fadeIn 1.5s forwards;

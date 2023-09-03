@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
 */
 function go_page(type, comp_uid){
     if(type && type=='half'){
-        document.location = '/reivew/half?comp_uid=' + comp_uid;
+        document.location = '/review/half?comp_uid=' + comp_uid;
     } else if(type && type=='quart'){
         document.location = '/review/quarter?comp_uid=' + comp_uid;
     }
