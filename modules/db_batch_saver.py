@@ -136,35 +136,6 @@ comp_df = get_comp_df(comp_uid)
 
 
 
-# 반기 정보 추출 함수 정의
-def extract_half(comp_df):
-    if int(comp_df['month']) <= 6:
-        return 'H1'
-    else:
-        return 'H2'
-
-# 'Half' 열 추가
-comp_df['half'] = comp_df.apply(extract_half, axis=1)
-
-
-# 분기 정보 추출 함수 정의
-def extract_quarter(comp_df):
-    if int(comp_df['month']) <= 3:
-        return 'Q1'
-    elif int(comp_df['month']) <= 6:
-        return 'Q2'
-    elif int(comp_df['month']) <= 9:
-        return 'Q3'
-    else:
-        return 'Q4'
-
-
-
-# 'Quarter' 열 추가
-comp_df['quarter'] = comp_df.apply(extract_quarter, axis=1)
-
-
-
 
 # 필터
 class Comp_Filter:
