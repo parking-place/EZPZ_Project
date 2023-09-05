@@ -144,7 +144,7 @@ def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이
 if __name__ == '__main__':
 
     comp_list = get_all_comp_name()
-    comp_list = ['세이지리서치(주)']
+    # comp_list = ['세이지리서치(주)']
     crawl_and_save(comp_list)
 
     #print('뉴스정보 전부 DB저장 완료')
