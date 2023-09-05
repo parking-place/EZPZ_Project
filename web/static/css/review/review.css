@@ -10,6 +10,8 @@ ul li {
 .detail_menu {
     display: Flex;
     justify-content : space-between;
+    margin-top: 36px;
+    box-shadow: 0 12px 12px -8px rgba(0, 0, 0, 0.1);
     /* 처음에 투명하게 설정 */
     opacity: 0;
     /* 애니메이션 이름과 지속 시간, 방향 설정 */
@@ -43,10 +45,30 @@ ul li {
     flex-grow: 1;
     text-align: center;
 }
+.tablinks.activate {
+    background-color: #FF9984;
+    text-decoration: none;
+}
 
 .tablinks:hover {
     background-color: #FF9984;
     text-decoration: none;
+}
+
+
+
+#reivew_cont {
+    opacity: 0;
+    /* 애니메이션 이름과 지속 시간, 방향 설정 */
+    animation: fadeIn 1.5s forwards;
+    /* 애니메이션 시작을 0.5초 동안 지연 */
+    animation-delay: 0.5s;
+}
+
+/* @keyframes 규칙으로 애니메이션 정의 */
+@keyframes fadeIn {
+    /* 최종적으로 도달할 투명도 값 */
+    to {opacity: 1;}
 }
 
 
@@ -59,52 +81,105 @@ ul li {
 .review_chart_cont {
     display: flex;
     justify-content: space-between;
+    margin-top: 96px;
+    margin-bottom: 56px;
 }
 
+.reviewChart, .reviewWordcloud {
+    flex: 1;
+}
+
+/* !!!!!!!!!!!!!!!! 그래프 !!!!!!!!!!!!!!! */
+/* !!!!!!!!!!!! 이지야 여기야 !!!!!!!!!!!! */
+/* !!!!!!!!!!!! 워드 클라우드 !!!!!!!!!!!! */
 /* review graph */
 .reviewChart {
-    width: 45%;
+    flex: 1;
+    margin-right: 10px;
 }
 
 /* review wordcloud */
 .reviewWordcloud {
-    width: 45%;
+    flex: 1;
+    margin-left: 10px;
 }
+/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
 /* review all_rate & review keyword */
-.average_cont > p.all_rate,
-.average_cont > ul.best_keyword{
-    box-sizing:border-box;
-    width : 45%;
+.average_cont {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 120px;
+}
+
+.average_cont > p.all_rate {
+    box-sizing: border-box;
     border-radius: 20px;
     border: solid #282828 3px;
-    padding: 20px ;
-    margin-bottom :32px ;
+    padding: 20px;
     text-align: center;
-    font-size: 20px;
-    font-weight: 600;
-    flex: 1;
+    font-size: 24px;
+    font-weight: 800;
+    width: calc(50% - 10px);
+    margin-right: 20px;
 }
+
+.average_cont > .best_keyword {
+    box-sizing: border-box;
+    border-radius: 20px;
+    border: solid #282828 3px;
+    padding: 20px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 800;
+    width: 50%;
+}
+
 
 /* review all_rate */
 .all_rate {
-    float: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0;
 }
 
 .star {
-    margin-top: -15px;
+    margin-bottom: 8px;
     margin-right: 8px;
     width: 35px;
     height: auto;
 }
 
-.average_cont .all_rate b {
+.average_cont .all_rate span {
     font-size: 32px;
+    font-weight: 900;
+    align-items: center;
 }
 
 /* review keyword */
 .best_keyword {
-    float: right;
+    margin: 0;
+}
+
+.best_keyword_text {
+    font-size: 18px;
+    font-weight: 300 !important;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    padding: 0 32px;
+    margin-bottom: 0;
+}
+
+.best_keyword_text li {
+    width: auto;
+    margin-right: 10px;
+}
+
+.best_keyword_text li:last-child {
+    margin-right: 0;
 }
 
 /* Clear floats after the columns */
@@ -118,38 +193,124 @@ ul li {
 
 /* review pos review and neg reviews */
 .review_detail_cont {
-    display:flex;
-    justify-content : space-between;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    height: 100%;
+    margin-bottom: 96px;
 }
 
-/* pos reviews */
+.review_pos_title h1,
+.review_neg_title h1{
+    display: flex;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
 
+.review_pos_title h2,
+.review_neg_title h2{
+    font-weight: 400 !important;
+}
+
+.review_pos_title, .review_neg_title {
+    margin-bottom: 48px;
+}
+
+/* reviews_center_line */
+.center_line {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    height: 100%;
+    width: 1px;
+    background-color: #282828; 
+}
+
+
+.pos_reviews, .neg_reviews {
+    width: calc(50% - 10px);
+    padding: 20px;
+}
+
+
+/* pos reviews */
+.positive {
+    color: #699BF7 !important;
+}
+
+/* pos_subtitle_line */
+.review_pos_title h2::after {
+    content: '';
+    display: block;
+    width: 70%;
+    height: 1px;
+    background-color: #282828;
+    margin-top: 20px;
+}
 
 
 /* neg reviews */
+.negative {
+    color: #FF9984 !important;
+}
 
+/* neg_subtitle_line */
+.review_neg_title h2::after {
+    content: '';
+    display: block;
+    width: 70%;
+    height: 1px;
+    background-color: #282828; 
+    margin-top: 20px;
+}
 
 
 
 /* tablet & mobile */
 @media (max-width: 768px) {
     .review_chart_cont {
+        display: flex;
         flex-direction: column;
         align-items: center;
     }
 
-    .review_detail_cont{
-        flex-direction : column;
-        align-items: center;
+    .reviewChart,
+    .reviewWordcloud {
+        width: auto;
+        height: auto;
     }
 
     .average_cont{
+        display: flex;
         flex-direction : column ;
         align-items: center;
     }
 
     .average_cont > p.all_rate,
-    .average_cont > ul.best_keyword{
-        width :100%;
+    .average_cont > .best_keyword{
+        width: 100%;
+        margin: 0 24px;
+    }
+
+    .average_cont > p.all_rate {
+        margin-bottom: 24px;
+    }
+
+    .review_detail_cont{
+        display: flex;
+        flex-direction : column;
+        align-items: center;
+    }
+
+    .pos_reviews, .neg_reviews {
+        width: 100%;
+    }
+
+    .pos_reviews {
+        margin-bottom: 24px;
+    }
+
+    .center_line {
+        display: none;
     }
 }
