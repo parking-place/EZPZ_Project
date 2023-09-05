@@ -10,15 +10,15 @@ import numpy as np
 import itertools
 from datetime import datetime
 
-from model.tokenizer import tokenizer
-from model.t5basesum
+from torchmodules import tokenizer, t5basesum
+from torchmodules.tokenizer import *
+from torchmodules.t5basesum import * 
 
-# tokenizer
 from konlpy.tag import Hannanum
 from kiwipiepy import Kiwi, basic_typos # Kiwi 오타정정 커스터마이징 모듈
 
-# 키워드 추출
 from collections import Counter
+
 
 
 
