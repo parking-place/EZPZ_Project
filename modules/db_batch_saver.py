@@ -10,7 +10,8 @@ import numpy as np
 import itertools
 from datetime import datetime
 
-from model import tokenizer
+from model.tokenizer import tokenizer
+from model.t5basesum
 
 # tokenizer
 from konlpy.tag import Hannanum
@@ -25,6 +26,7 @@ from collections import Counter
 # 디렉터리 지정
 DATA_PATH = './data/'
 MODEL_PATH = './model/'
+
 # 폴더 생성
 os.makedirs(DATA_PATH, exist_ok=True)
 
