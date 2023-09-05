@@ -34,15 +34,26 @@ def get_all_comp_name():
         comp_list.append(comp[0])
     return comp_list #리스트 받아와서 is reged y 회사마다 바꿔주고 modify_date만 바꿔주면됨
 
+def delete_comp_news(comp):
+    # 해당 회사기사만 삭제하도록 수정해야함
+    sql = f'select comp_uid from comp_info where replace(comp_name , " ", "") like "%{comp}%" '
+    comp_uid = sc.conn_and_exec(sql)
+    comp_uid= comp_uid[0][0]
+    sql = f'delete from comp_news where comp_uid = {comp_uid}'
+    sc.conn_and_exec(sql)
+    # delete from comp_news where comp_uid = {comp_uid}
+    pass
+
 
 def crawl_and_save(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정보 만들어줌 카카오 네이버 구글
 
     #print('뉴스 데이터 삭제')
     #cur.execute('truncate table comp_news') #기존 뉴스정보 테이블 삭제
-    sql = 'truncate table comp_news'
-    sc.conn_and_exec(sql)
+    # sql = 'truncate table comp_news'
+    # sc.conn_and_exec(sql)
 
     for comp in tqdm(comp_list):
+        
         #print(comp + '뉴스 크롤링시작')
         daum_news = daum_news_crawler.get_news(comp) #다음뉴스 크롤러 실행 확인
         #naver_news = naver_news_crawler.get_news(comp) #네이버 뉴스크롤러 실행
@@ -100,7 +111,11 @@ def crawl_and_save(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정�
 
         all_news['news_cont']= clean_cont
         all_news['news_sum'] = clean_sum
+        
+        # 해당 회사 기사 DB에서 삭제
+        delete_comp_news(comp)
 
+        # 크롤링한 뉴스 DB에 저장
         get_comp_news_db(all_news,comp) #기업별 all_news 테이블화 시키기
         #print(f'{comp} 뉴스 DB에 저장완료')
 
@@ -129,6 +144,7 @@ def get_comp_news_db(all_news,comp): # 만들어진 데이터프레임을 테이
 if __name__ == '__main__':
 
     comp_list = get_all_comp_name()
+    comp_list = ['세이지리서치(주)']
     crawl_and_save(comp_list)
 
     #print('뉴스정보 전부 DB저장 완료')

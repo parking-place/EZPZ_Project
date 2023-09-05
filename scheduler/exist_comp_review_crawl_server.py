@@ -25,9 +25,16 @@ def get_all_comp_name_and_uid():
     comp_list = list(comp_temp_list)
     return comp_list #리스트 받아와서 is reged y 회사마다 바꿔주고 modify_date만 바꿔주면됨
 
-def crawl_review(comp_list):
-    sql = 'truncate table comp_review'
+def delete_comp_review(comp):
+    sql = f'select comp_uid from comp_info where replace(comp_name , " ", "") like "%{comp}%" '
+    comp_uid = sc.conn_and_exec(sql)
+    comp_uid= comp_uid[0][0]
+    sql = f'delete from comp_review where comp_uid = {comp_uid}'
     sc.conn_and_exec(sql)
+
+def crawl_review(comp_list):
+    # sql = 'truncate table comp_review'
+    # sc.conn_and_exec(sql)
     
     # print(comp_list[0])
     comp_bar = tqdm(comp_list,
@@ -53,7 +60,9 @@ def crawl_review(comp_list):
         else:
             all_reviews = pd.concat([catch_reviews, jobplanet_reviews], ignore_index=True)
         comp_bar.set_description(comp_name + ' : ' + str(len(all_reviews)))
-        
+        # 기존 리뷰 삭제
+        delete_comp_review(comp_name)
+        # 리뷰 저장
         save_to_db(all_reviews, comp_name)
         
         comp_bar.set_description(comp_name + ' : ' + 'Saved')
