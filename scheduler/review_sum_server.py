@@ -74,20 +74,46 @@ def get_mean_rate(df):
 
 def process_review(grouped_df):
     review_list = grouped_df['review_cont'].tolist()
-    summary = get_review_summary(review_list)
+    # summary = get_review_summary(review_list)
     keyword = get_keyword(review_list)
     mean_rate = get_mean_rate(grouped_df)
     
-    return {'summary': summary, 'mean_rate': mean_rate, 'keyword': keyword}
+    pos_review_list = grouped_df[grouped_df['review_senti_orig'] == 'P']['review_cont'].tolist()
+    neg_review_list = grouped_df[grouped_df['review_senti_orig'] == 'N']['review_cont'].tolist()
+    summary_pos = get_review_summary(pos_review_list)
+    summary_neg = get_review_summary(neg_review_list)
+    keyword_pos = get_keyword(pos_review_list)
+    keyword_neg = get_keyword(neg_review_list)
+    
+    
+    return {
+        'keyword': keyword,
+        'mean_rate': mean_rate,
+        'summary_pos': summary_pos,
+        'summary_neg': summary_neg,
+        'keyword_pos': keyword_pos,
+        'keyword_neg': keyword_neg,
+    }
 
-def get_sql(comp_uid, year, term, summary, mean_rate, keyword):
-    # print(f'comp_uid: {comp_uid}, year: {year}, term: {term}, summary: {summary}, mean_rate: {mean_rate}, keyword: {keyword}')
-    summary = summary.replace('"', '\\"').replace("'", "\\'")
+# def get_sql(comp_uid, year, term, summary, mean_rate, keyword):
+#     # print(f'comp_uid: {comp_uid}, year: {year}, term: {term}, summary: {summary}, mean_rate: {mean_rate}, keyword: {keyword}')
+#     summary = summary.replace('"', '\\"').replace("'", "\\'")
+    
+#     sql = 'insert into sum_review '
+#     sql += '    (comp_uid, sum_year, sum_term, sum_cont, sum_keyword, avg_rate, create_date, modify_date) '
+#     sql += 'values ( '
+#     sql += f'{comp_uid}, "{year:04d}", "{term:02d}", "{summary}", "{keyword}", {mean_rate}, "{today_date}", "{today_date}" '
+#     sql += ');\n '
+#     return sql
+
+def get_sql(comp_uid, year, term, summary_pos, summary_neg, keyword, keyword_pos, keyword_neg, mean_rate ):
+    summary_pos = summary_pos.replace('"', '\\"').replace("'", "\\'")
+    summary_neg = summary_neg.replace('"', '\\"').replace("'", "\\'")
     
     sql = 'insert into sum_review '
-    sql += '    (comp_uid, sum_year, sum_term, sum_cont, sum_keyword, avg_rate, create_date, modify_date) '
+    sql += '    (comp_uid, sum_year, sum_term, sum_cont_pos, sum_cont_neg, sum_keyword, sum_keyword_pos, sum_keyword_neg, avg_rate, create_date, modify_date) '
     sql += 'values ( '
-    sql += f'{comp_uid}, "{year:04d}", "{term:02d}", "{summary}", "{keyword}", {mean_rate}, "{today_date}", "{today_date}" '
+    sql += f'{comp_uid}, "{year:04d}", "{term:02d}", "{summary_pos}", "{summary_neg}", "{keyword}", "{keyword_pos}", "{keyword_neg}", {mean_rate}, "{today_date}", "{today_date}" '
     sql += ');\n '
     return sql
 
