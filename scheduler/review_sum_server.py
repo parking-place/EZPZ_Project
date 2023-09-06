@@ -63,7 +63,8 @@ def get_keyword(review_list):
     pass
 
 def get_mean_rate(df):
-    pass
+    mean_rate = df['review_rate'].mean()
+    return mean_rate
 
 def process_review(grouped_df):
     review_list = grouped_df['review_cont'].tolist()
