@@ -47,7 +47,7 @@ period = None       # str type  (ex. 'H2', 'Q4')
 
 
 ### 예시 변수
-comp_uid = 1000
+comp_uid = 999
 year = 2020
 period = 'Q3'
 
@@ -194,14 +194,27 @@ class Comp_Filter:
 
 
     def filter_period(self):
-        
-        if self.period.startswith('H'):
-            half = self.period[-1]
-            return self.year_half()
 
-        elif self.period.startswith('Q'):
-            quarter = self.period[:-1]
-            return self.year_quarter()
+        if self.year == "all" and self.period == 'all' :
+            alltime = get_comp_df(self.comp_uid).sort_values(by='review_data', ascending=True)
+            return alltime
+        
+        elif self.year == "all" and self.period != 'all' :
+            alltime = get_comp_df(self.comp_uid).sort_values(by='review_data', ascending=True)
+            return alltime
+        
+        elif self.year != "all" :
+            if self.period.startswith('H'):
+                half = self.period[-1]
+                return self.year_half()
+
+            elif self.period.startswith('Q'):
+                quarter = self.period[:-1]
+                return self.year_quarter()
+        
+            elif self.period == "all":
+                all_period = comp_df[comp_df['review_data'].astype(str).str[:4] == str(self.year)].sort_values(by = 'review_data', ascending=True)
+                return all_period
 
         else:
             print("데이터가 없거나 잘못된 기간 형식입니다.")
@@ -209,13 +222,11 @@ class Comp_Filter:
         
 
 
-comp_filter = Comp_Filter(comp_uid, year, period).filter_period()
-
-
 
 
 # 평균 별점 추출 -> 소수점 첫째 짜리까지 표시(둘째 자리에서 반올림)
 def get_rating() :
+    comp_filter = Comp_Filter(comp_uid, year, period).filter_period()
 
     rating = np.round(comp_filter['review_rate'].mean(), decimals=1)
 
@@ -226,9 +237,12 @@ def get_rating() :
 
 # 키워드 추출
 def get_keywords() :
+
     # tokenizer 모듈 객체 생성
     get_keyword_nnp = tokenizer.get_keyword_nnp     # 고유명사
     get_keyword_nng = tokenizer.get_keyword_nng     # 일반/보통명사
+
+    comp_filter = Comp_Filter(comp_uid, year, period).filter_period()
 
     # - 고유명사 & 일반/보통명사 병합
     comp_kw = get_keyword_nng(comp_filter, 'review') \
@@ -242,10 +256,53 @@ def get_keywords() :
 def sum_reivew() : 
     # 요약 모듈 객체 생성
     summarizer = T5BaseSum().get_sum
+
+    comp_filter = Comp_Filter(comp_uid, year, period).filter_period()
+
     # 리스트 안의 여러 리뷰들을 하나의 string으로 만들어 요약
     summary = summarizer(', '.join(map(str, list(comp_filter['review_cont']))))
 
     return summary
+
+
+
+
+
+def batch_processor():
+    comp_num = df['comp_uid'].nunique()
+
+    comp_uid = 1
+    year = 'all'
+    period = 'all'
+
+    comp_filter = Comp_Filter(comp_uid, year, period).filter_period()
+
+    comp_batches = {}
+    avg_ratings = {}
+    ext_kw_batches = {}
+    sum_rv_batches = {}
+
+
+    while comp_uid <= comp_num:
+        
+        comp_filter = Comp_Filter(comp_uid, year, period).filter_period()
+
+        comp_batch = Comp_Filter(comp_uid, year, period).filter_period()
+        comp_batches[comp_uid] = comp_batch  # 딕셔너리에 새로운 값 할당
+        
+        avg_rating = get_rating()
+        avg_ratings[comp_uid] = avg_rating
+
+        ext_kw_batch = get_keywords()
+        ext_kw_batches[comp_uid] = ext_kw_batch
+
+        sum_rv_batch = sum_reivew()
+        sum_rv_batches[comp_uid] = sum_rv_batch
+
+        comp_uid += 1
+
+
+
 
 
 
