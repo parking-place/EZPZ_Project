@@ -63,8 +63,10 @@ def get_review_summary(review_list):
     return review_summary
 
 def get_keyword(review_list):
-    
-    pass
+    keywords = tk.get_keyword_nng(review_list, 'review', size=10)
+    keywords = [ word[0] + '_' + str(word[1]) for word in keywords ]
+    hashtags = '#'.join(keywords)
+    return hashtags
 
 def get_mean_rate(df):
     mean_rate = df['review_rate'].mean()
