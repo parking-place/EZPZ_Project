@@ -45,9 +45,11 @@ comp_uid = None     # int type  (ex. 777)
 year = None         # int type  (ex. 2020)
 period = None       # str type  (ex. 'H2', 'Q4')
 
-comp_uid = 1000
+
+### 예시 변수
+comp_uid = 777
 year = 2020
-period = 'H1'
+period = 'Q3'
 
 
 
@@ -137,10 +139,12 @@ comp_df = get_comp_df(comp_uid)
 
 
 
+
 # 필터
 class Comp_Filter:
 
     def __init__(self, comp_uid, year, period):
+        
         self.comp_uid = comp_uid
         self.year = year
         self.period = period
@@ -202,19 +206,20 @@ class Comp_Filter:
         else:
             print("데이터가 없거나 잘못된 기간 형식입니다.")
             return None
+        
 
 
-
-# 변수에 객체 정의
 comp_filter = Comp_Filter(comp_uid, year, period)
+filtered_df = comp_filter.filter_period()
 
-
-filtered_data = comp_filter.filter_period()
 
 
 # 평균 별점 추출 -> 소수점 첫째 짜리까지 표시(둘째 자리에서 반올림)
-rating = np.round(comp_filter.filter_period()['review_rate'].mean(), decimals=1)
+def get_rating() :
 
+    rating = np.round(Comp_Filter(comp_uid, year, period).filter_period()['review_rate'].mean(), decimals=1)
+
+    return rating
 
 
 
@@ -226,8 +231,8 @@ def get_keywords() :
     get_keyword_nng = tokenizer.get_keyword_nng     # 일반/보통명사
 
     # - 고유명사 & 일반/보통명사 병합
-    comp_kw = get_keyword_nng(comp_filter.filter_period(), 'review') \
-        + get_keyword_nnp(comp_filter.filter_period(), 'review')
+    comp_kw = get_keyword_nng(filtered_df, 'review') \
+        + get_keyword_nnp(filtered_df, 'review')
 
     return comp_kw
 
@@ -239,3 +244,7 @@ def sum_reivew() :
     return None 
 
 
+
+
+if __name__ == "__main__":
+    main()
