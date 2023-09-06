@@ -11,6 +11,7 @@ import sql_connection as sc
 from datetime import datetime
 
 from service_models import ServiceModels
+import tokenizer as tk
 
 from privates.ezpz_db import *
 
@@ -57,9 +58,12 @@ def group_quater(df):
         return 6
 
 def get_review_summary(review_list):
-    pass
+    all_sentences = ''.join(review_list)
+    review_summary = torch_models.get_summary(all_sentences, type='reviews_short')
+    return review_summary
 
 def get_keyword(review_list):
+    
     pass
 
 def get_mean_rate(df):
