@@ -26,7 +26,7 @@ def get_all_comp_uid():
     comp_temp_list = sc.conn_and_exec(sql)
     for comp in comp_temp_list:
         comp_list.append(comp[0])
-    return comp_list #리스트 받아와서 is reged y 회사마다 바꿔주고 modify_date만 바꿔주면됨
+    return comp_list
 
 def delete_sum_review(comp_uid):
     # 해당 회사 리뷰 요약만 삭제하도록 수정해야함
