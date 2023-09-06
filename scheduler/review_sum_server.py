@@ -48,13 +48,13 @@ def group_halfyear(df):
 
 def group_quater(df):
     if df['month'] <= 3:
-        return 1
-    elif df['month'] <= 6:
-        return 2
-    elif df['month'] <= 9:
         return 3
-    else:
+    elif df['month'] <= 6:
         return 4
+    elif df['month'] <= 9:
+        return 5
+    else:
+        return 6
 
 def get_review_summary(review_list):
     pass
@@ -112,7 +112,7 @@ def summary_main():
         groupby_quater = reviews_df.groupby(['year', 'quater'])
         for df in groupby_quater:
             year = df['year'].iloc[0]
-            term = df['quater'].iloc[0] + 2
+            term = df['quater'].iloc[0]
             prosseced_output = process_review(df)
             add_value_to_sql(comp_uid, year, term, **prosseced_output)
         
