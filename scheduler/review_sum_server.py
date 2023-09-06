@@ -59,8 +59,8 @@ def group_quater(df):
 
 def get_review_summary(review_list):
     all_sentences = ''.join(review_list)
-    if len(all_sentences) > 5000:
-        all_sentences = all_sentences[:5000]    
+    if len(all_sentences) > 10000:
+        all_sentences = all_sentences[:10000]    
     review_summary = torch_models.get_summary(all_sentences, type='reviews_short')
     return review_summary
 
