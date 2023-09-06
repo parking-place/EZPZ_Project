@@ -36,7 +36,7 @@ def delete_sum_review(comp_uid):
     # delete from comp_news where comp_uid = {comp_uid}
     pass
 
-def get_revuews(comp_uid):
+def get_reviews(comp_uid):
     sql = f'select * from comp_review where comp_uid = {comp_uid}'
     reviews = sc.conn_and_exec(sql)
     return reviews
@@ -80,12 +80,24 @@ def process_review(grouped_df):
     
     return {'summary': summary, 'mean_rate': mean_rate, 'keyword': keyword}
 
-def add_value_to_sql(sql, comp_uid, year, term, summary, mean_rate, keyword):
+def get_sql(comp_uid, year, term, summary, mean_rate, keyword):
     # print(f'comp_uid: {comp_uid}, year: {year}, term: {term}, summary: {summary}, mean_rate: {mean_rate}, keyword: {keyword}')
-    sql += 'INSERT INTO sum_review '
-    sql += '(comp_uid, sum_year, sum_term, sum_cont, sum_keyword, avg_rate, create_date, modify_date) '
-    sql += f'VALUES ({comp_uid}, "{year:04d}", "{term:02d}", "{summary}", "{keyword}", {mean_rate}, "{today_date}", "{today_date}");'
+    summary = summary.replace('"', '\\"').replace("'", "\\'")
+    
+    sql = 'insert into sum_review '
+    sql += '    (comp_uid, sum_year, sum_term, sum_cont, sum_keyword, avg_rate, create_date, modify_date) '
+    sql += 'values ( '
+    sql += f'{comp_uid}, "{year:04d}", "{term:02d}", "{summary}", "{keyword}", {mean_rate}, "{today_date}", "{today_date}" '
+    sql += ');\n '
     return sql
+
+def save_to_db(sql):
+    try:
+        sc.conn_and_exec(sql)
+    except Exception as e:
+        print(sql)
+        print(e)
+        pass
 
 def make_year_month_term(df):
     df['year'] = df['review_date'].apply(lambda x: x[:4]).apply(int)
@@ -98,36 +110,31 @@ def summary_main():
     comp_list = get_all_comp_uid()
     
     for comp_uid in tqdm(comp_list):
-        reviews = get_revuews(comp_uid)
+        reviews = get_reviews(comp_uid)
         reviews_df = pd.DataFrame(reviews, columns=col_name)
         reviews_df = make_year_month_term(reviews_df)
         
-        sql = ''
+        delete_sum_review(comp_uid)
         
         year = 0
         term = 0
         prosseced_output = process_review(reviews_df)
-        add_value_to_sql(sql, comp_uid, year, term, **prosseced_output)
+        sql = get_sql(comp_uid, year, term, **prosseced_output)
+        save_to_db(sql)
         
         groupby_halfyear = reviews_df.groupby(['year', 'halfyear'])
-        for df in groupby_halfyear:
-            year = df['year'].iloc[0]
-            term = df['halfyear'].iloc[0]
+        for (year, term), df in groupby_halfyear:
             prosseced_output = process_review(df)
-            add_value_to_sql(sql, comp_uid, year, term, **prosseced_output)
+            sql = get_sql(comp_uid, year, term, **prosseced_output)
+            save_to_db(sql)
             
         groupby_quater = reviews_df.groupby(['year', 'quater'])
-        for df in groupby_quater:
-            year = df['year'].iloc[0]
-            term = df['quater'].iloc[0]
+        for (year, term), df in groupby_quater:
             prosseced_output = process_review(df)
-            add_value_to_sql(sql, comp_uid, year, term, **prosseced_output)
+            sql = get_sql(comp_uid, year, term, **prosseced_output)
+            save_to_db(sql)
         
-        delete_sum_review(comp_uid)
-        sc.conn_and_exec(sql)
-        pass
-    
-    pass
+        # print('SQL: ', sql)
 
 if __name__ == "__main__":
     summary_main()
