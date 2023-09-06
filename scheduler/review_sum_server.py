@@ -81,9 +81,10 @@ def process_review(grouped_df):
     return {'summary': summary, 'mean_rate': mean_rate, 'keyword': keyword}
 
 def add_value_to_sql(sql, comp_uid, year, term, summary, mean_rate, keyword):
+    # print(f'comp_uid: {comp_uid}, year: {year}, term: {term}, summary: {summary}, mean_rate: {mean_rate}, keyword: {keyword}')
     sql += 'INSERT INTO sum_review '
     sql += '(comp_uid, sum_year, sum_term, sum_cont, sum_keyword, avg_rate, create_date, modify_date) '
-    sql += f'VALUES ({comp_uid}, {year:04d}, {term:02d}, "{summary}", "{keyword}", {mean_rate}, "{today_date}", "{today_date}");'
+    sql += f'VALUES ({comp_uid}, "{year:04d}", "{term:02d}", "{summary}", "{keyword}", {mean_rate}, "{today_date}", "{today_date}");'
     return sql
 
 def make_year_month_term(df):
@@ -103,24 +104,24 @@ def summary_main():
         
         sql = ''
         
-        year = '0000'
-        term = '00'
+        year = 0
+        term = 0
         prosseced_output = process_review(reviews_df)
-        add_value_to_sql(comp_uid, year, term, **prosseced_output)
+        add_value_to_sql(sql, comp_uid, year, term, **prosseced_output)
         
         groupby_halfyear = reviews_df.groupby(['year', 'halfyear'])
         for df in groupby_halfyear:
             year = df['year'].iloc[0]
             term = df['halfyear'].iloc[0]
             prosseced_output = process_review(df)
-            add_value_to_sql(comp_uid, year, term, **prosseced_output)
+            add_value_to_sql(sql, comp_uid, year, term, **prosseced_output)
             
         groupby_quater = reviews_df.groupby(['year', 'quater'])
         for df in groupby_quater:
             year = df['year'].iloc[0]
             term = df['quater'].iloc[0]
             prosseced_output = process_review(df)
-            add_value_to_sql(comp_uid, year, term, **prosseced_output)
+            add_value_to_sql(sql, comp_uid, year, term, **prosseced_output)
         
         delete_sum_review(comp_uid)
         sc.conn_and_exec(sql)
