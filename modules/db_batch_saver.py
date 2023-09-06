@@ -47,7 +47,7 @@ period = None       # str type  (ex. 'H2', 'Q4')
 
 
 ### 예시 변수
-comp_uid = 777
+comp_uid = 1000
 year = 2020
 period = 'Q3'
 
@@ -209,15 +209,15 @@ class Comp_Filter:
         
 
 
-comp_filter = Comp_Filter(comp_uid, year, period)
-filtered_df = comp_filter.filter_period()
+comp_filter = Comp_Filter(comp_uid, year, period).filter_period()
+
 
 
 
 # 평균 별점 추출 -> 소수점 첫째 짜리까지 표시(둘째 자리에서 반올림)
 def get_rating() :
 
-    rating = np.round(Comp_Filter(comp_uid, year, period).filter_period()['review_rate'].mean(), decimals=1)
+    rating = np.round(comp_filter['review_rate'].mean(), decimals=1)
 
     return rating
 
@@ -226,13 +226,13 @@ def get_rating() :
 
 # 키워드 추출
 def get_keywords() :
-
+    # tokenizer 모듈 객체 생성
     get_keyword_nnp = tokenizer.get_keyword_nnp     # 고유명사
     get_keyword_nng = tokenizer.get_keyword_nng     # 일반/보통명사
 
     # - 고유명사 & 일반/보통명사 병합
-    comp_kw = get_keyword_nng(filtered_df, 'review') \
-        + get_keyword_nnp(filtered_df, 'review')
+    comp_kw = get_keyword_nng(comp_filter, 'review') \
+        + get_keyword_nnp(comp_filter, 'review')
 
     return comp_kw
 
@@ -240,8 +240,21 @@ def get_keywords() :
 
 # 리뷰 요약
 def sum_reivew() : 
+    # 요약 모듈 객체 생성
+    summarizer = T5BaseSum().get_sum
+    # 리스트 안의 여러 리뷰들을 하나의 string으로 만들어 요약
+    summary = summarizer(', '.join(map(str, list(comp_filter['review_cont']))))
 
-    return None 
+    return summary
+
+
+
+
+### 변수 초기화 - comp_uid, year, period
+comp_uid = None     # int type  (ex. 777)
+year = None         # int type  (ex. 2020)
+period = None       # str type  (ex. 'H2', 'Q4')
+
 
 
 
