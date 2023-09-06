@@ -45,12 +45,8 @@ ul li {
     flex-grow: 1;
     text-align: center;
 }
-.tablinks.activate {
-    background-color: #FF9984;
-    text-decoration: none;
-}
 
-.tablinks:hover {
+.tablinks:hover, .tablinks.activate {
     background-color: #FF9984;
     text-decoration: none;
 }
@@ -83,10 +79,6 @@ ul li {
     justify-content: space-between;
     margin-top: 96px;
     margin-bottom: 56px;
-}
-
-.reviewChart, .reviewWordcloud {
-    flex: 1;
 }
 
 /* !!!!!!!!!!!!!!!! 그래프 !!!!!!!!!!!!!!! */
@@ -200,24 +192,35 @@ ul li {
     margin-bottom: 96px;
 }
 
-.review_pos_title h1,
-.review_neg_title h1{
+/*  ===================================
+    REVIEW SECTION
+    =================================== */
+/* review subtitles */
+.review_subtitle{ margin-bottom: 48px; }
+.review_subtitle h1{
     display: flex;
     font-weight: 700;
     margin-bottom: 20px;
 }
-
-.review_pos_title h2,
-.review_neg_title h2{
+.review_subtitle h2{
     font-weight: 400 !important;
 }
-
-.review_pos_title, .review_neg_title {
-    margin-bottom: 48px;
+.review_subtitle h2::after{
+    content: '';
+    display: block;
+    width: 70%;
+    height: 1px;
+    background-color: #282828;
+    margin-top: 20px;
+}
+/* review contents */
+.review_cont{
+    width: calc(50% - 10px);
+    padding: 20px;
 }
 
 /* reviews_center_line */
-.center_line {
+.vertical_rule {
     position: absolute;
     top: 0;
     left: 50%;
@@ -227,46 +230,10 @@ ul li {
 }
 
 
-.pos_reviews, .neg_reviews {
-    width: calc(50% - 10px);
-    padding: 20px;
-}
 
-
-/* pos reviews */
-.positive {
-    color: #699BF7 !important;
-}
-
-/* pos_subtitle_line */
-.review_pos_title h2::after {
-    content: '';
-    display: block;
-    width: 70%;
-    height: 1px;
-    background-color: #282828;
-    margin-top: 20px;
-}
-
-
-/* neg reviews */
-.negative {
-    color: #FF9984 !important;
-}
-
-/* neg_subtitle_line */
-.review_neg_title h2::after {
-    content: '';
-    display: block;
-    width: 70%;
-    height: 1px;
-    background-color: #282828; 
-    margin-top: 20px;
-}
-
-
-
-/* tablet & mobile */
+/*  ===================================
+    MOBILE
+    =================================== */
 @media (max-width: 768px) {
     .review_chart_cont {
         display: flex;

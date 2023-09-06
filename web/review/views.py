@@ -28,7 +28,6 @@ def load_basic_reviews(comp_uid, review_tab):
     }
     
     # 사용할  변수들
-    rate_sum = 0 # 총 평점 계산
     pos_reivew_list = [] # 긍정적 리뷰 : 20개만 담는다.
     neg_reivew_list = [] # 부정적 리뷰 : 20개만 담는다.
     
@@ -46,10 +45,6 @@ def load_basic_reviews(comp_uid, review_tab):
     else:
         # context에 넣어주기 전 처리
         for info in review_infos:
-            # 2-1. 평점 계산
-            # [[[DB에 데이터가 들어오면 삭제합니다.]]]
-            rate_sum += info.review_rate
-            
             # ----------------------------------------
             # 긍정적/부정적 리뷰 구분 & append
             # ----------------------------------------
@@ -82,25 +77,41 @@ def load_basic_reviews(comp_uid, review_tab):
         
         # 2. 전체 요약 데이터
         # [[DB에 데이터가 채워진 경우 connect, 코드 이어서 작성합니다.]]
-        # 2-1. 총 평점
-        context['rate_sum'] = round((rate_sum / len(review_infos)), 2)
         
-        # 2-2. 전체 리뷰 키워드
-        total_keywords = '키워드1#키워드2#키워드3#키워드4#키워드5#키워드6'
+        # 2-1. 전체 리뷰 키워드
+        total_keywords = '키워드1_100#키워드2_90#키워드3_80#키워드4_70#키워드5_60'
         total_keywords = total_keywords.split('#')
-        print(total_keywords)
         context['total_keywords'] = total_keywords
         
         # 2-3. 긍정 / 부정 요약
-        context['pos_sum'] = '긍정 리뷰 요약'
+        context['pos_sum'] = '긍정 리뷰 요약' # 최신 요약으로 뜨게 한다.
         context['neg_sum'] = '부정 리뷰 요약'
         
         # 3. 그래프 - 시계열 데이터
         # 시계열 데이터
         # : 리뷰 전체 요약 & 평점
+        # [[[가라로 넣습니다.]]]
+        # 3-1. 컬럼 지정
+        if review_tab == 'half':
+            context['time_cols'] = ['2023 1분기', '2023 2분기', '2023 3분기', '2023 4분기']
+        elif review_tab == 'quart':
+            context['time_cols'] = ['2022 상반기', '2022 하반기', '2023 상반기', '2023 하반기']
         
+        # 3-2. 별점
+        time_rate = [4.12, 4.31, 3.21, 3.24]
+        context['time_rate'] = time_rate
+        # 2-1. 총 별점
+        context['rate_sum'] = round((sum(time_rate) / len(time_rate)), 2)
         
-        
+        # 키워드
+        keyword_str = [
+            '키워드1-1_35#키워드1-2_21#키워드1-3_15#키워드1-4_12#키워드1-5_7',
+            '키워드2-1_35#키워드2-2_21#키워드2-3_15#키워드2-4_12#키워드2-5_7',
+            '키워드3-1_35#키워드3-2_21#키워드3-3_15#키워드3-4_12#키워드3-5_7',
+            '키워드4-1_35#키워드4-2_21#키워드4-3_15#키워드4-4_12#키워드4-5_7',
+        ]
+        keyword_str = [el.split('#') for el in keyword_str]
+        context['time_keyword'] = keyword_str
         
         # DATA LOADING END
         # ============================================= //
