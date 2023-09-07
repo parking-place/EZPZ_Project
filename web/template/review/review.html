@@ -6,6 +6,58 @@
 <script src="{% static 'js/review/review.js' %}"></script>
 <link href="{% static 'css/review/review.css' %}" rel="stylesheet">
 
+<!-- graph JS -->
+<script type="text/javascript">
+// ========================================
+// Chart 관련
+// ========================================
+function go_chart(cols, rate, keyword, freq){
+    const data = {
+        labels: cols,
+        datasets: [
+            {
+                label: '평균 별점'
+                , data: rate
+                , borderColor : 'skyblue'
+            }, {
+                label: '대표 키워드'
+                , data: keyword
+            }
+        ]
+    };
+    const config = {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: false,
+            plugins: {
+                legend: { display: false}
+                , title: {
+                    display: true,
+                    text: '리뷰 통계'
+                }
+            }
+            , scales: {
+                y: {
+                    suggestedMin: 0
+                    , suggestedMax: 5
+                    , ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    };
+    const el = document.getElementById('review_chart'); // 차트 들어갈 element
+    const pieChart = new Chart(el, config);
+}
+
+// 더보기 버튼 클릭시
+function show_details(){
+    $('.comp_news').css('height', 'auto');
+    $('#details_box').css('display', 'none');
+}
+</script>
 
 <!-- sub_detail_menu -->
 <div class="detail_menu">
@@ -21,8 +73,10 @@
         <!-- Chart Section -->
 
         <div class="review_chart_cont">
-            <!-- line graph : keyword & rates -->
-            <canvas id="reviewChart"></canvas>
+            <div style="width: 40%">
+                <!-- line graph : keyword & rates -->
+                <canvas id="review_chart" width="600"></canvas>
+            </div>
             <!-- word cloud : keyword -->
             <canvas id="reviewWordcloud"></canvas>
         </div>
@@ -48,9 +102,9 @@
     <div class="review_detail_cont">
 
         <!-- pos review container -->
-        <div class="pos_reviews">
-            <div class="review_pos_title">
-                <h1><span class="positive">긍정적</span>&nbsp;리뷰</h1>
+        <div class="review_cont">
+            <div class="review_subtitle">
+                <h1><span style="color: #699BF7">긍정적</span>&nbsp;리뷰</h1>
                 <h2>{{pos_sum}}</h2>
             </div>
             <!-- pos review conts -->
@@ -62,23 +116,52 @@
             </div>
         </div>
 
-        <div class="center_line"></div>
+        <div class="vertical_rule"></div>
 
         <!-- neg review container -->
-        <div class="neg_reviews">
-            <div class="review_neg_title">
-                <h1><span class="negative">부정적</span>&nbsp;리뷰</h1>
+        <div class="review_cont">
+            <div class="review_subtitle">
+                <h1><span style="color: #FF9984">부정적</span>&nbsp;리뷰</h1>
                 <h2>{{neg_sum}}</h2>
             </div>
             <!-- neg reivew conts -->
             <div>
                 {% for neg in neg_review %}
-                <h4 style="color:{{neg.color}}">{{neg.is_office}}</h4>
+                <h4 style="color: {{neg.color}}">{{neg.is_office}}</h4>
                 <p style="margin-bottom: 20px;">{{neg.cont}}</p>
                 {% endfor %}
             </div>
         </div>
     </div>
 </div>
+<!-- graph JS -->
+<script type="text/javascript">
 
+
+
+
+
+
+// safe 설정 안해줄 경우 list 깨짐 현상 발생.
+keyword_strings = {{time_keyword | safe}};
+time_cols = {{time_cols | safe}};
+time_rate = {{time_rate | safe}};
+
+// 횟수별로 나눠줍니다.
+var time_keyword = [];
+var time_freq = []; // 빈도수
+
+for(let i=0; i<keyword_strings.length; i++){
+    // 값이 들어갈 수 있게 빈 리스트 생성
+    time_keyword[i] = [];
+    time_freq[i] = [];
+
+    // 키워드와 빈도수 split
+    for (let j=0; j < keyword_strings[i].length; j++){
+        time_keyword[i][j] = keyword_strings[i][j].split('_')[0];
+        time_freq[i][j] = keyword_strings[i][j].split('_')[1];
+    }
+}
+go_chart(time_cols, time_rate, time_keyword, time_freq);
+</script>
 {% endblock %}

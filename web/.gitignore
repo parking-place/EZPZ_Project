@@ -172,3 +172,10 @@ cython_debug/
 #.idea/
 
 # End of https://www.toptal.com/developers/gitignore/api/django
+
+# added by prussian-1to9 :
+# django migration files
+comp/migrations/0*.py
+recruit/migrations/0*.py
+review/migrations/0*.py
+search/migrations/0*.py
