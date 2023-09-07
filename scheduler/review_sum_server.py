@@ -75,27 +75,32 @@ def get_mean_rate(df):
     return mean_rate
 
 def process_review(grouped_df):
-    review_list = grouped_df['review_cont'].tolist()
-    # summary = get_review_summary(review_list)
-    keyword = get_keyword(review_list)
-    mean_rate = get_mean_rate(grouped_df)
-    
-    pos_review_list = grouped_df[grouped_df['review_senti_orig'] == 'P']['review_cont'].tolist()
-    neg_review_list = grouped_df[grouped_df['review_senti_orig'] == 'N']['review_cont'].tolist()
-    summary_pos = get_review_summary(pos_review_list)
-    summary_neg = get_review_summary(neg_review_list)
-    keyword_pos = get_keyword(pos_review_list)
-    keyword_neg = get_keyword(neg_review_list)
-    
-    
-    return {
-        'keyword': keyword,
-        'mean_rate': mean_rate,
-        'summary_pos': summary_pos,
-        'summary_neg': summary_neg,
-        'keyword_pos': keyword_pos,
-        'keyword_neg': keyword_neg,
-    }
+    try:
+        review_list = grouped_df['review_cont'].tolist()
+        # summary = get_review_summary(review_list)
+        keyword = get_keyword(review_list)
+        mean_rate = get_mean_rate(grouped_df)
+        
+        pos_review_list = grouped_df[grouped_df['review_senti_orig'] == 'P']['review_cont'].tolist()
+        neg_review_list = grouped_df[grouped_df['review_senti_orig'] == 'N']['review_cont'].tolist()
+        
+        summary_pos = get_review_summary(pos_review_list)
+        summary_neg = get_review_summary(neg_review_list)
+        keyword_pos = get_keyword(pos_review_list)
+        keyword_neg = get_keyword(neg_review_list)
+        
+        
+        return {
+            'keyword': keyword,
+            'mean_rate': mean_rate,
+            'summary_pos': summary_pos,
+            'summary_neg': summary_neg,
+            'keyword_pos': keyword_pos,
+            'keyword_neg': keyword_neg,
+        }
+    except Exception as e:
+        print(e)
+        return False
 
 # def get_sql(comp_uid, year, term, summary, mean_rate, keyword):
 #     # print(f'comp_uid: {comp_uid}, year: {year}, term: {term}, summary: {summary}, mean_rate: {mean_rate}, keyword: {keyword}')
@@ -147,18 +152,24 @@ def summary_main():
         year = 0
         term = 0
         prosseced_output = process_review(reviews_df)
+        if prosseced_output is False:
+            continue
         sql = get_sql(comp_uid, year, term, **prosseced_output)
         save_to_db(sql)
         
         groupby_halfyear = reviews_df.groupby(['year', 'halfyear'])
         for (year, term), df in groupby_halfyear:
             prosseced_output = process_review(df)
+            if prosseced_output is False:
+                continue
             sql = get_sql(comp_uid, year, term, **prosseced_output)
             save_to_db(sql)
             
         groupby_quater = reviews_df.groupby(['year', 'quater'])
         for (year, term), df in groupby_quater:
             prosseced_output = process_review(df)
+            if prosseced_output is False:
+                continue
             sql = get_sql(comp_uid, year, term, **prosseced_output)
             save_to_db(sql)
         
