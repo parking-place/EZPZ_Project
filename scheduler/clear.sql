@@ -81,9 +81,12 @@ create table sum_review(
 	comp_uid bigint not null,
 	sum_year int(4) not null,
 	sum_term int(1) not null,
-	sum_cont varchar(256) not null,
+	sum_cont_pos varchar(256) not null,
+	sum_cont_neg varchar(256) not null,
 	sum_keyword varchar(5000),
-	
+	sum_keyword_pos varchar(5000),
+	sum_keyword_neg varchar(5000),
+	avg_rate float not null,
 	create_date char(8) not null,
 	modify_date char(8) not null,
 	
