@@ -44,6 +44,7 @@ scripts = {
     'sql_clear': 'sql_clear.py',
     'set_start_comp_list': 'set_start_comp_list.py',
     'exist_comp_review_crawler': 'exist_comp_review_crawl_server.py',
+    'review_sum_server': 'review_sum_server.py',
 }
 
 # TEST DAG
@@ -130,6 +131,13 @@ with DAG(
     default_args=default_args,
     schedule_interval='0 0 * * *', 
     catchup=False, ): 
+    # 새 회사 크롤러
+    new_comp_crawler = SSHOperator(
+        task_id='ssh_new_comp_crawler',
+        command=docker_base_command + scripts['new_comp_crawler'],
+        ssh_hook=ssh_hook_torch,
+        get_pty=True,
+    )
     # 기존 회사 뉴스 크롤러
     exist_comp_news_crawler = SSHOperator(
         task_id='ssh_exist_comp_news_crawler',
@@ -144,15 +152,23 @@ with DAG(
         ssh_hook=ssh_hook_torch,
         get_pty=True,
     )
-    # 새 회사 크롤러
-    new_comp_crawler = SSHOperator(
-        task_id='ssh_new_comp_crawler',
-        command=docker_base_command + scripts['new_comp_crawler'],
+    # 기존 회사 리뷰 크롤러
+    exist_comp_review_crawler = SSHOperator(
+        task_id='ssh_exist_comp_review_crawler',
+        command=docker_base_command + scripts['exist_comp_review_crawler'],
         ssh_hook=ssh_hook_torch,
         get_pty=True,
     )
+    # 리뷰 요약
+    review_sum_server = SSHOperator(
+        task_id='ssh_review_sum_server',
+        command=docker_base_command + scripts['review_sum_server'],
+        ssh_hook=ssh_hook_torch,
+        get_pty=True,
+    )
+    
     # 순서대로 파이프라인을 구성
-    exist_comp_news_crawler >> exist_comp_recruit_crawler >> new_comp_crawler
+    new_comp_crawler >> exist_comp_news_crawler >> exist_comp_recruit_crawler >> exist_comp_review_crawler >> review_sum_server
 
 # 새 회사 크롤러 DAG
 # 한번만 실행
@@ -210,6 +226,21 @@ with DAG(
     SSHOperator(
         task_id='ssh_exist_comp_review_crawler_test',
         command=docker_base_command + scripts['exist_comp_review_crawler'],
+        ssh_hook=ssh_hook_torch,
+        get_pty=True,
+    )
+    
+# 리뷰 요약 DAG
+# 한번만 실행
+with DAG(
+    dag_id='review_sum_server_test',
+    default_args=default_args,
+    schedule_interval='@once', 
+    catchup=False, ):
+    
+    SSHOperator(
+        task_id='ssh_review_sum_server_test',
+        command=docker_base_command + scripts['review_sum_server'],
         ssh_hook=ssh_hook_torch,
         get_pty=True,
     )
