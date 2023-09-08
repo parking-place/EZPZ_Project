@@ -30,7 +30,7 @@ def get_senti(review):
     return senti
 
 def update_db(reviews):
-    datas = [ (row.review_uid, row.review_senti_pred) for row in reviews.itertuples() ]
+    datas = [ (row.review_senti_pred, row.review_uid) for row in reviews.itertuples() ]
     
     sql = 'update comp_review set review_senti_pred = %s where review_uid = %s'
     sc.conn_and_exec_many(sql, datas)
