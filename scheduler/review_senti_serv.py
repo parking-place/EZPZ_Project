@@ -31,9 +31,10 @@ def get_senti(review):
     return senti
 
 def update_db(reviews):
-    datas = [ (row.review_senti_pred, row.review_uid) for row in reviews.itertuples() ]
+    modify_date = datetime.today().strftime('%Y%m%d')
+    datas = [ (row.review_senti_pred, modify_date, row.review_uid) for row in reviews.itertuples() ]
     
-    sql = 'update comp_review set review_senti_pred = %s where review_uid = %s'
+    sql = 'update comp_review set review_senti_pred = %s , modify_date = %s where review_uid = %s'
     sc.conn_and_exec_many(sql, datas)
 
 def review_senti_main():
