@@ -20,3 +20,20 @@ def conn_and_exec(sql,param=None): #return문이 필요할 때
 	
 	#select 문 정보를 저장해서 사용해야되는경우 반환값이 있어야함(ex comp_uid)
 	return exec
+
+def conn_and_exec_many(sql, params):
+	conn = get_connection()
+	cur = conn.cursor()
+	try:	
+		cur.executemany(sql,params)
+		exec = cur.fetchall()
+		conn.commit()
+	except Exception as e:
+		print('Error : ', e)
+		print('SQL : ', sql)
+		conn.rollback()
+	finally:
+		conn.close()	
+	
+	#select 문 정보를 저장해서 사용해야되는경우 반환값이 있어야함(ex comp_uid)
+	return exec

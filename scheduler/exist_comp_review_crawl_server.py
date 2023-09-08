@@ -71,6 +71,10 @@ def crawl_review(comp_list):
     
     return 
 
+def str_replaces(st_data):
+    return str.replace('\"', '').replace("\'", '').replace('\\', '').replace('\n', ' ').replace('\r', '').replace('\t', '').replace('\b', '').replace('\f', '').replace('\a', '').replace('\v', '').replace('\0', '').replace('"', '').replace("'", '')
+    
+
 def save_to_db(df, comp_name):
     #cur.execute(f'select comp_uid from comp_info where comp_name = "{comp}"')
     replace_comp_name = comp_name.replace(' ','')
@@ -80,22 +84,46 @@ def save_to_db(df, comp_name):
     create_date = datetime.today().strftime('%Y%m%d')
     modify_date = datetime.today().strftime('%Y%m%d')
     
-    for index, row in df.iterrows():
-        review = row['review_cont'][:1000].replace('"', '').replace("'", '').replace('\\', '').replace('\n', ' ')
+    datas = []
+    for _index, row in df.iterrows():
+        data = (
+            comp_uid,
+            str_replaces(row['review_cont'][:1000]),
+            row['review_senti_orig'],
+            row['review_rate'],
+            int(row['is_office']),
+            row['review_date'],
+            row['position'],
+            create_date,
+            modify_date
+        )
+
+        datas.append(data)
+    
+    sql = 'insert into comp_review '
+    sql += '    (comp_uid, review_cont, review_senti_orig, review_rate, is_office, review_date, position, create_date, modify_date) '
+    sql += 'values ( '
+    sql += '   %s, %s, %s, %s, %s, %s, %s, %s, %s '
+    sql += ') '
+    
+    sc.conn_and_exec_many(sql, datas)
+    
+    # for index, row in df.iterrows():
+    #     review = row['review_cont'][:1000].replace('"', '').replace("'", '').replace('\\', '').replace('\n', ' ')
         
-        sql = 'insert into comp_review '
-        sql += '    (comp_uid, review_cont, review_senti_orig, review_rate, is_office, review_date, position, create_date, modify_date) '
-        sql += 'values ( '
-        sql += f'   "{comp_uid}", "{review}", "{row["review_senti_orig"]}", "{row["review_rate"]}", "{int(row["is_office"])}", "{row["review_date"]}", "{row["position"]}" '
-        sql += f'    ,"{create_date}", "{modify_date}" '
-        sql += ') '
-        try :
-            sc.conn_and_exec(sql)
-        except Exception as e:
-            print(sql)
-            print(row)
-            print(e)
-            continue
+    #     sql = 'insert into comp_review '
+    #     sql += '    (comp_uid, review_cont, review_senti_orig, review_rate, is_office, review_date, position, create_date, modify_date) '
+    #     sql += 'values ( '
+    #     sql += f'   "{comp_uid}", "{review}", "{row["review_senti_orig"]}", "{row["review_rate"]}", "{int(row["is_office"])}", "{row["review_date"]}", "{row["position"]}" '
+    #     sql += f'    ,"{create_date}", "{modify_date}" '
+    #     sql += ') '
+    #     try :
+    #         sc.conn_and_exec(sql)
+    #     except Exception as e:
+    #         print(sql)
+    #         print(row)
+    #         print(e)
+    #         continue
 
 #테스트용으로 사용하세요
 if __name__ == '__main__':
