@@ -45,6 +45,7 @@ scripts = {
     'set_start_comp_list': 'set_start_comp_list.py',
     'exist_comp_review_crawler': 'exist_comp_review_crawl_server.py',
     'review_sum_server': 'review_sum_server.py',
+    'review_senti_server': 'review_senti_serv.py',
 }
 
 # TEST DAG
@@ -159,6 +160,13 @@ with DAG(
         ssh_hook=ssh_hook_torch,
         get_pty=True,
     )
+    # 리뷰 감정평가
+    review_senti_server = SSHOperator(
+        task_id='ssh_review_senti_server',
+        command=docker_base_command + scripts['review_senti_server'],
+        ssh_hook=ssh_hook_torch,
+        get_pty=True,
+    )
     # 리뷰 요약
     review_sum_server = SSHOperator(
         task_id='ssh_review_sum_server',
@@ -168,7 +176,7 @@ with DAG(
     )
     
     # 순서대로 파이프라인을 구성
-    new_comp_crawler >> exist_comp_news_crawler >> exist_comp_recruit_crawler >> exist_comp_review_crawler >> review_sum_server
+    new_comp_crawler >> exist_comp_news_crawler >> exist_comp_recruit_crawler >> exist_comp_review_crawler >> review_senti_server >> review_sum_server
 
 # 새 회사 크롤러 DAG
 # 한번만 실행
@@ -226,6 +234,21 @@ with DAG(
     SSHOperator(
         task_id='ssh_exist_comp_review_crawler_test',
         command=docker_base_command + scripts['exist_comp_review_crawler'],
+        ssh_hook=ssh_hook_torch,
+        get_pty=True,
+    )
+    
+# 리뷰 감정평가 DAG
+# 한번만 실행
+with DAG(
+    dag_id='review_senti_server_test',
+    default_args=default_args,
+    schedule_interval='@once',
+    catchup=False, ):
+    
+    SSHOperator(
+        task_id='ssh_review_senti_server_test',
+        command=docker_base_command + scripts['review_senti_server'],
         ssh_hook=ssh_hook_torch,
         get_pty=True,
     )
