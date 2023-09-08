@@ -38,11 +38,12 @@ def update_db(reviews):
 
 def review_senti_main():
     review_df = get_all_reviews()
-    review_df['review_senti_pred'] = review_df['review_cont'].progress_apply(get_senti)
     
     if len(review_df) == 0:
         print('예측할 리뷰가 없습니다.')
         return
+    
+    review_df['review_senti_pred'] = review_df['review_cont'].progress_apply(get_senti)
     
     s_time = time.time()
     update_db(review_df)
