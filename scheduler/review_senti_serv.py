@@ -9,6 +9,7 @@ import cryptography
 from tqdm import tqdm, tqdm_pandas
 import sql_connection as sc
 from datetime import datetime
+import time
 
 from service_models import ServiceModels
 
@@ -43,7 +44,10 @@ def review_senti_main():
         print('예측할 리뷰가 없습니다.')
         return
     
+    s_time = time.time()
     update_db(review_df)
+    e_time = time.time()
+    print(f'예측된 리뷰 {len(review_df)}개 업데이트 완료. DB 적용 소요시간: {e_time - s_time}')
 
 if __name__ == '__main__':
     review_senti_main()
