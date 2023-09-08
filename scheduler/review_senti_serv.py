@@ -48,7 +48,11 @@ def review_senti_main():
     s_time = time.time()
     update_db(review_df)
     e_time = time.time()
-    print(f'예측된 리뷰 {len(review_df)}개 업데이트 완료. DB 적용 소요시간: {e_time - s_time}')
+    
+    t_min = int((e_time - s_time) / 60)
+    t_sec = int((e_time - s_time) % 60)
+    
+    print(f'예측된 리뷰 {len(review_df)}개 업데이트 완료. DB 적용 소요시간: {t_min}분 {t_sec}초')
 
 if __name__ == '__main__':
     review_senti_main()
