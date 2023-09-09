@@ -187,8 +187,6 @@ def summary_main_many():
         reviews_df = pd.DataFrame(reviews, columns=col_name)
         reviews_df = make_year_month_term(reviews_df)
         
-        delete_sum_review(comp_uid)
-        
         year = 0
         term = 0
         
@@ -215,6 +213,8 @@ def summary_main_many():
                 continue
             data = get_data(comp_uid, year, term, **prosseced_output)
             datas.append(data)
+        
+        delete_sum_review(comp_uid)
         
         save_to_db_many(datas)
         
