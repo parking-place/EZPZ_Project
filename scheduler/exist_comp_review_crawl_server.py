@@ -74,7 +74,9 @@ def crawl_review(comp_list):
     return 
 
 def cleaning_text(text):
-    pattern = r'[^a-z가-힣\s\.]' # 알파벳, 한글, 공백, 마침표만 남기고 삭제
+    # pattern = r'[^a-z가-힣\s\.]' # 알파벳, 한글, 공백, 마침표만 남기고 삭제
+    # 숫자, 알파벳, 한글, 공백, 마침표, 쉼표만 남기고 삭제
+    pattern = r'[^0-9a-zA-Z가-힣\s\.\,]'
     text = re.sub(pattern=pattern, repl='', string=text)
     text = text.strip()
     return text
