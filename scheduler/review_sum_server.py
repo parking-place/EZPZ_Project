@@ -134,7 +134,7 @@ def save_to_db(sql):
 
 def make_year_month_term(df):
     df['year'] = df['review_date'].apply(lambda x: x[:4]).apply(int)
-    df['month'] = df['review_date'].apply(lambda x: x[5:7]).apply(int)
+    df['month'] = df['review_date'].apply(lambda x: x[4:6]).apply(int)
     df['halfyear'] = df.apply(group_halfyear, axis=1)
     df['quater'] = df.apply(group_quater, axis=1)
     return df
