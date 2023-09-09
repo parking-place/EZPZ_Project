@@ -9,6 +9,7 @@ import cryptography
 from tqdm import tqdm, tqdm_pandas
 import sql_connection as sc
 from datetime import datetime
+import time
 
 from service_models import ServiceModels
 
@@ -30,15 +31,29 @@ def get_senti(review):
     return senti
 
 def update_db(reviews):
-    datas = [ (row.review_uid, row.review_senti_pred) for row in reviews.itertuples() ]
+    modify_date = datetime.today().strftime('%Y%m%d')
+    datas = [ (row.review_senti_pred, modify_date, row.review_uid) for row in reviews.itertuples() ]
     
-    sql = 'update comp_review set review_senti_pred = %s where review_uid = %s'
+    sql = 'update comp_review set review_senti_pred = %s , modify_date = %s where review_uid = %s'
     sc.conn_and_exec_many(sql, datas)
 
 def review_senti_main():
     review_df = get_all_reviews()
+    
+    if len(review_df) == 0:
+        print('예측할 리뷰가 없습니다.')
+        return
+    
     review_df['review_senti_pred'] = review_df['review_cont'].progress_apply(get_senti)
+    
+    s_time = time.time()
     update_db(review_df)
+    e_time = time.time()
+    
+    t_min = int((e_time - s_time) / 60)
+    t_sec = int((e_time - s_time) % 60)
+    
+    print(f'예측된 리뷰 {len(review_df)}개 업데이트 완료. DB 적용 소요시간: {t_min}분 {t_sec}초')
 
 if __name__ == '__main__':
     review_senti_main()
