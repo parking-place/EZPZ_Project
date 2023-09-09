@@ -15,7 +15,7 @@ from datetime import datetime
 
 from service_models import ServiceModels
 
-
+import re
 
 import daum_news_crawler
 import naver_news_crawler
@@ -43,6 +43,14 @@ def delete_comp_news(comp):
     sc.conn_and_exec(sql)
     # delete from comp_news where comp_uid = {comp_uid}
     pass
+
+def cleaning_text(text):
+    # pattern = r'[^a-z가-힣\s\.]' # 알파벳, 한글, 공백, 마침표만 남기고 삭제
+    # 숫자, 알파벳, 한글, 공백, 마침표, 쉼표만 남기고 삭제
+    pattern = r'[^0-9a-zA-Z가-힣\s\.\,]'
+    text = re.sub(pattern=pattern, repl='', string=text)
+    text = text.strip()
+    return text
 
 
 def crawl_and_save(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정보 만들어줌 카카오 네이버 구글
@@ -99,14 +107,13 @@ def crawl_and_save(comp_list): # 뉴스크롤링 테이블에 넣을 모든 정�
         clean_cont=[]
         clean_sum=[]
         for i in all_news['news_cont']:
-
-            cont_clean = i.replace('"', '').replace("'", '')
+            cont_clean = cleaning_text(i)
             clean_cont.append(cont_clean)
 
 
 
         for j in all_news['news_sum']:
-            sum_clean = j.replace('"', '').replace("'", '')
+            sum_clean = cleaning_text(j)
             clean_sum.append(sum_clean)
 
         all_news['news_cont']= clean_cont

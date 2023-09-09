@@ -13,6 +13,8 @@ from datetime import datetime
 from service_models import ServiceModels
 import tokenizer as tk
 
+import re
+
 from privates.ezpz_db import *
 
 col_name = ['review_uid', 'comp_uid', 'review_cont', 'review_senti_orig', 'review_senti_pred', 'review_rate', 'is_office', 'review_date', 'position', 'create_date', 'modify_date']
@@ -56,6 +58,12 @@ def group_quater(df):
         return 5
     else:
         return 6
+
+def cleaning_text(text):
+    pattern = r'[^0-9a-z가-힣\s\.]' # 숫자, 알파벳, 한글, 공백, 마침표만 남기고 삭제
+    text = re.sub(pattern=pattern, repl='', string=text)
+    text = text.strip()
+    return text
 
 def get_review_summary(review_list):
     all_sentences = ''.join(review_list)
