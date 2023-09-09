@@ -23,7 +23,7 @@ import news_crawlers
 
 from privates.ezpz_db import *
 
-data_check= ServiceModels() #모델 서빙 모듈 객체
+data_check= ServiceModels(tpye = 'news') #모델 서빙 모듈 객체
 
 
 def get_all_comp_name():

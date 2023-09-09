@@ -17,7 +17,7 @@ from privates.ezpz_db import *
 
 col_name = ['review_uid', 'comp_uid', 'review_cont', 'review_senti_orig', 'review_senti_pred', 'review_rate', 'is_office', 'review_date', 'position', 'create_date', 'modify_date']
 
-torch_models = ServiceModels() #모델 서빙 모듈 객체
+torch_models = ServiceModels(type = 'reviews_sum') #모델 서빙 모듈 객체
 
 today_date = datetime.today().strftime('%Y%m%d')
 
@@ -134,7 +134,7 @@ def save_to_db(sql):
 
 def make_year_month_term(df):
     df['year'] = df['review_date'].apply(lambda x: x[:4]).apply(int)
-    df['month'] = df['review_date'].apply(lambda x: x[5:7]).apply(int)
+    df['month'] = df['review_date'].apply(lambda x: x[4:6]).apply(int)
     df['halfyear'] = df.apply(group_halfyear, axis=1)
     df['quater'] = df.apply(group_quater, axis=1)
     return df
