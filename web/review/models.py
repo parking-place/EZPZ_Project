@@ -52,8 +52,12 @@ class SumReview(models.Model):
     comp_uid = models.ForeignKey(CompInfo, models.DO_NOTHING, db_column='comp_uid')
     sum_year = models.IntegerField()
     sum_term = models.IntegerField()
-    sum_cont = models.CharField(max_length=256)
+    sum_cont_pos = models.CharField(max_length=256)
+    sum_cont_neg = models.CharField(max_length=256)
     sum_keyword = models.CharField(max_length=5000, blank=True, null=True)
+    sum_keyword_pos = models.CharField(max_length=5000, blank=True, null=True)
+    sum_keyword_neg = models.CharField(max_length=5000, blank=True, null=True)
+    avg_rate = models.FloatField()
     create_date = models.CharField(max_length=8)
     modify_date = models.CharField(max_length=8)
     

@@ -32,7 +32,7 @@ class RecruitInfo(models.Model):
     recruit_uid = models.BigAutoField(primary_key=True)
     comp_uid = models.ForeignKey(CompInfo, models.DO_NOTHING, db_column='comp_uid')
     recruit_url = models.CharField(max_length=2000)
-    recruit_position = models.CharField(max_length=20)
+    recruit_position = models.CharField(max_length=100)
     recruit_thumb = models.CharField(max_length=2000, blank=True, null=True)
     recruit_desc = models.CharField(max_length=200, blank=True, null=True)
     create_date = models.CharField(max_length=8)
