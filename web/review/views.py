@@ -131,7 +131,7 @@ def load_basic_reviews(comp_uid, review_tab):
         stat_details['time_keywords'] = []
         for row in stat_datas:
             data = row.sum_keyword.split('#')
-            data = ''.join([el.split('_')[0] + ', ' if idx < (len(data)-2) else el.split('_')[0] for idx, el in enumerate(data)])
+            data = ''.join([el.split('_')[0] + ', ' if idx < (len(data) - 1) else el.split('_')[0] for idx, el in enumerate(data)])
             stat_details['time_keywords'].append(data)
         
         # 3-3. word cloud
