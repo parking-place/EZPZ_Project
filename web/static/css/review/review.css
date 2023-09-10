@@ -186,6 +186,8 @@ ul li {
 /* review contents */
 .review_cont{
     width: calc(50% - 10px);
+    height: 500px;
+    overflow: hidden;
     padding: 20px;
 }
 
@@ -198,7 +200,13 @@ ul li {
     width: 1px;
     background-color: #282828; 
 }
-
+/* 더보기 box */
+#details_box{
+    background-color: white;
+    height: 100px;
+    padding-top: 20px;
+    text-align: center;
+}
 
 
 /*  ===================================
