@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect
 
-from .models import CompInfo, CompReview
+import pandas as pd
+
+from .models import CompInfo, CompReview, SumReview # SumReview : 통계 테이블
+
 
 
 def load_basic_reviews(comp_uid, review_tab):
@@ -16,6 +19,15 @@ def load_basic_reviews(comp_uid, review_tab):
     returns ]
         context : dict  - 데이터가 채워진 dict
     """
+    # =============================================
+    # CONSTANTS
+    # =============================================
+    term_to_str = {
+        # 반기별
+        1: '상반기', 2: '하반기',
+        # 분기별
+        3: '1분기', 4: '2분기', 5: '3분기', 6: '4분기'
+    }
     # 회사 이름 불러오기
     comp_name = CompInfo.objects.get(comp_uid=comp_uid).comp_name
     
@@ -38,22 +50,22 @@ def load_basic_reviews(comp_uid, review_tab):
     # 리뷰 불러오기 : 최근순
     review_infos = CompReview.objects.filter(comp_uid=comp_uid).order_by('-review_date')
     
+    # -------------------------
     # 1. 리뷰 컨테이너 (낱개)
+    # -------------------------
     if len(review_infos) == 0:
         context['msg'] = '리뷰 정보가 없습니다.'
         
     else:
+        review_details = {}
         # context에 넣어주기 전 처리
         for info in review_infos:
             # ----------------------------------------
             # 긍정적/부정적 리뷰 구분 & append
             # ----------------------------------------
-            # [[[모델 서빙 미완성으로 senti_orig로 구분합니다.]]]
             # 20개 까지만 출력합니다.
             # 1-1. 긍정적 리뷰
-            if info.review_senti_orig == 'P' and len(pos_reivew_list) < 20:
-            # [[[감정평가 모델 완성시 주석 해제 후 사용하세요.]]]
-            #if info.review_senti_pred and len(pos_reivew_list) < 20:
+            if info.review_senti_pred == 'P' and len(pos_reivew_list) < 20:
                 pos_reivew_list.append({
                     'cont': info.review_cont,
                     'is_office': '현직자' if info.is_office else '퇴사자',
@@ -62,9 +74,7 @@ def load_basic_reviews(comp_uid, review_tab):
                 
                 
             # 1-2. 부정적 리뷰
-            elif info.review_senti_orig == 'N' and len(neg_reivew_list) < 20:
-            # [[[감정평가 모델 완성시 주석 해제 후 사용하세요.]]]
-            #elif not(info.review_senti_pred) and len(neg_reivew_list) < 20:
+            elif info.review_senti_pred == 'N' and len(neg_reivew_list) < 20:
                 neg_reivew_list.append({
                     'cont': info.review_cont,
                     'is_office': '현직자' if info.is_office else '퇴사자',
@@ -72,47 +82,74 @@ def load_basic_reviews(comp_uid, review_tab):
                 })
                 
         # 1-3. context에 넣어주기
-        context['pos_review'] = pos_reivew_list
-        context['neg_review'] = neg_reivew_list
+        review_details['pos'] = pos_reivew_list
+        review_details['neg'] = neg_reivew_list
+        context['review_details'] = review_details
         
+        # -------------------------
         # 2. 전체 요약 데이터
-        # [[DB에 데이터가 채워진 경우 connect, 코드 이어서 작성합니다.]]
+        # -------------------------
+        # 데이터 로드
+        tot_summary = {}
+        total_stat = SumReview.objects.get(comp_uid=comp_uid, sum_year=0, sum_term=0)
         
-        # 2-1. 전체 리뷰 키워드
-        total_keywords = '키워드1_100#키워드2_90#키워드3_80#키워드4_70#키워드5_60'
-        total_keywords = total_keywords.split('#')
-        context['total_keywords'] = total_keywords
+        # 로딩 성공한 경우에만 조회합니다.
+        if total_stat is not None:
+            # 2-1. 총 별점
+            tot_summary['rate'] = round(total_stat.avg_rate, 2)
+            # 2-2. 총 키워드
+            tot_summary['keywords'] = [el.split('_')[0] for el in total_stat.sum_keyword.split('#')]
+            
+            # 2-3. 긍정 / 부정 총 요약
+            tot_summary['pos_sum'] = total_stat.sum_cont_neg
+            tot_summary['neg_sum'] = total_stat.sum_cont_pos
+            context['tot_summary'] = tot_summary
         
-        # 2-3. 긍정 / 부정 요약
-        context['pos_sum'] = '긍정 리뷰 요약' # 최신 요약으로 뜨게 한다.
-        context['neg_sum'] = '부정 리뷰 요약'
+        # -------------------------
+        # 3. 시계열 통계 데이터(그래프, 워드 클라우드)
+        # -------------------------
+        stat_details = {}
+        # # 3-1. 파라미터 처리, 컬럼 지정
+        if review_tab == 'half': # 반기별
+            stat_datas = SumReview.objects.filter(comp_uid=comp_uid, sum_term__in=[3, 4, 5, 6])
+            
+        elif review_tab == 'quart': # 분기별
+            stat_datas = SumReview.objects.filter(comp_uid=comp_uid, sum_term__in=[1, 2])
+            
+        else: # return : 정상 접근이 아닌경우
+            context['msg'] = '리뷰 통계 데이터를 지원하지 않는 기업입니다.'
+            return context
         
-        # 3. 그래프 - 시계열 데이터
-        # 시계열 데이터
-        # : 리뷰 전체 요약 & 평점
-        # [[[가라로 넣습니다.]]]
-        # 3-1. 컬럼 지정
-        if review_tab == 'half':
-            context['time_cols'] = ['2023 1분기', '2023 2분기', '2023 3분기', '2023 4분기']
-        elif review_tab == 'quart':
-            context['time_cols'] = ['2022 상반기', '2022 하반기', '2023 상반기', '2023 하반기']
+        # 3-2. line graph
+        # 컬럼 지정
+        stat_details['time_cols'] = [f'{el.sum_year} {term_to_str[el.sum_term]}' for el in stat_datas]
+        # 별점
+        stat_details['time_rate'] = [round(el.avg_rate, 2) for el in stat_datas]
         
-        # 3-2. 별점
-        time_rate = [4.12, 4.31, 3.21, 3.24]
-        context['time_rate'] = time_rate
-        # 2-1. 총 별점
-        context['rate_sum'] = round((sum(time_rate) / len(time_rate)), 2)
+        # 키워드는 10개씩 저장된다.
+        keyword_str = [el.sum_keyword.split('#') for el in stat_datas]
+        keyword_df = pd.DataFrame({
+            'keyword': [el.split('_')[0] for row in keyword_str for el in row],
+            'value': [el.split('_')[1] for row in keyword_str for el in row]
+        })
         
-        # 키워드
-        keyword_str = [
-            '키워드1-1_35#키워드1-2_21#키워드1-3_15#키워드1-4_12#키워드1-5_7',
-            '키워드2-1_35#키워드2-2_21#키워드2-3_15#키워드2-4_12#키워드2-5_7',
-            '키워드3-1_35#키워드3-2_21#키워드3-3_15#키워드3-4_12#키워드3-5_7',
-            '키워드4-1_35#키워드4-2_21#키워드4-3_15#키워드4-4_12#키워드4-5_7',
-        ]
-        keyword_str = [el.split('#') for el in keyword_str]
-        context['time_keyword'] = keyword_str
+        # 3-3. word cloud
+        # 타입변경 + grouping 해 중복 재거
+        # 그루핑 해 중복을 재거합니다.
+        word_cloud_df = keyword_df.astype({
+            'keyword': 'str', 'value': 'int16'
+        }).groupby('keyword').sum('value').reset_index()
+        # 상위 20개 키워드만 추출합니다.
+        word_cloud_df = word_cloud_df.sort_values(by='value', ascending=False).head(20)
         
+        # 값을 dict에 넣어 반환
+        stat_details['word_cloud'] = []
+        for x, value in zip(word_cloud_df['keyword'], word_cloud_df['value']):
+            stat_details['word_cloud'].append({
+                'x': x, 'value': value
+            })
+            
+        context['stat_details'] = stat_details
         # DATA LOADING END
         # ============================================= //
         

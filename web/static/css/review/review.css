@@ -3,10 +3,15 @@
 ul li {
     list-style-type: none;
 }
-
-
-
-/* sub_detail_menu */
+/*  ===================================
+    SUB MENU
+    =================================== */
+/* @keyframes 규칙으로 애니메이션 정의 */
+@keyframes fadeIn {
+    /* 최종적으로 도달할 투명도 값 */
+    to {opacity: 1;}
+}
+/* sub menu container */
 .detail_menu {
     display: Flex;
     justify-content : space-between;
@@ -19,21 +24,9 @@ ul li {
     /* 애니메이션 시작을 0.5초 동안 지연 */
     animation-delay: 0.5s;
 }
-
-/* @keyframes 규칙으로 애니메이션 정의 */
-@keyframes fadeIn {
-    /* 최종적으로 도달할 투명도 값 */
-    to {opacity: 1;}
-}
-
+/* menu tab */
 .tablinks {
-    /* 기존 버튼 style 없애기 */
     border: none;
-    outline: none;
-    padding: 0;
-    background: none;
-
-    /* 새로운 버튼 style 입히기 */
     width: 100%;  
     font-weight: 700;
     text-decoration: none;
@@ -45,7 +38,6 @@ ul li {
     flex-grow: 1;
     text-align: center;
 }
-
 .tablinks:hover, .tablinks.activate {
     background-color: #FF9984;
     text-decoration: none;
@@ -61,41 +53,19 @@ ul li {
     animation-delay: 0.5s;
 }
 
-/* @keyframes 규칙으로 애니메이션 정의 */
-@keyframes fadeIn {
-    /* 최종적으로 도달할 투명도 값 */
-    to {opacity: 1;}
-}
 
 
-
-/* review chart */
-.review_all_view_cont{
-    width: 100%;
-}
-
+/*  ===================================
+    REVIEW SECTION
+    =================================== */
+/* chart section */
 .review_chart_cont {
     display: flex;
     justify-content: space-between;
-    margin-top: 96px;
-    margin-bottom: 56px;
+    margin: 60px 0 56px 0;
+    padding: 0 10% 0 10%;
+    text-align: center;
 }
-
-/* !!!!!!!!!!!!!!!! 그래프 !!!!!!!!!!!!!!! */
-/* !!!!!!!!!!!! 이지야 여기야 !!!!!!!!!!!! */
-/* !!!!!!!!!!!! 워드 클라우드 !!!!!!!!!!!! */
-/* review graph */
-.reviewChart {
-    flex: 1;
-    margin-right: 10px;
-}
-
-/* review wordcloud */
-.reviewWordcloud {
-    flex: 1;
-    margin-left: 10px;
-}
-/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
 /* review all_rate & review keyword */
 .average_cont {

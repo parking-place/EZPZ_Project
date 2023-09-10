@@ -4,6 +4,10 @@
 {% block content %}
 <script src="{% static 'js/chart-3.4.0.js' %}"></script>
 <script src="{% static 'js/review/review.js' %}"></script>
+<!-- word cloud -->
+<script src="{% static 'js/anychart-base.min.js' %}"></script>
+<script src="{% static 'js/anychart-tag-cloud.min.js' %}"></script>
+
 <link href="{% static 'css/review/review.css' %}" rel="stylesheet">
 
 <!-- graph JS -->
@@ -19,9 +23,15 @@ function go_chart(cols, rate, keyword, freq){
                 label: '평균 별점'
                 , data: rate
                 , borderColor : 'skyblue'
+                , fill: false,
+                hidden: false  // <-- shown
             }, {
                 label: '대표 키워드'
-                , data: keyword
+                , data: ['키워드1', '키워드2', '키워드3', '키워드4', '키워드5',
+                    '키워드6', '키워드7', '키워드8', '키워드9', '키워드10',
+                    '키워드11', '키워드12', '키워드13', '키워드14']
+                , fill: false
+                , hidden: true
             }
         ]
     };
@@ -38,7 +48,10 @@ function go_chart(cols, rate, keyword, freq){
                 }
             }
             , scales: {
-                y: {
+                x: {
+                    display: false
+                }
+                , y: {
                     suggestedMin: 0
                     , suggestedMax: 5
                     , ticks: {
@@ -65,103 +78,112 @@ function show_details(){
     <button class="tablinks {% if review_tab == 'quart' %} activate {% endif %}" onclick="javascript:go_page('quart', {{comp_uid}})">분기별</button>
 </div>
 
-<!-- Halfyear -->
+<!-- review contents -->
 <div id="reivew_cont" class="tabcontent">
-
-    <!-- review body -->
-    <div class="review_all_view_cont">
+    
+    <!-- show messages if have alert message -->
+    {% if msg %}
+    <div style="text-align: center; padding: 60px 0 60px 0;"><h4>{{msg}}</h4></div>
+    {% endif %}
+    
+    <!-- review statistics datas -->
+    <div>
         <!-- Chart Section -->
-
+        {% if stat_details %}
         <div class="review_chart_cont">
             <div style="width: 40%">
                 <!-- line graph : keyword & rates -->
                 <canvas id="review_chart" width="600"></canvas>
             </div>
             <!-- word cloud : keyword -->
-            <canvas id="reviewWordcloud"></canvas>
+            <div id="review_word_cloud"></div>
+            <!--
+                <canvas id="review_word_cloud"></canvas>
+            -->
         </div>
-
+        {% endif %}
+        
+        {% if tot_summary %}
         <div class="average_cont">
             <!-- review all rate -->
-            <p class="all_rate">총 별점<span class="rate_num"><img class="star" src="{% static 'img/star.png' %}" alt="star"/>{{rate_sum}}</span></p>
+            <p class="all_rate">총 별점<span class="rate_num"><img class="star" src="{% static 'img/star.png' %}" alt="star"/>{{tot_summary.rate}}</span></p>
 
             <!-- review best keyword 5 -->
             <div class="best_keyword">
                 <p class="best_keyword_title">이 회사의 중요 키워드</p>
                 <ul class="best_keyword_text">
-                    {% for keyword in total_keywords %}
+                    {% for keyword in tot_summary.keywords %}
                     <li>{{keyword}}</li>
                     {% endfor %}
                 </ul>
             </div>
         </div>
-
+        {% endif %}
     </div>
 
     <!-- pos / neg review -->
+    {% if review_details %}
     <div class="review_detail_cont">
 
         <!-- pos review container -->
         <div class="review_cont">
             <div class="review_subtitle">
                 <h1><span style="color: #699BF7">긍정적</span>&nbsp;리뷰</h1>
-                <h2>{{pos_sum}}</h2>
+                {% if tot_summary.pos_sum %}
+                <h2>{{tot_summary.pos_sum}}</h2>
+                {% endif %}
             </div>
             <!-- pos review conts -->
             <div>
-                {% for pos in pos_review %}
-                <h4 style="color: {{pos.color}}">{{pos.is_office}}</h4>
-                <p style="margin-bottom: 20px;">{{pos.cont}}</p>
+                {% for review in review_details.pos %}
+                <h4 style="color: {{review.color}}">{{review.is_office}}</h4>
+                <p style="margin-bottom: 20px;">{{review.cont}}</p>
                 {% endfor %}
             </div>
         </div>
-
+        
         <div class="vertical_rule"></div>
-
+        
         <!-- neg review container -->
         <div class="review_cont">
             <div class="review_subtitle">
                 <h1><span style="color: #FF9984">부정적</span>&nbsp;리뷰</h1>
-                <h2>{{neg_sum}}</h2>
+                {% if tot_summary.neg_sum %}
+                <h2>{{tot_summary.neg_sum}}</h2>
+                {% endif %}
             </div>
             <!-- neg reivew conts -->
             <div>
-                {% for neg in neg_review %}
-                <h4 style="color: {{neg.color}}">{{neg.is_office}}</h4>
-                <p style="margin-bottom: 20px;">{{neg.cont}}</p>
+                {% for review in review_details.neg %}
+                <h4 style="color: {{review.color}}">{{review.is_office}}</h4>
+                <p style="margin-bottom: 20px;">{{review.cont}}</p>
                 {% endfor %}
             </div>
         </div>
     </div>
+    {% endif %}
 </div>
 <!-- graph JS -->
 <script type="text/javascript">
 
-
-
-
-
-
 // safe 설정 안해줄 경우 list 깨짐 현상 발생.
-keyword_strings = {{time_keyword | safe}};
-time_cols = {{time_cols | safe}};
-time_rate = {{time_rate | safe}};
+time_cols = {{stat_details.time_cols | safe}};
+time_rate = {{stat_details.time_rate | safe}};
 
 // 횟수별로 나눠줍니다.
 var time_keyword = [];
 var time_freq = []; // 빈도수
 
-for(let i=0; i<keyword_strings.length; i++){
-    // 값이 들어갈 수 있게 빈 리스트 생성
-    time_keyword[i] = [];
-    time_freq[i] = [];
+go_chart(time_cols, time_rate);
+//go_chart(time_cols, time_rate, time_keyword, time_freq);
 
-    // 키워드와 빈도수 split
-    for (let j=0; j < keyword_strings[i].length; j++){
-        time_keyword[i][j] = keyword_strings[i][j].split('_')[0];
-        time_freq[i][j] = keyword_strings[i][j].split('_')[1];
-    }
-}
-go_chart(time_cols, time_rate, time_keyword, time_freq);
+// render Word Cloud
+anychart.onDocumentReady(function () {
+    var data = {{stat_details.word_cloud | safe}};
+    var chart = anychart.tagCloud(data);
+    chart.angles([0]);
+    chart.container("review_word_cloud");
+    chart.draw();
+});
 </script>
 {% endblock %}
