@@ -13,6 +13,8 @@ from datetime import datetime
 from service_models import ServiceModels
 import tokenizer as tk
 
+import re
+
 from privates.ezpz_db import *
 
 col_name = ['review_uid', 'comp_uid', 'review_cont', 'review_senti_orig', 'review_senti_pred', 'review_rate', 'is_office', 'review_date', 'position', 'create_date', 'modify_date']
@@ -23,7 +25,7 @@ today_date = datetime.today().strftime('%Y%m%d')
 
 def get_all_comp_uid():
     comp_list = []
-    sql = ' select comp_uid from comp_info where is_reged = "Y" ' #처리안된 회사들만 가져옴
+    sql = ' select comp_uid from comp_info where is_reged = "Y" '
     comp_temp_list = sc.conn_and_exec(sql)
     for comp in comp_temp_list:
         comp_list.append(comp[0])
@@ -37,7 +39,7 @@ def delete_sum_review(comp_uid):
     pass
 
 def get_reviews(comp_uid):
-    sql = f'select * from comp_review where comp_uid = {comp_uid}'
+    sql = f'select * from comp_review where comp_uid = {comp_uid} and review_senti_pred is not null'
     reviews = sc.conn_and_exec(sql)
     return reviews
 
@@ -56,6 +58,14 @@ def group_quater(df):
         return 5
     else:
         return 6
+
+def cleaning_text(text):
+    # pattern = r'[^0-9a-zA-Z가-힣\s\.]' # 숫자, 알파벳, 한글, 공백, 마침표만 남기고 삭제
+    # 숫자, 알파벳, 한글, 공백, 마침표, 쉼표만 남기고 삭제
+    pattern = r'[^0-9a-zA-Z가-힣\s\.\,]'
+    text = re.sub(pattern=pattern, repl='', string=text)
+    text = text.strip()
+    return text
 
 def get_review_summary(review_list):
     all_sentences = ''.join(review_list)
@@ -81,8 +91,8 @@ def process_review(grouped_df):
         keyword = get_keyword(review_list)
         mean_rate = get_mean_rate(grouped_df)
         
-        pos_review_list = grouped_df[grouped_df['review_senti_orig'] == 'P']['review_cont'].tolist()
-        neg_review_list = grouped_df[grouped_df['review_senti_orig'] == 'N']['review_cont'].tolist()
+        pos_review_list = grouped_df[grouped_df['review_senti_pred'] == 'P']['review_cont'].tolist()
+        neg_review_list = grouped_df[grouped_df['review_senti_pred'] == 'N']['review_cont'].tolist()
         
         summary_pos = get_review_summary(pos_review_list)
         summary_neg = get_review_summary(neg_review_list)
@@ -114,8 +124,8 @@ def process_review(grouped_df):
 #     return sql
 
 def get_sql(comp_uid, year, term, summary_pos, summary_neg, keyword, keyword_pos, keyword_neg, mean_rate ):
-    summary_pos = summary_pos.replace('"', '\\"').replace("'", "\\'")
-    summary_neg = summary_neg.replace('"', '\\"').replace("'", "\\'")
+    summary_pos = cleaning_text(summary_pos)
+    summary_neg = cleaning_text(summary_neg)
     
     sql = 'insert into sum_review '
     sql += '    (comp_uid, sum_year, sum_term, sum_cont_pos, sum_cont_neg, sum_keyword, sum_keyword_pos, sum_keyword_neg, avg_rate, create_date, modify_date) '
@@ -123,6 +133,36 @@ def get_sql(comp_uid, year, term, summary_pos, summary_neg, keyword, keyword_pos
     sql += f'{comp_uid}, "{year:04d}", "{term:02d}", "{summary_pos}", "{summary_neg}", "{keyword}", "{keyword_pos}", "{keyword_neg}", {mean_rate}, "{today_date}", "{today_date}" '
     sql += ');\n '
     return sql
+
+def get_data(comp_uid, year, term, summary_pos, summary_neg, keyword, keyword_pos, keyword_neg, mean_rate ):
+    data = (
+        comp_uid,
+        year,
+        term,
+        cleaning_text(summary_pos),
+        cleaning_text(summary_neg),
+        keyword,
+        keyword_pos,
+        keyword_neg,
+        mean_rate,
+        today_date,
+        today_date,
+    )
+    
+    return data
+
+def save_to_db_many(datas):
+    sql = 'insert into sum_review '
+    sql += '    (comp_uid, sum_year, sum_term, sum_cont_pos, sum_cont_neg, sum_keyword, sum_keyword_pos, sum_keyword_neg, avg_rate, create_date, modify_date) '
+    sql += 'values ( '
+    sql += '%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s '
+    sql += ') '
+    
+    try:
+        sc.conn_and_exec_many(sql, datas)
+    except Exception as e:
+        print(e)
+        pass
 
 def save_to_db(sql):
     try:
@@ -138,6 +178,46 @@ def make_year_month_term(df):
     df['halfyear'] = df.apply(group_halfyear, axis=1)
     df['quater'] = df.apply(group_quater, axis=1)
     return df
+
+def summary_main_many():
+    comp_list = get_all_comp_uid()
+    
+    for comp_uid in tqdm(comp_list):
+        reviews = get_reviews(comp_uid)
+        reviews_df = pd.DataFrame(reviews, columns=col_name)
+        reviews_df = make_year_month_term(reviews_df)
+        
+        year = 0
+        term = 0
+        
+        datas = []
+        
+        prosseced_output = process_review(reviews_df)
+        if prosseced_output is False:
+            continue
+        data = get_data(comp_uid, year, term, **prosseced_output)
+        datas.append(data)
+        
+        groupby_halfyear = reviews_df.groupby(['year', 'halfyear'])
+        for (year, term), df in groupby_halfyear:
+            prosseced_output = process_review(df)
+            if prosseced_output is False:
+                continue
+            data = get_data(comp_uid, year, term, **prosseced_output)
+            datas.append(data)
+        
+        groupby_quater = reviews_df.groupby(['year', 'quater'])
+        for (year, term), df in groupby_quater:
+            prosseced_output = process_review(df)
+            if prosseced_output is False:
+                continue
+            data = get_data(comp_uid, year, term, **prosseced_output)
+            datas.append(data)
+        
+        delete_sum_review(comp_uid)
+        
+        save_to_db_many(datas)
+        
 
 def summary_main():
     comp_list = get_all_comp_uid()
@@ -176,7 +256,8 @@ def summary_main():
         # print('SQL: ', sql)
 
 if __name__ == "__main__":
-    summary_main()
+    # summary_main()
+    summary_main_many()
     
     
 ############################################################################################################

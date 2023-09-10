@@ -14,6 +14,8 @@ from datetime import datetime
 import new_catch
 import jobplanetv2
 
+import re
+
 from privates.ezpz_db import *
 
 from tqdm import tqdm
@@ -71,6 +73,14 @@ def crawl_review(comp_list):
     
     return 
 
+def cleaning_text(text):
+    # pattern = r'[^a-z가-힣\s\.]' # 알파벳, 한글, 공백, 마침표만 남기고 삭제
+    # 숫자, 알파벳, 한글, 공백, 마침표, 쉼표만 남기고 삭제
+    pattern = r'[^0-9a-zA-Z가-힣\s\.\,]'
+    text = re.sub(pattern=pattern, repl='', string=text)
+    text = text.strip()
+    return text
+
 def str_replaces(st_data):
     return str.replace('\"', '').replace("\'", '').replace('\\', '').replace('\n', ' ').replace('\r', '').replace('\t', '').replace('\b', '').replace('\f', '').replace('\a', '').replace('\v', '').replace('\0', '').replace('"', '').replace("'", '')
     
@@ -88,7 +98,7 @@ def save_to_db(df, comp_name):
     for _index, row in df.iterrows():
         data = (
             comp_uid,
-            str_replaces(row['review_cont'][:1000]),
+            cleaning_text(row['review_cont'][:1000]),
             row['review_senti_orig'],
             row['review_rate'],
             int(row['is_office']),
