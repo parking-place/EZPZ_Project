@@ -2,18 +2,19 @@
 {% load static %}
 
 {% block content %}
-<script src="{% static 'js/chart-3.4.0.js' %}"></script>
-<script src="{% static 'js/review/review.js' %}"></script>
+<!-- line graph -->
+<script src="{% static 'js/lib/chart-3.4.0.js' %}"></script>
 <!-- word cloud -->
-<script src="{% static 'js/anychart-base.min.js' %}"></script>
-<script src="{% static 'js/anychart-tag-cloud.min.js' %}"></script>
+<script src="{% static 'js/lib/anychart-base.min.js' %}"></script>
+<script src="{% static 'js/lib/anychart-tag-cloud.min.js' %}"></script>
 
+<script src="{% static 'js/review/review.js' %}"></script>
 <link href="{% static 'css/review/review.css' %}" rel="stylesheet">
 
 <!-- sub_detail_menu -->
-<div class="detail_menu">
-    <button class="tablinks {% if review_tab == 'half' %} activate {% endif %}" onclick="javascript:go_page('half', {{comp_uid}})">반기별</button>
-    <button class="tablinks {% if review_tab == 'quart' %} activate {% endif %}" onclick="javascript:go_page('quart', {{comp_uid}})">분기별</button>
+<div class="sub-menu">
+    <a class="{% if review_tab == 'half' %} active {% endif %}" href="/review/half?comp_uid={{comp_uid}}">반기별</button>
+    <a class="{% if review_tab == 'quart' %} active {% endif %}" href="/review/quarter?comp_uid={{comp_uid}}">분기별</button>
 </div>
 
 <!-- review contents -->
@@ -99,7 +100,7 @@
     {% endif %}
 </div>
 
-<div id="details_box"><a href="javascript:show_details()">더보기</a></div>
+<div id="details_box"><a href="javascript:show_details('.review_cont')">더보기</a></div>
 
 <!-- graph JS -->
 <script type="text/javascript">
@@ -113,7 +114,7 @@ draw_chart(time_cols, time_rate);
 // render Word Cloud
 anychart.onDocumentReady(function () {
     var data = {{stat_details.word_cloud | safe}};
-    draw_word_cloud(data)
+    draw_word_cloud(data);
 });
 </script>
 {% endblock %}

@@ -27,8 +27,8 @@
 <link href="{% static 'css/base.css' %}" rel="stylesheet">
 
 <!-- jQquery -->
-<script src="{% static 'js/jquery-3.7.0.min.js' %}"></script>
-<script src="{% static 'js/search.js' %}"></script>
+<script src="{% static 'js/lib/jquery-3.7.0.min.js' %}"></script>
+<script src="{% static 'js/ezpz.js' %}"></script>
 </head>
 <body>
     <!-- 검색창 header START -->
@@ -55,17 +55,9 @@
         <section id="#" class="#">
             <div class="container" data-aos="fade-up">
                 <div class="sub-menu">
-                    {% if comp_uid %}
-                    <a class="corp-menu {% if active == 'comp' %} active {% endif %}" href="/comp/?comp_uid={{comp_uid}}">기업정보</a>
-                    <a class="recruit-menu {% if active == 'recruit' %} active {% endif %}" href="/recruit/?comp_uid={{comp_uid}}">채용공고</a>
-                    <a class="review-menu {% if active == 'review' %} active {% endif %}" href="/review/?comp_uid={{comp_uid}}">기업리뷰</a>
-                    <!-- 탭 넘김 테스트 완료시 else 구문 삭제 START -->
-                    {% else %}
-                    <a class="corp-menu {% if active == 'comp' %} active {% endif %}" href="/comp">기업정보</a>
-                    <a class="recruit-menu {% if active == 'recruit' %} active {% endif %}" href="/recruit">채용공고</a>
-                    <a class="review-menu {% if active == 'review' %} active {% endif %}" href="/review">기업리뷰</a>
-                    <!-- 탭 넘김 테스트 완료시 else 구문 삭제 END -->
-                    {% endif %}
+                    <a class="{% if active == 'comp' %} active {% endif %}" href="/comp/?comp_uid={{comp_uid}}">기업정보</a>
+                    <a class="{% if active == 'recruit' %} active {% endif %}" href="/recruit/?comp_uid={{comp_uid}}">채용공고</a>
+                    <a class="{% if active == 'review' %} active {% endif %}" href="/review/?comp_uid={{comp_uid}}">기업리뷰</a>
                 </div>
 
             </div>
@@ -113,6 +105,6 @@
     <script src="{% static 'vendor/swiper/swiper-bundle.min.js' %}"></script>
     <script src="{% static 'vendor/waypoints/noframework.waypoints.js' %}"></script>
     <script src="{% static 'vendor/php-email-form/validate.js' %}"></script>
-    <script src="{% static 'js/bootstrap.js' %}"></script>
+    <script src="{% static 'js/lib/bootstrap.js' %}"></script>
 </body>
 </html>
