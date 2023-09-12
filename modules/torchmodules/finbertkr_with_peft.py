@@ -52,5 +52,5 @@ class FinBertKR:
 if __name__ == '__main__':
     finbertkr = FinBertKR()
     news = '삼성전자의 주가가 1% 상승했다.'
-    
+    print(news)
     print(finbertkr.get_sentiment(news))
