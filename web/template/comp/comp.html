@@ -3,7 +3,7 @@
 
 {% block content %}
 <!-- JS /CSS -->
-<script src="{% static 'js/chart-3.4.0.js' %}"></script>
+<script src="{% static 'js/lib/chart-3.4.0.js' %}"></script>
 <script src="{% static 'js/comp/comp.js' %}"></script>
 <link href="{% static 'css/comp/comp.css' %}" rel="stylesheet">
 
@@ -48,9 +48,9 @@
     </div>
     {% endfor %}
 </div>
-<div id="details_box"><a href="javascript:show_details()">더보기</a></div>
+<div id="details_box"><a href="javascript:show_details('.comp_news')">더보기</a></div>
 
 <script>
-go_chart({{pos_ratio}}, {{neg_ratio}}, {{neu_ratio}});
+draw_chart({{pos_ratio}}, {{neg_ratio}}, {{neu_ratio}});
 </script>
 {% endblock %}

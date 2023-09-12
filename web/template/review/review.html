@@ -2,80 +2,19 @@
 {% load static %}
 
 {% block content %}
-<script src="{% static 'js/chart-3.4.0.js' %}"></script>
-<script src="{% static 'js/review/review.js' %}"></script>
+<!-- line graph -->
+<script src="{% static 'js/lib/chart-3.4.0.js' %}"></script>
 <!-- word cloud -->
-<script src="{% static 'js/anychart-base.min.js' %}"></script>
-<script src="{% static 'js/anychart-tag-cloud.min.js' %}"></script>
+<script src="{% static 'js/lib/anychart-base.min.js' %}"></script>
+<script src="{% static 'js/lib/anychart-tag-cloud.min.js' %}"></script>
 
+<script src="{% static 'js/review/review.js' %}"></script>
 <link href="{% static 'css/review/review.css' %}" rel="stylesheet">
 
-<!-- graph JS -->
-<script type="text/javascript">
-// ========================================
-// Chart 관련
-// ========================================
-function go_chart(cols, rate, keyword, freq){
-    const data = {
-        labels: cols,
-        datasets: [
-            {
-                label: '평균 별점'
-                , data: rate
-                , borderColor : 'skyblue'
-                , fill: false,
-                hidden: false  // <-- shown
-            }, {
-                label: '대표 키워드'
-                , data: ['키워드1', '키워드2', '키워드3', '키워드4', '키워드5',
-                    '키워드6', '키워드7', '키워드8', '키워드9', '키워드10',
-                    '키워드11', '키워드12', '키워드13', '키워드14']
-                , fill: false
-                , hidden: true
-            }
-        ]
-    };
-    const config = {
-        type: 'line',
-        data: data,
-        options: {
-            responsive: false,
-            plugins: {
-                legend: { display: false}
-                , title: {
-                    display: true,
-                    text: '리뷰 통계'
-                }
-            }
-            , scales: {
-                x: {
-                    display: false
-                }
-                , y: {
-                    suggestedMin: 0
-                    , suggestedMax: 5
-                    , ticks: {
-                        stepSize: 1
-                    }
-                }
-            }
-        }
-    };
-    const el = document.getElementById('review_chart'); // 차트 들어갈 element
-    const pieChart = new Chart(el, config);
-}
-
-// 더보기 버튼 클릭시
-function show_details(){
-    $('.comp_news').css('height', 'auto');
-    $('#details_box').css('display', 'none');
-}
-</script>
-
 <!-- sub_detail_menu -->
-<div class="detail_menu">
-    <button class="tablinks {% if review_tab == 'half' %} activate {% endif %}" onclick="javascript:go_page('half', {{comp_uid}})">반기별</button>
-    <button class="tablinks {% if review_tab == 'quart' %} activate {% endif %}" onclick="javascript:go_page('quart', {{comp_uid}})">분기별</button>
+<div class="sub-menu">
+    <a class="{% if review_tab == 'half' %} active {% endif %}" href="/review/half?comp_uid={{comp_uid}}">반기별</a>
+    <a class="{% if review_tab == 'quart' %} active {% endif %}" href="/review/quarter?comp_uid={{comp_uid}}">분기별</a>
 </div>
 
 <!-- review contents -->
@@ -97,9 +36,6 @@ function show_details(){
             </div>
             <!-- word cloud : keyword -->
             <div id="review_word_cloud"></div>
-            <!--
-                <canvas id="review_word_cloud"></canvas>
-            -->
         </div>
         {% endif %}
         
@@ -163,27 +99,22 @@ function show_details(){
     </div>
     {% endif %}
 </div>
+
+<div id="details_box"><a href="javascript:show_details('.review_cont')">더보기</a></div>
+
 <!-- graph JS -->
 <script type="text/javascript">
-
 // safe 설정 안해줄 경우 list 깨짐 현상 발생.
 time_cols = {{stat_details.time_cols | safe}};
 time_rate = {{stat_details.time_rate | safe}};
+time_keywords = {{stat_details.time_keywords | safe}};
 
-// 횟수별로 나눠줍니다.
-var time_keyword = [];
-var time_freq = []; // 빈도수
-
-go_chart(time_cols, time_rate);
-//go_chart(time_cols, time_rate, time_keyword, time_freq);
+draw_chart(time_cols, time_rate);
 
 // render Word Cloud
 anychart.onDocumentReady(function () {
     var data = {{stat_details.word_cloud | safe}};
-    var chart = anychart.tagCloud(data);
-    chart.angles([0]);
-    chart.container("review_word_cloud");
-    chart.draw();
+    draw_word_cloud(data);
 });
 </script>
 {% endblock %}

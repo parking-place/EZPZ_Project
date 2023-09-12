@@ -126,17 +126,23 @@ def load_basic_reviews(comp_uid, review_tab):
         # 별점
         stat_details['time_rate'] = [round(el.avg_rate, 2) for el in stat_datas]
         
-        # 키워드는 10개씩 저장된다.
-        keyword_str = [el.sum_keyword.split('#') for el in stat_datas]
-        keyword_df = pd.DataFrame({
-            'keyword': [el.split('_')[0] for row in keyword_str for el in row],
-            'value': [el.split('_')[1] for row in keyword_str for el in row]
-        })
+        # 키워드
+        # : 10개씩 저장된다.
+        stat_details['time_keywords'] = []
+        for row in stat_datas:
+            data = row.sum_keyword.split('#')
+            data = ''.join([el.split('_')[0] + ', ' if idx < (len(data) - 1) else el.split('_')[0] for idx, el in enumerate(data)])
+            stat_details['time_keywords'].append(data)
         
         # 3-3. word cloud
         # 타입변경 + grouping 해 중복 재거
         # 그루핑 해 중복을 재거합니다.
-        word_cloud_df = keyword_df.astype({
+        keyword_str = [el.sum_keyword.split('#') for el in stat_datas]
+        word_cloud_df = pd.DataFrame({
+            'keyword': [el.split('_')[0] for row in keyword_str for el in row],
+            'value': [el.split('_')[1] for row in keyword_str for el in row]
+        })
+        word_cloud_df = word_cloud_df.astype({
             'keyword': 'str', 'value': 'int16'
         }).groupby('keyword').sum('value').reset_index()
         # 상위 20개 키워드만 추출합니다.
