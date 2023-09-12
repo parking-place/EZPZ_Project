@@ -14,7 +14,7 @@
 <!-- sub_detail_menu -->
 <div class="sub-menu">
     <a class="{% if review_tab == 'half' %} active {% endif %}" href="/review/half?comp_uid={{comp_uid}}">반기별</a>
-    <a class="{% if review_tab == 'quart' %} active {% endif %}" href="/review/quarter?comp_uid={{comp_uid}}">분기별</a>
+    <a class="{% if review_tab == 'quarter' %} active {% endif %}" href="/review/quarter?comp_uid={{comp_uid}}">분기별</a>
 </div>
 
 <!-- review contents -->
@@ -97,10 +97,12 @@
             </div>
         </div>
     </div>
-    {% endif %}
 </div>
+{% endif %}
 
+{% if review_details.pos_len > 3 or review_details.neg_len > 3 %}
 <div id="details_box"><a href="javascript:show_details('.review_cont')">더보기</a></div>
+{% endif %}
 
 <!-- graph JS -->
 <script type="text/javascript">

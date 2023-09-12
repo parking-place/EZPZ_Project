@@ -12,13 +12,15 @@
 <div class="comp_cont">
     <div class="comp_logo">
         <a href="javascript:window.open('{{comp_info.url}}');">
-            <img src="{{comp_info.thumb}}" class="building" width="300px" height="300px"/>
+            <img src="{{comp_info.thumb}}" class="building" width="300px" height="auto"/>
         </a>
     </div>
-    <a href="javascript:window.open('{{comp_info.url}}');"><h3 style="margin-left: 5px">{{comp_info.name}}</h3></a>
+    <a href="javascript:window.open('{{comp_info.url}}');"><h3 style="width: 250px; margin-left: 5px">{{comp_info.name}}</h3></a>
     
     <!-- pie chart -->
+    {% if pos_ratio != 0 or neg_ratio != 0 or neu_ratio != 0 %}
     <canvas id="pieChart" width="400px" height="400px" style="display: inline-block;"></canvas>
+    {% endif %}
 </div>
 
 <!-- info table -->
@@ -37,7 +39,13 @@
     </tr>
 </table>
 
+<!-- show messages if have alert message -->
+{% if msg %}
+<div style="text-align: center; padding: 60px 0 60px 0;"><h4>{{msg}}</h4></div>
+{% endif %}
+
 <!-- news summarize list box -->
+{% if news %}
 <div class="comp_news">
     {% for data in news %}
     <div class="news_cont">
@@ -47,10 +55,16 @@
         <p>{{data.sum}}</p>
     </div>
     {% endfor %}
-</div>
-<div id="details_box"><a href="javascript:show_details('.comp_news')">더보기</a></div>
 
+</div>
+{% endif %}
+{% if news_len > 10 %}
+<div id="details_box"><a href="javascript:show_details('.comp_news')">더보기</a></div>
+{% endif %}
+
+{% if pos_ratio != 0 or neg_ratio != 0 or neu_ratio != 0 %}
 <script>
 draw_chart({{pos_ratio}}, {{neg_ratio}}, {{neu_ratio}});
 </script>
+{% endif %}
 {% endblock %}
