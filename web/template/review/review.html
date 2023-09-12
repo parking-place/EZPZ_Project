@@ -105,6 +105,7 @@
 {% endif %}
 
 <!-- graph JS -->
+{% if stat_details %}
 <script type="text/javascript">
 // safe 설정 안해줄 경우 list 깨짐 현상 발생.
 time_cols = {{stat_details.time_cols | safe}};
@@ -119,4 +120,5 @@ anychart.onDocumentReady(function () {
     draw_word_cloud(data);
 });
 </script>
+{% endif %}
 {% endblock %}
