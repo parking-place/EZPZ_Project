@@ -29,7 +29,7 @@ class FinBertKR:
         self.__tokenizer = AutoTokenizer.from_pretrained(ORIG_MODEL_NAME)
         self.__config = PeftConfig.from_pretrained(model_name_or_path)
         self.__model = AutoModelForSequenceClassification.from_pretrained(self.__config.base_model_name_or_path)
-        self.__model = PeftModel.from_pretrained(self.__model, model_name_or_path)
+        self.__model = PeftModel.from_pretrained(self.__model, model_name_or_path).to(DEVICE)
         self.__softmax = F.softmax
         
         self.__NUM2LABEL = {2: 'positive', 1: 'neutral', 0: 'negative'}
