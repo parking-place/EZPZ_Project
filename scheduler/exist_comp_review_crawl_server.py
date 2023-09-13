@@ -22,28 +22,21 @@ from tqdm import tqdm
 
 def get_all_comp_name_and_uid():
     comp_list = []
-    sql = ' select comp_name, comp_jpuid, comp_ctuid from comp_info where is_reged = "Y" ' #처리안된 회사들만 가져옴
+    sql = ' select comp_uid, comp_name, comp_jpuid, comp_ctuid from comp_info where is_reged = "Y" ' #처리안된 회사들만 가져옴
     comp_temp_list = sc.conn_and_exec(sql)
     comp_list = list(comp_temp_list)
     return comp_list #리스트 받아와서 is reged y 회사마다 바꿔주고 modify_date만 바꿔주면됨
 
-def delete_comp_review(comp):
-    sql = f'select comp_uid from comp_info where replace(comp_name , " ", "") like "%{comp}%" '
-    comp_uid = sc.conn_and_exec(sql)
-    comp_uid= comp_uid[0][0]
+def delete_comp_review(comp_uid):
     sql = f'delete from comp_review where comp_uid = {comp_uid}'
     sc.conn_and_exec(sql)
 
 def crawl_review(comp_list):
-    # sql = 'truncate table comp_review'
-    # sc.conn_and_exec(sql)
-    
-    # print(comp_list[0])
     comp_bar = tqdm(comp_list,
                     position=0,
                     leave=True,
                     )
-    for comp_name, jp_uid, ct_uid in comp_bar:
+    for comp_uid, comp_name, jp_uid, ct_uid in comp_bar:
         
         comp_bar.set_description(comp_name)
         
@@ -63,7 +56,7 @@ def crawl_review(comp_list):
             all_reviews = pd.concat([catch_reviews, jobplanet_reviews], ignore_index=True)
         comp_bar.set_description(comp_name + ' : ' + str(len(all_reviews)))
         # 기존 리뷰 삭제
-        delete_comp_review(comp_name)
+        delete_comp_review(comp_uid)
         # 리뷰 저장
         save_to_db(all_reviews, comp_name)
         
@@ -117,30 +110,11 @@ def save_to_db(df, comp_name):
     sql += ') '
     
     sc.conn_and_exec_many(sql, datas)
-    
-    # for index, row in df.iterrows():
-    #     review = row['review_cont'][:1000].replace('"', '').replace("'", '').replace('\\', '').replace('\n', ' ')
-        
-    #     sql = 'insert into comp_review '
-    #     sql += '    (comp_uid, review_cont, review_senti_orig, review_rate, is_office, review_date, position, create_date, modify_date) '
-    #     sql += 'values ( '
-    #     sql += f'   "{comp_uid}", "{review}", "{row["review_senti_orig"]}", "{row["review_rate"]}", "{int(row["is_office"])}", "{row["review_date"]}", "{row["position"]}" '
-    #     sql += f'    ,"{create_date}", "{modify_date}" '
-    #     sql += ') '
-    #     try :
-    #         sc.conn_and_exec(sql)
-    #     except Exception as e:
-    #         print(sql)
-    #         print(row)
-    #         print(e)
-    #         continue
 
-#테스트용으로 사용하세요
-if __name__ == '__main__':
-
+def review_crawling_main():
     comp_list = get_all_comp_name_and_uid()
     crawl_review(comp_list)
-    # comp_list = [('(주)트레드링스', '318498', None)]
-    # crawl_review(comp_list)
 
-    #print('뉴스정보 전부 DB저장 완료')
+# 스크립트 실행시 실행되는 영역
+if __name__ == '__main__':
+    review_crawling_main()
