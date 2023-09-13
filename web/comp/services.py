@@ -43,6 +43,7 @@ class NewsCont(object):
             if news.news_sum: # 데이터가 있을때만 넣기
                 data = {
                     'sum': news.news_sum,
+                    'url': news.news_url.replace('http:', 'https:'),
                     # 감정평가에 따른 CSS 컬러값
                     'color': '#87ceeb' if news.news_senti == 1 else '#d3d3d3' if news.news_senti == 0 else '#ffc0cb',
                 }

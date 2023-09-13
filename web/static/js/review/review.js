@@ -57,7 +57,7 @@ function chart_resize(){
     if(window.innerWidth <= 768){
         width = $('#reivew_cont').css('width');
     }else{
-        width = innerWidth / 2;
+        width = innerWidth / 2.5;
     }
     $('#chart_container').css('width', width);
 }

@@ -125,7 +125,7 @@ ul li {
     justify-content: space-between;
     position: relative;
     height: 100%;
-    margin-bottom: 96px;
+    margin-bottom: 10px;
 }
 
 /*  ===================================
@@ -155,15 +155,6 @@ ul li {
     width: 1px;
     background-color: #282828; 
 }
-@media screen and (max-width: 768px) {
-    .review_cont {
-        width: 100%;
-        height: auto;
-    }
-    .vertical_rule{
-        display: none;
-    }
-}
 
 /* 더보기 box */
 #details_box{
@@ -184,10 +175,13 @@ ul li {
         align-items: center;
     }
 
-    .reviewChart,
-    .reviewWordcloud {
-        width: auto;
+    .review_cont {
+        width: 100%;
         height: auto;
+    }
+    
+    .vertical_rule{
+        display: none;
     }
 
     .average_cont{

@@ -10,14 +10,9 @@
 
 <script src="{% static 'js/review/review.js' %}"></script>
 <link href="{% static 'css/review/review.css' %}" rel="stylesheet">
-<style>
-#chart_container{
-    width: 30%;
-}
-</style>
 
 <!-- sub_detail_menu -->
-<div class="sub-menu">
+<div class="sub-menu" style="margin:0">
     <a class="{% if review_tab == 'half' %} active {% endif %}" href="/review/half?comp_uid={{comp_uid}}">반기별</a>
     <a class="{% if review_tab == 'quarter' %} active {% endif %}" href="/review/quarter?comp_uid={{comp_uid}}">분기별</a>
 </div>
