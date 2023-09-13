@@ -10,6 +10,11 @@
 
 <script src="{% static 'js/review/review.js' %}"></script>
 <link href="{% static 'css/review/review.css' %}" rel="stylesheet">
+<style>
+#chart_container{
+    width: 30%;
+}
+</style>
 
 <!-- sub_detail_menu -->
 <div class="sub-menu">
@@ -30,9 +35,12 @@
         <!-- Chart Section -->
         {% if stat_details %}
         <div class="review_chart_cont">
-            <div style="width: 40%">
+            <!--
+                <div style="width: 40%">
+            -->
+            <div id="chart_container">
                 <!-- line graph : keyword & rates -->
-                <canvas id="review_chart" width="600"></canvas>
+                <canvas id="review_chart"></canvas>
             </div>
             <!-- word cloud : keyword -->
             <div id="review_word_cloud"></div>
@@ -120,7 +128,14 @@ draw_chart(time_cols, time_rate);
 anychart.onDocumentReady(function () {
     var data = {{stat_details.word_cloud | safe}};
     draw_word_cloud(data);
+    chart_resize();
+
+    // 이벤트
+    $(window).resize(function(){
+        chart_resize();
+    });
 });
+
 </script>
 {% endif %}
 {% endblock %}

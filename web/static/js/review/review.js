@@ -30,7 +30,7 @@ function draw_chart(cols, rate){
         type: 'line'
         , data: data
         , options: {
-            responsive: false
+            responsive: true
             , plugins: {
                 legend: { display: false }
                 , title: {
@@ -50,7 +50,16 @@ function draw_chart(cols, rate){
         , plugins: [hoverValue]
     };
     const el = document.getElementById('review_chart'); // 차트 들어갈 element
-    const pieChart = new Chart(el, config); // draw
+    const line_graph = new Chart(el, config); // draw
+}
+
+function chart_resize(){
+    if(window.innerWidth <= 768){
+        width = $('#reivew_cont').css('width');
+    }else{
+        width = innerWidth / 2;
+    }
+    $('#chart_container').css('width', width);
 }
 
 /*  ========================================
