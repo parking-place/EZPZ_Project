@@ -9,16 +9,10 @@ sys.path.append('/app/EZPZ_Project/modules/crawlers/job_post') #채용공고 크
 sys.path.append('/app/EZPZ_Project/modules/crawlers/comp_info') #기업 정보 크롤러
 sys.path.append('/app/EZPZ_Project') #db 연동정보 경로
 
-import pymysql
-import cryptography
 import sql_connection as sc #mysql connection
 from tqdm import tqdm
 from datetime import datetime
 
-import daum_news_crawler #다음뉴스크롤러
-import naver_news_crawler #네이버 뉴스크롤러
-import news_crawlers #네이버 뉴스 크롤러2
-import wanted_recruit_crawler #채용공고 크롤러
 import info_crawler #기업정보 크롤러
 
 
