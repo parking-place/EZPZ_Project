@@ -12,9 +12,9 @@
 <link href="{% static 'css/review/review.css' %}" rel="stylesheet">
 
 <!-- sub_detail_menu -->
-<div class="sub-menu">
+<div class="sub-menu" style="margin:0">
     <a class="{% if review_tab == 'half' %} active {% endif %}" href="/review/half?comp_uid={{comp_uid}}">반기별</a>
-    <a class="{% if review_tab == 'quart' %} active {% endif %}" href="/review/quarter?comp_uid={{comp_uid}}">분기별</a>
+    <a class="{% if review_tab == 'quarter' %} active {% endif %}" href="/review/quarter?comp_uid={{comp_uid}}">분기별</a>
 </div>
 
 <!-- review contents -->
@@ -30,9 +30,12 @@
         <!-- Chart Section -->
         {% if stat_details %}
         <div class="review_chart_cont">
-            <div style="width: 40%">
+            <!--
+                <div style="width: 40%">
+            -->
+            <div id="chart_container">
                 <!-- line graph : keyword & rates -->
-                <canvas id="review_chart" width="600"></canvas>
+                <canvas id="review_chart"></canvas>
             </div>
             <!-- word cloud : keyword -->
             <div id="review_word_cloud"></div>
@@ -63,45 +66,50 @@
 
         <!-- pos review container -->
         <div class="review_cont">
-            <div class="review_subtitle">
+            <div>
                 <h1><span style="color: #699BF7">긍정적</span>&nbsp;리뷰</h1>
                 {% if tot_summary.pos_sum %}
                 <h2>{{tot_summary.pos_sum}}</h2>
+                <hr/>
                 {% endif %}
             </div>
             <!-- pos review conts -->
+            {% for review in review_details.pos %}
             <div>
-                {% for review in review_details.pos %}
                 <h4 style="color: {{review.color}}">{{review.is_office}}</h4>
                 <p style="margin-bottom: 20px;">{{review.cont}}</p>
-                {% endfor %}
             </div>
+            {% endfor %}
         </div>
         
         <div class="vertical_rule"></div>
         
         <!-- neg review container -->
         <div class="review_cont">
-            <div class="review_subtitle">
+            <div style="margin-bottom: 30px;">
                 <h1><span style="color: #FF9984">부정적</span>&nbsp;리뷰</h1>
                 {% if tot_summary.neg_sum %}
                 <h2>{{tot_summary.neg_sum}}</h2>
+                <hr/>
                 {% endif %}
             </div>
             <!-- neg reivew conts -->
+            {% for review in review_details.neg %}
             <div>
-                {% for review in review_details.neg %}
                 <h4 style="color: {{review.color}}">{{review.is_office}}</h4>
                 <p style="margin-bottom: 20px;">{{review.cont}}</p>
-                {% endfor %}
             </div>
+            {% endfor %}
         </div>
     </div>
-    {% endif %}
 </div>
+{% endif %}
 
+{% if review_details %}
 <div id="details_box"><a href="javascript:show_details('.review_cont')">더보기</a></div>
+{% endif %}
 
+{% if stat_details %}
 <!-- graph JS -->
 <script type="text/javascript">
 // safe 설정 안해줄 경우 list 깨짐 현상 발생.
@@ -115,6 +123,14 @@ draw_chart(time_cols, time_rate);
 anychart.onDocumentReady(function () {
     var data = {{stat_details.word_cloud | safe}};
     draw_word_cloud(data);
+    chart_resize();
+
+    // 이벤트
+    $(window).resize(function(){
+        chart_resize();
+    });
 });
+
 </script>
+{% endif %}
 {% endblock %}

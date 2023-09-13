@@ -1,25 +1,23 @@
-.comp_cont *{
-    display: inline-block;
-    position: relative;
+.comp_basic_info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.comp_basic_info > a{
+    flex-grow: 0.5;
+}
+#chart_container{
+    width: 350px;
 }
 /* comp thumb */
 .comp_logo{
     border: 3px solid #dddddd;
     border-radius: 35px;
     width: 350px;
-    height: 350px;
     background-color: #efefef;
-    margin: 72px 0 72px 5%;
     padding: 25px;
-}
-
-/* pie Chart */
-#pieChart {
-    display: inline-block;
-    position: absolute;
-    width: 400px;
-    height: 400px;
-    margin-left: 12%;
 }
 
 /* comp info table */
@@ -50,9 +48,12 @@
     background-color: #efefef;
     max-width: 500px;
     width: 40%;
-    height: 68px;
-    padding: 0 10px 0 10px;
+    padding: 10px;
     margin-bottom: 10px;
+}
+.news_cont:hover{
+    color: #FF9984;
+    cursor: pointer;
 }
 .news_cont:nth-child(odd){
     margin-right: 5%;

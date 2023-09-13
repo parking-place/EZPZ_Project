@@ -6,12 +6,27 @@ function add_nbsp(el){
     }
 }
 
+function go_external_page(url){
+    if(!url || url == 'https://'){
+        window.alert('홈페이지 바로가기가 지원되지 않는 기업입니다.');
+        return;
+    }
+
+    window.open(url);
+}
+
 // 이벤트 삽입 외엔 document ready 사용하지 않습니다.
 $(document).ready(function(){
     $.each($('.news_cont > p'), function(){
         add_nbsp(this);
     })
+    $('.news_cont').click(function(){
+        go_external_page($(this).attr('data'));
+    });
 });
+
+
+
 /*  ========================================
     PieChart 관련
     ======================================== */
@@ -29,7 +44,7 @@ function draw_chart(pos, neg, neu){
         type: 'pie',
         data: data,
         options: {
-            responsive: false,
+            responsive: true,
             plugins: {
                 legend: {
                     position: 'top',
