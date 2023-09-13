@@ -16,7 +16,7 @@ class NewsCont(object):
                 'loc': info.comp_loc,
                 'size': info.comp_size,
                 'thumb': info.comp_thumb,
-                'url': info.comp_url,
+                'url': info.comp_url.replace('http:', 'https:'),
                 'cont': info.comp_cont,
             },
         }

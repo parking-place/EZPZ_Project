@@ -63,49 +63,51 @@
 
         <!-- pos review container -->
         <div class="review_cont">
-            <div class="review_subtitle">
+            <div>
                 <h1><span style="color: #699BF7">긍정적</span>&nbsp;리뷰</h1>
                 {% if tot_summary.pos_sum %}
                 <h2>{{tot_summary.pos_sum}}</h2>
+                <hr/>
                 {% endif %}
             </div>
             <!-- pos review conts -->
+            {% for review in review_details.pos %}
             <div>
-                {% for review in review_details.pos %}
                 <h4 style="color: {{review.color}}">{{review.is_office}}</h4>
                 <p style="margin-bottom: 20px;">{{review.cont}}</p>
-                {% endfor %}
             </div>
+            {% endfor %}
         </div>
         
         <div class="vertical_rule"></div>
         
         <!-- neg review container -->
         <div class="review_cont">
-            <div class="review_subtitle">
+            <div style="margin-bottom: 30px;">
                 <h1><span style="color: #FF9984">부정적</span>&nbsp;리뷰</h1>
                 {% if tot_summary.neg_sum %}
                 <h2>{{tot_summary.neg_sum}}</h2>
+                <hr/>
                 {% endif %}
             </div>
             <!-- neg reivew conts -->
+            {% for review in review_details.neg %}
             <div>
-                {% for review in review_details.neg %}
                 <h4 style="color: {{review.color}}">{{review.is_office}}</h4>
                 <p style="margin-bottom: 20px;">{{review.cont}}</p>
-                {% endfor %}
             </div>
+            {% endfor %}
         </div>
     </div>
 </div>
 {% endif %}
 
-{% if review_details.pos_len > 3 or review_details.neg_len > 3 %}
+{% if review_details %}
 <div id="details_box"><a href="javascript:show_details('.review_cont')">더보기</a></div>
 {% endif %}
 
-<!-- graph JS -->
 {% if stat_details %}
+<!-- graph JS -->
 <script type="text/javascript">
 // safe 설정 안해줄 경우 list 깨짐 현상 발생.
 time_cols = {{stat_details.time_cols | safe}};

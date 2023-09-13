@@ -11,11 +11,11 @@
 <!-- comp info body -->
 <div class="comp_cont">
     <div class="comp_logo">
-        <a href="javascript:window.open('{{comp_info.url}}');">
+        <a href="javascript:go_comp_page('{{comp_info.url}}');">
             <img src="{{comp_info.thumb}}" class="building" width="300px" height="auto"/>
         </a>
     </div>
-    <a href="javascript:window.open('{{comp_info.url}}');"><h3 style="width: 250px; margin-left: 5px">{{comp_info.name}}</h3></a>
+    <a href="javascript:go_comp_page('{{comp_info.url}}');"><h3 style="width: 250px; margin-left: 5px">{{comp_info.name}}</h3></a>
     
     <!-- pie chart -->
     <canvas id="pieChart" width="400px" height="400px" style="display: inline-block;"></canvas>
@@ -26,12 +26,12 @@
     <tr align="center">
         <td class="t_head">설립</td>
         <td>{{comp_info.found}}</td>
-        <td class="t_head">기업규모</td>
-        <td>{{comp_info.size}}</td>
-    </tr>
-    <tr align="center">
         <td class="t_head">산업분류</td>
         <td>{{comp_info.cont}}</td>
+    </tr>
+    <tr align="center">
+        <td class="t_head">기업규모</td>
+        <td>{{comp_info.size}}</td>
         <td class="t_head">위치</td>
         <td>{{comp_info.loc}}</td>
     </tr>

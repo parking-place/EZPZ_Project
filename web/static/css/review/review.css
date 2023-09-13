@@ -132,7 +132,6 @@ ul li {
     REVIEW SECTION
     =================================== */
 /* review subtitles */
-.review_subtitle{ margin-bottom: 48px; }
 .review_subtitle h1{
     display: flex;
     font-weight: 700;
@@ -140,14 +139,6 @@ ul li {
 }
 .review_subtitle h2{
     font-weight: 400 !important;
-}
-.review_subtitle h2::after{
-    content: '';
-    display: block;
-    width: 70%;
-    height: 1px;
-    background-color: #282828;
-    margin-top: 20px;
 }
 /* review contents */
 .review_cont{
