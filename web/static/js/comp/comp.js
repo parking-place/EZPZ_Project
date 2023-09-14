@@ -18,10 +18,10 @@ function go_external_page(url){
 }
 
 // 이벤트 삽입 외엔 document ready 사용하지 않습니다.
-$(document).ready(function(){
+document.addEventListener('DOMContentLoaded', function(){
     const conts = document.querySelectorAll('.news_cont');
     const texts = document.querySelectorAll('.news_cont > p');
-
+    
     conts.forEach((cont) => {
         cont.addEventListener('click', function(){
             go_external_page(cont.getAttribute('data'));
