@@ -8,7 +8,12 @@ const hoverValue = {
         const { ctx, data, options } = chart;
         chart.getActiveElements().forEach((active) => {
             value = '키워드 : ' + time_keywords[active.index];
-            ctx.fillText(value, 25, 280);
+            
+            if(chart.width <= 446){
+                ctx.fillText(value, (chart.width / 10), (chart.height * 0.95));
+            }else{
+                ctx.fillText(value, (chart.width / 20), (chart.height * 0.9));
+            }
         })
     }
 }
@@ -51,15 +56,6 @@ function draw_chart(cols, rate){
     };
     const el = document.getElementById('review_chart'); // 차트 들어갈 element
     const line_graph = new Chart(el, config); // draw
-}
-
-function chart_resize(){
-    if(window.innerWidth <= 768){
-        width = $('#reivew_cont').css('width');
-    }else{
-        width = innerWidth / 2.5;
-    }
-    $('#chart_container').css('width', width);
 }
 
 /*  ========================================
