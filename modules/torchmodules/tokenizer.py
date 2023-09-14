@@ -22,14 +22,22 @@ import pandas
 from konlpy.tag import Hannanum
 from kiwipiepy import Kiwi, basic_typos # Kiwi 오타정정 커스터마이징 모듈
 
+# 불용단어 설정
+from kiwipiepy import Stopwords
+
+#from kiwipiepy import Token, Stopwords
+
 # 키워드 추출
 from collections import Counter
 
 # consts
 hann = Hannanum()
 kiwi = Kiwi(typos=basic_typos) # 오타 정정 내장 모듈 사용해 선언
-
-
+stopwords = Stopwords() # 불용(무시)할 단어객체
+# 무시할 단어는 여기에 추가
+ignore_list = [
+    '회사', '업무', '근무', '제도', '사용', '경우', '기업', '단점', '가능'
+]
 
 def preprocess_reviews(review_list) -> list:
     """
@@ -111,6 +119,11 @@ def set_kiwi(review_list):
     """
     hann_nouns = hann_anal(review_list)
     map(lambda x : kiwi.add_user_word(x, 'NNP', 2), hann_nouns)
+    
+    # 불용 단어 설정
+    for ignore in ignore_list:
+        stopwords.add((ignore, 'NNP'))
+        stopwords.add((ignore, 'NNG'))
 
 
 
