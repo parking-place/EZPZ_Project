@@ -1,8 +1,10 @@
 function add_nbsp(el){
     const nbsp = document.createTextNode("\u00a0");
-    if($(el).css('height') == '24px'){
-        $(el).append('<br>');
-        $(el).append(nbsp);
+    const br = document.createElement("br");
+
+    if(el.clientHeight == 24){
+        el.appendChild(br);
+        el.appendChild(nbsp);
     }
 }
 
@@ -16,12 +18,17 @@ function go_external_page(url){
 }
 
 // 이벤트 삽입 외엔 document ready 사용하지 않습니다.
-$(document).ready(function(){
-    $.each($('.news_cont > p'), function(){
-        add_nbsp(this);
-    })
-    $('.news_cont').click(function(){
-        go_external_page($(this).attr('data'));
+document.addEventListener('DOMContentLoaded', function(){
+    const conts = document.querySelectorAll('.news_cont');
+    const texts = document.querySelectorAll('.news_cont > p');
+    
+    conts.forEach((cont) => {
+        cont.addEventListener('click', function(){
+            go_external_page(cont.getAttribute('data'));
+        });
+    });
+    texts.forEach((text) => {
+        add_nbsp(text);
     });
 });
 

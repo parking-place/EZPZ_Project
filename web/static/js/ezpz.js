@@ -17,6 +17,6 @@
     =============================================*/
 // 더보기 버튼
 function show_details(cont_tag_id){
-    $(cont_tag_id).css('height', 'auto');
-    $('#details_box').css('display', 'none');
+    document.querySelector(cont_tag_id).style.height = 'auto';
+    document.querySelector('#details_box').style.display = 'none';
 }

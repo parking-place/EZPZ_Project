@@ -120,15 +120,9 @@ time_keywords = {{stat_details.time_keywords | safe}};
 draw_chart(time_cols, time_rate);
 
 // render Word Cloud
-anychart.onDocumentReady(function () {
+anychart.onDocumentReady(function(){
     var data = {{stat_details.word_cloud | safe}};
     draw_word_cloud(data);
-    chart_resize();
-
-    // 이벤트
-    $(window).resize(function(){
-        chart_resize();
-    });
 });
 
 </script>
