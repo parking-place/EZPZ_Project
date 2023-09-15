@@ -23,9 +23,7 @@ from konlpy.tag import Hannanum
 from kiwipiepy import Kiwi, basic_typos # Kiwi 오타정정 커스터마이징 모듈
 
 # 불용단어 설정
-from kiwipiepy import Stopwords
-
-#from kiwipiepy import Token, Stopwords
+from kiwipiepy.utils import Stopwords
 
 # 키워드 추출
 from collections import Counter
@@ -270,30 +268,31 @@ if __name__ == '__main__':
     # MAIN FUNCTION TEST
     # ========================================
     # NNG
-    #st_time = time.time()
-    #print(get_keyword_nng(review_list, 'review', 20))
-    #ed_time = time.time()
-    #print(f'run main function(NNG) : {ed_time - st_time} sec') 33.172860622406006 sec
+    st_time = time.time()
+    print(get_keyword_nng(review_list, 'review', 20))
+    ed_time = time.time()
+    print(f'run main function(NNG) : {ed_time - st_time} sec')# 47.29314851760864 sec
     
     # NNP
-    #st_time = time.time()
-    #print(get_keyword_nng(review_df, 'review', 20))
-    #ed_time = time.time()
-    #print(f'run main function(NNG) : {ed_time - st_time} sec') 10.375234127044678 sec
+    st_time = time.time()
+    print(get_keyword_nng(review_df, 'review', 20))
+    ed_time = time.time()
+    print(f'run main function(NNG) : {ed_time - st_time} sec')# 7.946721315383911 sec
     
     
     
+    # ========================================
+    # TEST EACH FUNCTIONS
     # ========================================
     # set_kiwi() START
-    # ========================================
     #st_time = time.time()
-    hann_nouns = hann_anal(review_list)
+    #hann_nouns = hann_anal(review_list)
     #ed_time = time.time()
     #print(f'for noun tokenization : {ed_time - st_time} sec') for noun tokenization : 17.434030055999756 sec
     
     #st_time = time.time()
     # kiwi vocabulary에 한나눔으로 추출한 명사를 넣어줍시다.
-    map(lambda x : kiwi.add_user_word(x, 'NNP', 2), hann_nouns) # 중요도는 2정도로 설정해 줍니다.
+    #map(lambda x : kiwi.add_user_word(x, 'NNP', 2), hann_nouns) # 중요도는 2정도로 설정해 줍니다.
     #ed_time = time.time()
     #print(f"for set kiwi's vocabulary : {ed_time - st_time} sec") 0.0 sec
     # set_kiwi() END
@@ -301,29 +300,28 @@ if __name__ == '__main__':
     
     
     # get_keyword_nn* START
-    size = 20 # param
-    kiwi_result = []
+    #size = 20 # param
+    #kiwi_result = []
     
-    [kiwi_result.extend(el) for el in list(map(
+    #[kiwi_result.extend(el) for el in list(map(
         # split_complex = False : 너무 자잘하게 분석하지 않도록 한다.
         # normalize_coda = True : ㅋㅋㅋ, ㅎㅎㅎ 등 분리
-        lambda x : kiwi.tokenize(x, split_complex=False, normalize_coda=True),
-        review_list
-    ))]
+    #    lambda x : kiwi.tokenize(x, split_complex=False, normalize_coda=True),
+    #    review_list
+    #))]
     
     # 테스트 시 주석 풀어 사용
     # get_keyword_nng
     #st_time = time.time()
-    print(Counter([token.form for token in kiwi_result if token.tag.find('NNG') != -1 and len(token.form) > 1]).most_common(size))
+    #print(Counter([token.form for token in kiwi_result if token.tag.find('NNG') != -1 and len(token.form) > 1]).most_common(size))
     #ed_time = time.time()
     #print(f'get nnp : {ed_time - st_time} sec')
     
     # get_keyowrd_nnp
     #st_time = time.time()
-    # 고유명사 추출
-    tokens = [token.form for token in kiwi_result if token.tag.find('NNP') != -1]
+    #tokens = [token.form for token in kiwi_result if token.tag.find('NNP') != -1]
     # 가장 많이 나오는 단어 (기업명 추정) 제외
-    print(Counter(tokens).most_common(size+1)[1:])
+    #print(Counter(tokens).most_common(size+1)[1:])
     #ed_time = time.time()
     #print(f'get nng : {ed_time - st_time} sec')
     
