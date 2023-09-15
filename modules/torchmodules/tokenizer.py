@@ -196,7 +196,7 @@ def get_keyword_nnp(raw_str:(pandas.DataFrame|list), cont_type=None, size:int=10
     [kiwi_result.extend(el) for el in list(map(
         # split_complex = False : 너무 자잘하게 분석하지 않도록 한다.
         # normalize_coda = True : ㅋㅋㅋ, ㅎㅎㅎ 등 분리
-        lambda x : kiwi.tokenize(x, split_complex=False, normalize_coda=True),
+        lambda x : kiwi.tokenize(x, split_complex=False, normalize_coda=True, stopwords=stopwords),
         review_list
     ))]
     
@@ -233,7 +233,7 @@ def get_keyword_nng(raw_str:(pandas.DataFrame|list), cont_type, size:int=10) -> 
     [kiwi_result.extend(el) for el in list(map(
         # split_complex = False : 너무 자잘하게 분석하지 않도록 한다.
         # normalize_coda = True : ㅋㅋㅋ, ㅎㅎㅎ 등 분리
-        lambda x : kiwi.tokenize(x, split_complex=False, normalize_coda=True),
+        lambda x : kiwi.tokenize(x, split_complex=False, normalize_coda=True, stopwords=stopwords),
         review_list
     ))]
     
@@ -271,13 +271,13 @@ if __name__ == '__main__':
     st_time = time.time()
     print(get_keyword_nng(review_list, 'review', 20))
     ed_time = time.time()
-    print(f'run main function(NNG) : {ed_time - st_time} sec')# 47.29314851760864 sec
+    print(f'run main function(NNG) : {ed_time - st_time} sec')# 38.47996139526367 sec
     
     # NNP
     st_time = time.time()
     print(get_keyword_nng(review_df, 'review', 20))
     ed_time = time.time()
-    print(f'run main function(NNG) : {ed_time - st_time} sec')# 7.946721315383911 sec
+    print(f'run main function(NNG) : {ed_time - st_time} sec')# 9.4391028881073 sec
     
     
     
