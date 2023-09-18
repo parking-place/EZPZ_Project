@@ -7,6 +7,7 @@ from privates.ezpz_db import *
 def conn_and_exec(sql,param=None): #return문이 필요할 때
 	conn = get_connection()
 	cur = conn.cursor()
+	exec = None
 	try:	
 		cur.execute(sql,param)
 		exec = cur.fetchall()
@@ -24,6 +25,7 @@ def conn_and_exec(sql,param=None): #return문이 필요할 때
 def conn_and_exec_many(sql, params):
 	conn = get_connection()
 	cur = conn.cursor()
+	exec = None
 	try:	
 		cur.executemany(sql,params)
 		exec = cur.fetchall()
@@ -32,6 +34,9 @@ def conn_and_exec_many(sql, params):
 		print('Error : ', e)
 		print('SQL : ', sql)
 		conn.rollback()
+		
+		for param in params:
+			conn_and_exec(sql,param)
 	finally:
 		conn.close()	
 	
