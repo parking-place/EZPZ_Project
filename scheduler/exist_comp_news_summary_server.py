@@ -22,7 +22,7 @@ import news_crawlers
 
 from privates.ezpz_db import *
 
-torch_models = ServiceModels(tpye = 'news') #모델 서빙 모듈 객체
+torch_models = ServiceModels(type = 'news') #모델 서빙 모듈 객체
 
 modify_date = datetime.today().strftime('%Y%m%d')
 
@@ -33,7 +33,7 @@ def get_all_news():
     뉴스중에서 요약이 안된 뉴스들만 가져는 함수
     '''
     news_list = []
-    sql = 'select news_uid, news_cont from news_info where news_sum is null'
+    sql = 'select news_uid, news_cont from comp_news where news_sum is null'
     all_news = sc.conn_and_exec(sql)
     for news in all_news:
         news_list.append(news)
