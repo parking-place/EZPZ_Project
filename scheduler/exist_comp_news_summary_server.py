@@ -22,7 +22,7 @@ import news_crawlers
 
 from privates.ezpz_db import *
 
-torch_models = ServiceModels(tpye = 'news') #모델 서빙 모듈 객체
+torch_models = ServiceModels(type = 'news') #모델 서빙 모듈 객체
 
 modify_date = datetime.today().strftime('%Y%m%d')
 
