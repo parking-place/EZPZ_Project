@@ -79,3 +79,13 @@
 
 - 크롤러 픽스
 </details>
+
+<details>
+<summary> 23.09.18 </summary>
+
+<!-- summary 아래 한칸 공백 두어야함 -->
+- 기존 목표 기능 구현 완료
+<br>
+
+- 리팩토링
+</details>
