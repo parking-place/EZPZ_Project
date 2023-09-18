@@ -60,6 +60,7 @@ def comp_info_crawl_save(comp_list):
         # sql += f'VALUES (%s, %s, %s, %s, %s, %s, %s, "Y", "{modify_date}")'
         sql += f'VALUES ( '
         sql += f'   "{col_value[1]}", "{col_value[2]}", "{col_value[3]}", "{col_value[4]}", "{col_value[5]}", "{col_value[6]}", "{col_value[7]}", "Y", "{modify_date}" '
+        sql += f') WHERE comp_uid = {comp_uid}'
         
         sc.conn_and_exec(sql)
         
