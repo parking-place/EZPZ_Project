@@ -57,9 +57,11 @@ def comp_info_crawl_save(comp_list):
         #크롤링해온 값 테이블에 저장 저장일자와 수정일자는 스케줄링단계에서 진행이므로 일단 00000000 넣어두었음
         sql = 'INSERT INTO comp_info '
         sql += '(comp_name, comp_loc, comp_thumb, comp_cont, comp_founded, comp_size, comp_url, is_reged, modify_date) '
-        sql += f'VALUES (%s, %s, %s, %s, %s, %s, %s, "Y", "{modify_date}")'
+        # sql += f'VALUES (%s, %s, %s, %s, %s, %s, %s, "Y", "{modify_date}")'
+        sql += f'VALUES ( '
+        sql += f'   "{col_value[1]}", "{col_value[2]}", "{col_value[3]}", "{col_value[4]}", "{col_value[5]}", "{col_value[6]}", "{col_value[7]}", "Y", "{modify_date}" '
         
-        sc.conn_and_exec(sql, (col_value[1], col_value[2], col_value[3], col_value[4], col_value[5], col_value[6], col_value[7], modify_date,comp))
+        sc.conn_and_exec(sql)
         
     #     data = (
     #         col_value[1], 
