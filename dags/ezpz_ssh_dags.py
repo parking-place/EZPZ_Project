@@ -40,6 +40,7 @@ ssh_docker_start_cmd = r'docker start ezpz_torch'
 scripts = {
     'new_comp_crawler': 'new_comp_crawler_server.py',
     'exist_comp_news_crawler': 'exist_comp_news_crawl_server.py',
+    'exist_comp_news_summary': 'exist_comp_news_summary_server.py',
     'exist_comp_recruit_crawler': 'exist_comp_recruit_crawl_server.py',
     'sql_clear': 'sql_clear.py',
     'set_start_comp_list': 'set_start_comp_list.py',
@@ -146,6 +147,13 @@ with DAG(
         ssh_hook=ssh_hook_torch,
         get_pty=True,
     )
+    # 기존 회사 뉴스 요약
+    exist_comp_news_summary = SSHOperator(
+        task_id='ssh_exist_comp_news_summary',
+        command=docker_base_command + scripts['exist_comp_news_summary'],
+        ssh_hook=ssh_hook_torch,
+        get_pty=True,
+    )
     # 기존 회사 채용 크롤러
     exist_comp_recruit_crawler = SSHOperator(
         task_id='ssh_exist_comp_recruit_crawler',
@@ -176,7 +184,67 @@ with DAG(
     )
     
     # 순서대로 파이프라인을 구성
-    new_comp_crawler >> exist_comp_news_crawler >> exist_comp_recruit_crawler >> exist_comp_review_crawler >> review_senti_server >> review_sum_server
+    new_comp_crawler >> exist_comp_news_crawler >> exist_comp_news_summary >> exist_comp_recruit_crawler >> exist_comp_review_crawler >> review_senti_server >> review_sum_server
+
+# 크롤러 태스크 TEST DAG
+# 한번만 실행
+with DAG(
+    dag_id='crawler_task_test',
+    default_args=default_args,
+    schedule_interval='@once', 
+    catchup=False, ): 
+    # 새 회사 크롤러
+    new_comp_crawler = SSHOperator(
+        task_id='ssh_new_comp_crawler',
+        command=docker_base_command + scripts['new_comp_crawler'],
+        ssh_hook=ssh_hook_torch,
+        get_pty=True,
+    )
+    # 기존 회사 뉴스 크롤러
+    exist_comp_news_crawler = SSHOperator(
+        task_id='ssh_exist_comp_news_crawler',
+        command=docker_base_command + scripts['exist_comp_news_crawler'],
+        ssh_hook=ssh_hook_torch,
+        get_pty=True,
+    )
+    # 기존 회사 뉴스 요약
+    exist_comp_news_summary = SSHOperator(
+        task_id='ssh_exist_comp_news_summary',
+        command=docker_base_command + scripts['exist_comp_news_summary'],
+        ssh_hook=ssh_hook_torch,
+        get_pty=True,
+    )
+    # 기존 회사 채용 크롤러
+    exist_comp_recruit_crawler = SSHOperator(
+        task_id='ssh_exist_comp_recruit_crawler',
+        command=docker_base_command + scripts['exist_comp_recruit_crawler'],
+        ssh_hook=ssh_hook_torch,
+        get_pty=True,
+    )
+    # 기존 회사 리뷰 크롤러
+    exist_comp_review_crawler = SSHOperator(
+        task_id='ssh_exist_comp_review_crawler',
+        command=docker_base_command + scripts['exist_comp_review_crawler'],
+        ssh_hook=ssh_hook_torch,
+        get_pty=True,
+    )
+    # 리뷰 감정평가
+    review_senti_server = SSHOperator(
+        task_id='ssh_review_senti_server',
+        command=docker_base_command + scripts['review_senti_server'],
+        ssh_hook=ssh_hook_torch,
+        get_pty=True,
+    )
+    # 리뷰 요약
+    review_sum_server = SSHOperator(
+        task_id='ssh_review_sum_server',
+        command=docker_base_command + scripts['review_sum_server'],
+        ssh_hook=ssh_hook_torch,
+        get_pty=True,
+    )
+    
+    # 순서대로 파이프라인을 구성
+    new_comp_crawler >> exist_comp_news_crawler >> exist_comp_news_summary >> exist_comp_recruit_crawler >> exist_comp_review_crawler >> review_senti_server >> review_sum_server
 
 # 새 회사 크롤러 DAG
 # 한번만 실행
