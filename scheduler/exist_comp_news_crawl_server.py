@@ -26,7 +26,7 @@ modify_date = datetime.today().strftime('%Y%m%d')
 
 def get_all_comp():
     comp_list = []
-    sql = ' select comp_name, cimp_uid from comp_info where is_reged = "Y" ' #처리안된 회사들만 가져옴
+    sql = ' select comp_name, comp_uid from comp_info where is_reged = "Y" ' #처리안된 회사들만 가져옴
     comp_temp_list = sc.conn_and_exec(sql)
     for comp_name, comp_uid in comp_temp_list:
         comp_list.append((comp_name, comp_uid))
