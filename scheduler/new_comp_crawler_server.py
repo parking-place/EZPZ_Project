@@ -29,20 +29,16 @@ def crawler_exec(comp_list):
 
 def get_comp_list():
     comp_list = []
-    sql = ' select comp_name from comp_info where is_reged = "N" ' #처리안된 회사들만 가져옴
+    sql = ' select comp_uid, comp_jpuid, comp_name from comp_info where is_reged = "N" ' #처리안된 회사들만 가져옴
     comp_temp_list = sc.conn_and_exec(sql)
-    for comp in comp_temp_list:
-        comp_list.append(comp[0])
+    for comp_uid, comp_jpuid, comp_name in comp_temp_list:
+        comp_list.append((comp_uid, comp_jpuid, comp_name))
     return comp_list #리스트 받아와서 is reged y 회사마다 바꿔주고 modify_date만 바꿔주면됨
 
-def comp_info_crawl_save(comp_list):
-    for comp in tqdm(comp_list):
 
-        #기업정보 크롤러에 넘겨줄 잡플 uid
-        replace_comp = comp.replace(' ','')
-        sql = f'select comp_jpuid from comp_info where replace(comp_name , " ", "") like "%{replace_comp}%" '
-        jpuid = sc.conn_and_exec(sql)
-        comp_jpuid= jpuid[0][0]
+def comp_info_crawl_save(comp_list):    
+    datas = []
+    for comp_uid, comp_jpuid, comp in tqdm(comp_list):
 
         comp_info_df=info_crawler.get_url(comp_jpuid) #info_crawler 기업정보 데이터 프레임 저장
         comp_info_df['comp_cont']=comp_info_df['comp_cont'].iloc[0][0]
@@ -59,16 +55,29 @@ def comp_info_crawl_save(comp_list):
         col_value[4] # 6글자 문자열로 변환 테이블에 형식대로
 
         #크롤링해온 값 테이블에 저장 저장일자와 수정일자는 스케줄링단계에서 진행이므로 일단 00000000 넣어두었음
-        #sql = 'INSERT INTO comp_info '
-        #sql += '(comp_name, comp_loc, comp_thumb, comp_cont, comp_founded, comp_size, comp_url, is_reged, modify_date) '
-        #sql += f'VALUES (%s, %s, %s, %s, %s, %s, %s, "Y", "{modify_date}")'
+        sql = 'UPDATE comp_info '
+        sql += 'SET comp_loc=%s, comp_thumb=%s, comp_cont=%s, comp_founded=%s, comp_size=%s, comp_url=%s, comp_ctuid=%s, is_reged="Y", modify_date= %s '
+        sql += 'WHERE comp_uid=%s'
+        
+        sc.conn_and_exec(sql, (col_value[1], col_value[2], col_value[3], col_value[4], col_value[5], col_value[6], col_value[7], modify_date,comp_uid))
+        
+    #     data = (
+    #         col_value[1], 
+    #         col_value[2], 
+    #         col_value[3], 
+    #         col_value[4], 
+    #         col_value[5], 
+    #         col_value[6], 
+    #         col_value[7], 
+    #         modify_date, 
+    #         comp_uid
+    #         )
 
-        sql = ' UPDATE comp_info '
-        sql += ' SET comp_loc=%s, comp_thumb=%s, comp_cont=%s, comp_founded=%s, comp_size=%s, comp_url=%s, comp_ctuid=%s, is_reged="Y", modify_date= %s '
-        sql += ' WHERE comp_name=%s '
-        #cur.execute(sql, (col_value[2], col_value[3], col_value[4], col_value[5], col_value[6], col_value[7], col_value[1]))
-        #cur.execute(sql, (col_value[1], col_value[2], col_value[3], col_value[4], col_value[5], col_value[6], col_value[7]))
-        sc.conn_and_exec(sql, (col_value[1], col_value[2], col_value[3], col_value[4], col_value[5], col_value[6], col_value[7], modify_date,comp))
+    # sql = ' UPDATE comp_info '
+    # sql += ' SET comp_loc=%s, comp_thumb=%s, comp_cont=%s, comp_founded=%s, comp_size=%s, comp_url=%s, comp_ctuid=%s, is_reged="Y", modify_date= %s '
+    # sql += ' WHERE comp_uid=%s'
+    # # sc.conn_and_exec(sql, (col_value[1], col_value[2], col_value[3], col_value[4], col_value[5], col_value[6], col_value[7], modify_date,comp))
+    # sc.conn_and_exec_many(sql, datas)
 
         #print(f'{comp} 정보 insert 됨')
 

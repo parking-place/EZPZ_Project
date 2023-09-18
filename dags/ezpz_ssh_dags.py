@@ -275,7 +275,22 @@ with DAG(
         ssh_hook=ssh_hook_torch,
         get_pty=True,
     )
+
+# 기존 회사 뉴스 요약 DAG
+# 한번만 실행
+with DAG(
+    dag_id='exist_comp_news_summary_test',
+    default_args=default_args,
+    schedule_interval='@once', 
+    catchup=False, ):
     
+    SSHOperator(
+        task_id='ssh_exist_comp_news_summary_test',
+        command=docker_base_command + scripts['exist_comp_news_summary'],
+        ssh_hook=ssh_hook_torch,
+        get_pty=True,
+    )
+
 # 기존 회사 채용 크롤러 DAG
 # 한번만 실행
 with DAG(

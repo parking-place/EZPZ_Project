@@ -26,7 +26,7 @@ modify_date = datetime.today().strftime('%Y%m%d')
 
 def get_all_comp():
     comp_list = []
-    sql = ' select comp_name, cimp_uid from comp_info where is_reged = "Y" ' #처리안된 회사들만 가져옴
+    sql = ' select comp_name, comp_uid from comp_info where is_reged = "Y" ' #처리안된 회사들만 가져옴
     comp_temp_list = sc.conn_and_exec(sql)
     for comp_name, comp_uid in comp_temp_list:
         comp_list.append((comp_name, comp_uid))
@@ -80,10 +80,10 @@ def news_crawl_main(): # 뉴스크롤링 테이블에 넣을 모든 정보 만�
     
     comp_list = get_all_comp()
     
-    datas = []
+    # datas = []
 
     for comp, comp_uid in tqdm(comp_list):
-        
+        datas = []
         #print(comp + '뉴스 크롤링시작')
         daum_news = daum_news_crawler.get_news(comp) #다음뉴스 크롤러 실행 확인
         #naver_news = naver_news_crawler.get_news(comp) #네이버 뉴스크롤러 실행
