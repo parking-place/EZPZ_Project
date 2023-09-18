@@ -1,4 +1,5 @@
-from finbertkr import FinBertKR
+# from finbertkr import FinBertKR
+from finbertkr_with_peft import FinBertKR
 from mt5sum import MT5Sum
 from t5basesum import T5BaseSum
 from lstmsenti import LSTMSenti
@@ -8,7 +9,6 @@ class ServiceModels:
     def __init__(self, type = 'news'):
         
         self.__type = type
-        
         
         if self.__type == 'news':
             self.__news_sum = MT5Sum()

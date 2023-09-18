@@ -119,14 +119,14 @@ def recruit_info_update(comp_list):
             #print(f'{comp} 공고 삭제됨')
     #추가 및 삭제 잘 됐나 여부는 요걸로 확인
 
-
-
-#테스트용으로 사용하세요
-if __name__ == '__main__':
-
-
+def recruit_main():
     comp_list = get_all_comp_name()
     recruit_info_update(comp_list)
+
+
+# 스크립트 실행시 실행되는 메인 함수
+if __name__ == '__main__':
+    recruit_main()
 
 
 
