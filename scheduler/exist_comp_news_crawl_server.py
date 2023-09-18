@@ -114,7 +114,7 @@ def news_crawl_main(): # 뉴스크롤링 테이블에 넣을 모든 정보 만�
             datas.append(data)
             
         delete_comp_news(comp_uid)
-        save_to_db_many(datas)
+    save_to_db_many(datas)
 
 
 
