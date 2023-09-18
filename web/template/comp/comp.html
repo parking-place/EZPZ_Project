@@ -1,0 +1,71 @@
+{% extends 'base/index.html' %}
+{% load static %}
+
+{% block content %}
+<!-- JS /CSS -->
+<script src="{% static 'js/lib/chart-3.4.0.js' %}"></script>
+<script src="{% static 'js/comp/comp.js' %}"></script>
+<link href="{% static 'css/comp/comp.css' %}" rel="stylesheet">
+
+<!-- comp info body -->
+<div class="comp_basic_info">
+    <div class="comp_logo">
+        <a href="javascript:go_external_page('{{comp_info.url}}');">
+            <img src="{{comp_info.thumb}}" class="building" width="300px" height="auto"/>
+        </a>
+    </div>
+    <a href="javascript:go_external_page('{{comp_info.url}}');">
+        <h3 style="margin-left: 10px;">{{comp_info.name}}</h3>
+    </a>
+    
+    <!-- pie chart -->
+    <div id="chart_container">
+        <canvas id="pieChart"></canvas>
+    </div>
+</div>
+
+<!-- info table -->
+<table align="center" class="comp_table">
+    <tr align="center">
+        <td class="t_head">설립</td>
+        <td>{{comp_info.found}}</td>
+        <td class="t_head">산업분류</td>
+        <td>{{comp_info.cont}}</td>
+    </tr>
+    <tr align="center">
+        <td class="t_head">기업규모</td>
+        <td>{{comp_info.size}}</td>
+        <td class="t_head">위치</td>
+        <td>{{comp_info.loc}}</td>
+    </tr>
+</table>
+
+<!-- show messages if have alert message -->
+{% if msg %}
+<div style="text-align: center; padding: 60px 0 60px 0;"><h4>{{msg}}</h4></div>
+{% endif %}
+
+<!-- news summarize list box -->
+{% if news %}
+<div class="comp_news">
+    {% for data in news %}
+        <div class="news_cont" data="{{data.url}}">
+            <div class="senti_box">
+                <div class="senti" style="background-color: {{data.color}}"><p></p></div>
+            </div>
+            <p>{{data.sum}}</p>
+        </div>
+    {% endfor %}
+
+</div>
+{% endif %}
+{% if news_len > 10 %}
+<div id="details_box"><a href="javascript:show_details('.comp_news')">더보기</a></div>
+{% endif %}
+
+{% if pos_ratio != 0 or neg_ratio != 0 or neu_ratio != 0 %}
+<script>
+draw_chart({{pos_ratio}}, {{neg_ratio}}, {{neu_ratio}});
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends 'base/index.html' %}
+{% load static %}
+
+{% block content %}
+<!-- line graph -->
+<script src="{% static 'js/lib/chart-3.4.0.js' %}"></script>
+<!-- word cloud -->
+<script src="{% static 'js/lib/anychart-base.min.js' %}"></script>
+<script src="{% static 'js/lib/anychart-tag-cloud.min.js' %}"></script>
+
+<script src="{% static 'js/review/review.js' %}"></script>
+<link href="{% static 'css/review/review.css' %}" rel="stylesheet">
+
+<!-- sub_detail_menu -->
+<div class="sub-menu" style="margin:0">
+    <a class="{% if review_tab == 'half' %} active {% endif %}" href="/review/half?comp_uid={{comp_uid}}">반기별</a>
+    <a class="{% if review_tab == 'quarter' %} active {% endif %}" href="/review/quarter?comp_uid={{comp_uid}}">분기별</a>
+</div>
+
+<!-- review contents -->
+<div id="reivew_cont" class="tabcontent">
+    
+    <!-- show messages if have alert message -->
+    {% if msg %}
+    <div style="text-align: center; padding: 60px 0 60px 0;"><h4>{{msg}}</h4></div>
+    {% endif %}
+    
+    <!-- review statistics datas -->
+    <div>
+        <!-- Chart Section -->
+        {% if stat_details %}
+        <div class="review_chart_cont">
+            <!--
+                <div style="width: 40%">
+            -->
+            <div id="chart_container">
+                <!-- line graph : keyword & rates -->
+                <canvas id="review_chart"></canvas>
+            </div>
+            <!-- word cloud : keyword -->
+            <div id="review_word_cloud"></div>
+        </div>
+        {% endif %}
+        
+        {% if tot_summary %}
+        <div class="average_cont">
+            <!-- review all rate -->
+            <p class="all_rate">총 별점<span class="rate_num"><img class="star" src="{% static 'img/star.png' %}" alt="star"/>{{tot_summary.rate}}</span></p>
+
+            <!-- review best keyword 5 -->
+            <div class="best_keyword">
+                <p class="best_keyword_title">이 회사의 중요 키워드</p>
+                <ul class="best_keyword_text">
+                    {% for keyword in tot_summary.keywords %}
+                    <li>{{keyword}}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- pos / neg review -->
+    {% if review_details %}
+    <div class="review_detail_cont">
+
+        <!-- pos review container -->
+        <div class="review_cont">
+            <div>
+                <h1><span style="color: #699BF7">긍정적</span>&nbsp;리뷰</h1>
+                {% if tot_summary.pos_sum %}
+                <h2>{{tot_summary.pos_sum}}</h2>
+                <hr/>
+                {% endif %}
+            </div>
+            <!-- pos review conts -->
+            {% for review in review_details.pos %}
+            <div>
+                <h4 style="color: {{review.color}}">{{review.is_office}}</h4>
+                <p style="margin-bottom: 20px;">{{review.cont}}</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="vertical_rule"></div>
+        
+        <!-- neg review container -->
+        <div class="review_cont">
+            <div style="margin-bottom: 30px;">
+                <h1><span style="color: #FF9984">부정적</span>&nbsp;리뷰</h1>
+                {% if tot_summary.neg_sum %}
+                <h2>{{tot_summary.neg_sum}}</h2>
+                <hr/>
+                {% endif %}
+            </div>
+            <!-- neg reivew conts -->
+            {% for review in review_details.neg %}
+            <div>
+                <h4 style="color: {{review.color}}">{{review.is_office}}</h4>
+                <p style="margin-bottom: 20px;">{{review.cont}}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if review_details %}
+<div id="details_box"><a href="javascript:show_details('.review_cont')">더보기</a></div>
+{% endif %}
+
+{% if stat_details %}
+<!-- graph JS -->
+<script type="text/javascript">
+// safe 설정 안해줄 경우 list 깨짐 현상 발생.
+time_cols = {{stat_details.time_cols | safe}};
+time_rate = {{stat_details.time_rate | safe}};
+time_keywords = {{stat_details.time_keywords | safe}};
+
+draw_chart(time_cols, time_rate);
+
+// render Word Cloud
+anychart.onDocumentReady(function(){
+    var data = {{stat_details.word_cloud | safe}};
+    draw_word_cloud(data);
+});
+
+</script>
+{% endif %}
+{% endblock %}
