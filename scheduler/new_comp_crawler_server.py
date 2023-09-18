@@ -32,7 +32,7 @@ def get_comp_list():
     sql = ' select comp_uid, comp_jpuid, comp_name from comp_info where is_reged = "N" ' #처리안된 회사들만 가져옴
     comp_temp_list = sc.conn_and_exec(sql)
     for comp_uid, comp_jpuid, comp_name in comp_temp_list:
-        comp_list.append((comp_uid, comp_name))
+        comp_list.append((comp_uid, comp_jpuid, comp_name))
     return comp_list #리스트 받아와서 is reged y 회사마다 바꿔주고 modify_date만 바꿔주면됨
 
 
