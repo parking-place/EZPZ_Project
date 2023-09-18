@@ -15,3 +15,10 @@
 <!-- summary 아래 한칸 공백 두어야함 -->
 - POC 브랜치 readme.md 연결
 </details>
+
+<details>
+<summary> 1.0 </summary>
+
+<!-- summary 아래 한칸 공백 두어야함 -->
+- 계획된 기능 개발 완료
+</details>
