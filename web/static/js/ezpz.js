@@ -17,6 +17,9 @@
     =============================================*/
 // 더보기 버튼
 function show_details(cont_tag_id){
-    document.querySelector(cont_tag_id).style.height = 'auto';
+    const tags = document.querySelectorAll(cont_tag_id);
+    tags.forEach((tag) => {
+        tag.style.height = 'auto';
+    })
     document.querySelector('#details_box').style.display = 'none';
 }
