@@ -22,3 +22,13 @@
 <!-- summary 아래 한칸 공백 두어야함 -->
 - 계획된 기능 개발 완료
 </details>
+
+<details>
+<summary> 1.0.1 </summary>
+
+<!-- summary 아래 한칸 공백 두어야함 -->
+- 크롤러 버그 픽스
+<br>
+
+- 웹페이지 리뷰 버그 픽스
+</details>
