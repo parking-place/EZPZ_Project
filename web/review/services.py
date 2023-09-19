@@ -81,8 +81,8 @@ class ReviewCont(object):
             tot_summary['keywords'] = [el.split('_')[0] for el in total_stat.sum_keyword.split('#')]
             
             # 긍정 / 부정 총 요약
-            tot_summary['pos_sum'] = total_stat.sum_cont_neg
-            tot_summary['neg_sum'] = total_stat.sum_cont_pos
+            tot_summary['neg_sum'] = total_stat.sum_cont_neg
+            tot_summary['pos_sum'] = total_stat.sum_cont_pos
             return tot_summary
         
         
