@@ -14,7 +14,7 @@
 
 ## 🔧 Made with :
 
-### 개발 언어
+### 개발 언어/ 프레임워크
 <a href="" target="_blank"><img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white"/></a>
 <a href="" target="_blank"><img src="https://img.shields.io/badge/Pytorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white"/></a>
 <a href="" target="_blank"><img src="https://img.shields.io/badge/Huggingface-FFD500?style=flat-square&logo=huggingface&logoColor=white"/></a>
