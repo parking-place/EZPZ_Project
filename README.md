@@ -2,6 +2,7 @@
 
 ## Documents :
 - [WBS Doc](https://1drv.ms/x/s!Ak-qJnXuYvPagptErroAZXEsVnkF1g?e=ehG54Z)
+- [PPT](https://1drv.ms/p/s!Ak-qJnXuYvPagptFcffsTRmzF9G9LA?e=J6Cuyv)
 - [Details (Notion)](https://laced-garlic-bbb.notion.site/EZPZ_final-3e18c5bed4a44c54aa5d9a8b5535fe97)
 - [Dockerfiles](./dockers/readme.md)
 - [POC readme](https://github.com/parking-place/EZPZ_Project/tree/POC/POC)
